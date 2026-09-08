@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Resource | BookFlow</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+</head>
+<body>
+
+<!-- ── Navbar ──────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg bf-navbar bf-topbar">
+    <div class="container">
+        <a class="bf-brand" th:href="@{/}">
+            <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
+            BookFlow
+        </a>
+        <button class="navbar-toggler" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navUpload"
+                aria-controls="navUpload" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navUpload">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
+                <li class="nav-item"><a class="bf-nav-link" th:href="@{/}">Home</a></li>
+                <li class="nav-item"><a class="bf-nav-link" th:href="@{/resources}">Browse Resources</a></li>
+                <li class="nav-item"><a class="bf-nav-link active" th:href="@{/resources/upload}">Upload</a></li>
+                <li class="nav-item"><a class="bf-nav-link" th:href="@{/resources/my}">My Uploads</a></li>
+            </ul>
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
+                <li class="nav-item dropdown">
+                    <a class="bf-user-trigger dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="bf-avatar"><i class="bi bi-person" style="font-size:.65rem;"></i></span>
+                        <span sec:authentication="name">User</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Page banner ─────────────────────────────────────────── -->
+<div class="bf-page-banner">
+    <div class="container">
+        <h1><i class="bi bi-cloud-upload me-2" style="font-size:1.1rem;"></i>Upload a Resource</h1>
+        <p>Share academic materials with your peers. Resources are reviewed before publication.</p>
+    </div>
+</div>
+
+<!-- ── Content ─────────────────────────────────────────────── -->
+<main style="padding:1.5rem 0 2.5rem;">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+
+                <!-- Error alerts — th:if and th:text preserved exactly -->
+                <div th:if="${fileError}"
+                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                    <i class="bi bi-x-circle-fill flex-shrink-0"></i>
+                    <span th:text="${fileError}"></span>
+                </div>
+                <div th:if="${uploadError}"
+                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                    <span th:text="${uploadError}"></span>
+                </div>
+
+                <!-- Upload form — enctype, th:action, th:object all preserved exactly -->
+                <div class="bf-card">
+                    <div class="bf-card-header">Resource Details</div>
+                    <div class="bf-card-body">
+                        <form th:action="@{/resources/upload}"
+                              th:object="${resourceUploadDto}"
+                              method="post"
+                              enctype="multipart/form-data">
+
+                            <!-- Title -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">
+                                    Title <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="title" th:field="*{title}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
+                                       placeholder="e.g. Data Structures Unit 3 Notes">
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}"
+                                     th:errors="*{title}"></div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" th:field="*{description}"
+                                          class="form-control"
+                                          th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"
+                                          rows="3"
+                                          placeholder="Brief description (optional)"></textarea>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}"
+                                     th:errors="*{description}"></div>
+                            </div>
+
+                            <!-- Resource Type -->
+                            <div class="mb-3">
+                                <label for="type" class="form-label">
+                                    Resource Type <span class="text-danger">*</span>
+                                </label>
+                                <select id="type" th:field="*{type}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'">
+                                    <option value="">-- Select type --</option>
+                                    <option th:each="t : ${resourceTypes}"
+                                            th:value="${t}" th:text="${t.displayName}"></option>
+                                </select>
+                                <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}"
+                                     th:errors="*{type}"></div>
+                            </div>
+
+                            <!-- Branch / Subject -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="branch" class="form-label">
+                                        Branch <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="branch" th:field="*{branch}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
+                                           placeholder="e.g. Computer Engineering">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('branch')}"
+                                         th:errors="*{branch}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="subject" class="form-label">
+                                        Subject <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="subject" th:field="*{subject}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
+                                           placeholder="e.g. Data Structures">
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('subject')}"
+                                         th:errors="*{subject}"></div>
+                                </div>
+                            </div>
+
+                            <!-- Year / Semester -->
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="year" class="form-label">
+                                        Year <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="year" th:field="*{year}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'">
+                                        <option value="">-- Select year --</option>
+                                        <option value="1">First Year</option>
+                                        <option value="2">Second Year</option>
+                                        <option value="3">Third Year</option>
+                                        <option value="4">Fourth Year</option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('year')}"
+                                         th:errors="*{year}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="semester" class="form-label">
+                                        Semester <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="semester" th:field="*{semester}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'">
+                                        <option value="">-- Select semester --</option>
+                                        <option th:each="s : ${#numbers.sequence(1,8)}"
+                                                th:value="${s}" th:text="'Semester ' + ${s}"></option>
+                                    </select>
+                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('semester')}"
+                                         th:errors="*{semester}"></div>
+                                </div>
+                            </div>
+
+                            <!-- File — name="file" preserved exactly -->
+                            <div class="mb-4">
+                                <label for="file" class="form-label">
+                                    File <span class="text-danger">*</span>
+                                </label>
+                                <div class="bf-upload-zone position-relative">
+                                    <i class="bi bi-cloud-arrow-up d-block"
+                                       style="font-size:2rem;color:#3b82f6;margin-bottom:.4rem;"></i>
+                                    <p class="mb-1" style="font-size:.875rem;font-weight:600;color:#1e293b;">
+                                        Click to choose a file
+                                    </p>
+                                    <p class="mb-0" style="font-size:.77rem;color:#64748b;">
+                                        PDF, DOC, DOCX — max 20 MB
+                                    </p>
+                                    <input type="file" id="file" name="file"
+                                           accept=".pdf,.doc,.docx"
+                                           onchange="updateLabel(this)"
+                                           style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                                </div>
+                                <p id="file-label" class="form-text mt-1"></p>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-cloud-upload me-1"></i>Submit for Review
+                                </button>
+                                <a th:href="@{/resources/my}" class="btn btn-outline-secondary">Cancel</a>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Info note -->
+                <div class="alert alert-info d-flex gap-2 mt-3" role="alert" style="font-size:.845rem;">
+                    <i class="bi bi-info-circle-fill flex-shrink-0 mt-1"></i>
+                    <span>
+                        After submission your resource will be <strong>Pending</strong> until an
+                        administrator reviews it. Only approved resources are visible in the public library.
+                    </span>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer class="bf-footer">
+    <div class="container text-center">&copy; 2026 BookFlow &mdash; PVPP College of Engineering</div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function updateLabel(input) {
+        var lbl = document.getElementById('file-label');
+        if (input.files && input.files[0]) {
+            lbl.textContent = 'Selected: ' + input.files[0].name;
+            lbl.style.color = '#15803d';
+        }
+    }
+</script>
+</body>
+</html>

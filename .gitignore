@@ -1,0 +1,16 @@
+# Secrets and OAuth credentials
+secrets/
+
+# Maven build output
+target/
+
+# Local uploaded resource files
+uploads/
+
+# IDE files
+.idea/
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
