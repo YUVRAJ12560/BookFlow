@@ -94,8 +94,62 @@ public class ResourceService {
     }
 
     // ----------------------------------------------------------------
-    // Admin verification operations
+    // Admin upload — publishes directly as APPROVED
     // ----------------------------------------------------------------
+
+    /**
+     * Admin-direct resource upload. The resource is published immediately as
+     * APPROVED — no pending review step is needed for admin-uploaded content.
+     * The admin is set as both uploader and verifier.
+     *
+     * USER uploads continue to use {@link #upload(ResourceUploadDto, User)}
+     * which enforces PENDING status.
+     */
+    @Transactional
+    public Resource uploadAsAdmin(ResourceUploadDto dto, User admin) throws IOException {
+        String storedFilename  = fileStorageService.store(dto.getFile());
+        String safeOriginalName = fileStorageService
+                .sanitiseOriginalFilename(dto.getFile().getOriginalFilename());
+
+        Resource resource = new Resource();
+        resource.setTitle(dto.getTitle().trim());
+        resource.setDescription(
+                dto.getDescription() != null ? dto.getDescription().trim() : null);
+        resource.setType(dto.getType());
+        resource.setBranch(dto.getBranch().trim());
+        resource.setSubject(dto.getSubject().trim());
+        resource.setYear(dto.getYear());
+        resource.setSemester(dto.getSemester());
+        resource.setFilePath(storedFilename);
+        resource.setOriginalFilename(safeOriginalName);
+        resource.setUploadedBy(admin);
+
+        // Admin uploads are pre-approved — no student review needed.
+        resource.setStatus(ResourceStatus.APPROVED);
+        resource.setVerifiedBy(admin);
+        resource.setVerifiedAt(java.time.LocalDateTime.now());
+
+        return resourceRepository.save(resource);
+    }
+
+    // ----------------------------------------------------------------
+    // Dashboard statistics
+    // ----------------------------------------------------------------
+
+    public long countPending()  { return resourceRepository.countByStatus(ResourceStatus.PENDING);  }
+    public long countApproved() { return resourceRepository.countByStatus(ResourceStatus.APPROVED); }
+    public long countRejected() { return resourceRepository.countByStatus(ResourceStatus.REJECTED); }
+    public long countTotal()    { return resourceRepository.count(); }
+
+    /** Counts APPROVED resources of a specific type — used by the library category cards. */
+    public long countApprovedByType(com.bookflow.entity.ResourceType type) {
+        return resourceRepository.countByStatusAndType(ResourceStatus.APPROVED, type);
+    }
+
+    /** Returns the N most recently submitted resources for the admin activity feed. */
+    public List<Resource> findRecent(int limit) {
+        return resourceRepository.findRecentResources(limit);
+    }
 
     /**
      * Returns all PENDING resources in submission order (oldest first),

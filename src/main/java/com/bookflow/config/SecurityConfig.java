@@ -133,6 +133,7 @@ public class SecurityConfig {
     //   /                    → public (home page)
     //   /register            → public
     //   static files         → public
+    //   /auth/google         → Google Sign-In callback (public)
     //   /resources/**        → requires authentication (USER or ADMIN)
     //   /user/**             → requires authentication (USER or ADMIN)
     //   Everything else      → requires authentication
@@ -150,7 +151,9 @@ public class SecurityConfig {
                 // Public pages — home, register, login, email verification
                 .requestMatchers("/", "/register", "/login").permitAll()
                 .requestMatchers("/verify-email", "/verify-pending", "/verify-success",
-                                 "/verify-error", "/resend-verification").permitAll()
+                                 "/verify-error", "/resend-verification", "/error").permitAll()
+                // Google Sign-In callback — validates the ID token server-side
+                .requestMatchers("/auth/google").permitAll()
                 // Static assets
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll()
                 // Resource library and downloads require authentication.

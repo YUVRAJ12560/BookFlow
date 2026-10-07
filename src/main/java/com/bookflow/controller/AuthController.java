@@ -29,9 +29,13 @@ public class AuthController {
     // Registration
     // ----------------------------------------------------------------
 
+    @org.springframework.beans.factory.annotation.Value("${google.oauth.client-id:placeholder}")
+    private String googleClientId;
+
     @GetMapping("/register")
     public String showRegisterForm(Model model) {
         model.addAttribute("registerDto", new RegisterDto());
+        model.addAttribute("googleClientId", googleClientId != null ? googleClientId.trim() : "");
         return "public/register";
     }
 
@@ -85,7 +89,8 @@ public class AuthController {
     // ----------------------------------------------------------------
 
     @GetMapping("/login")
-    public String showLoginForm() {
+    public String showLoginForm(Model model) {
+        model.addAttribute("googleClientId", googleClientId != null ? googleClientId.trim() : "");
         return "public/login";
     }
 

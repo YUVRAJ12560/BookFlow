@@ -1,7 +1,9 @@
 package com.bookflow.controller;
 
 import com.bookflow.dto.RejectDto;
+import com.bookflow.dto.ResourceUploadDto;
 import com.bookflow.entity.Resource;
+import com.bookflow.entity.ResourceType;
 import com.bookflow.entity.User;
 import com.bookflow.repository.ResourceRepository;
 import com.bookflow.repository.UserRepository;
@@ -83,10 +85,13 @@ public class AdminController {
             Model model) {
 
         User admin = resolveAdmin(userDetails);
-        int pendingCount = resourceService.findPending().size();
 
-        model.addAttribute("admin", admin);
-        model.addAttribute("pendingCount", pendingCount);
+        model.addAttribute("admin",         admin);
+        model.addAttribute("pendingCount",  resourceService.countPending());
+        model.addAttribute("approvedCount", resourceService.countApproved());
+        model.addAttribute("rejectedCount", resourceService.countRejected());
+        model.addAttribute("totalCount",    resourceService.countTotal());
+        model.addAttribute("recentResources", resourceService.findRecent(8));
         model.addAttribute("pageTitle", "Admin Dashboard");
         return "admin/dashboard";
     }
@@ -248,6 +253,57 @@ public class AdminController {
                 .headers(headers)
                 .contentType(mediaType)
                 .body(fileResource);
+    }
+
+    // ----------------------------------------------------------------
+    // Admin resource upload — GET /admin/resources/upload
+    // Admin-uploaded resources are published directly as APPROVED.
+    // ----------------------------------------------------------------
+
+    @GetMapping("/resources/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String showAdminUploadForm(
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model) {
+
+        model.addAttribute("admin", resolveAdmin(userDetails));
+        model.addAttribute("resourceUploadDto", new ResourceUploadDto());
+        model.addAttribute("resourceTypes", ResourceType.values());
+        model.addAttribute("pageTitle", "Upload Official Resource");
+        return "admin/upload-resource";
+    }
+
+    @PostMapping("/resources/upload")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String processAdminUpload(
+            @Valid @ModelAttribute("resourceUploadDto") ResourceUploadDto dto,
+            BindingResult bindingResult,
+            @AuthenticationPrincipal UserDetails userDetails,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        User admin = resolveAdmin(userDetails);
+        model.addAttribute("admin", admin);
+        model.addAttribute("resourceTypes", ResourceType.values());
+
+        if (bindingResult.hasErrors()) {
+            return "admin/upload-resource";
+        }
+
+        try {
+            resourceService.uploadAsAdmin(dto, admin);
+        } catch (IllegalArgumentException e) {
+            model.addAttribute("fileError", e.getMessage());
+            return "admin/upload-resource";
+        } catch (Exception e) {
+            model.addAttribute("uploadError",
+                    "An unexpected error occurred. Please try again.");
+            return "admin/upload-resource";
+        }
+
+        redirectAttributes.addFlashAttribute("actionSuccess",
+                "Resource uploaded and published to the library.");
+        return "redirect:/admin/dashboard";
     }
 
     // ----------------------------------------------------------------

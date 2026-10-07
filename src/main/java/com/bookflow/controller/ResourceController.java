@@ -18,8 +18,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -58,6 +57,14 @@ public class ResourceController {
         model.addAttribute("filter", filter);
         model.addAttribute("resourceTypes", ResourceType.values());
         model.addAttribute("pageTitle", "Resource Library");
+
+        // Per-category counts for the category cards — real data, APPROVED only
+        model.addAttribute("countNotes",         resourceService.countApprovedByType(ResourceType.NOTES));
+        model.addAttribute("countPYQ",           resourceService.countApprovedByType(ResourceType.PYQ));
+        model.addAttribute("countInternalPaper", resourceService.countApprovedByType(ResourceType.INTERNAL_PAPER));
+        model.addAttribute("countExamPattern",   resourceService.countApprovedByType(ResourceType.EXAM_PATTERN));
+        model.addAttribute("countRefBook",       resourceService.countApprovedByType(ResourceType.REFERENCE_BOOK));
+
         return "resources/library";
     }
 
@@ -158,7 +165,7 @@ public class ResourceController {
     public String processUpload(
             @Valid @ModelAttribute("resourceUploadDto") ResourceUploadDto dto,
             BindingResult bindingResult,
-            @AuthenticationPrincipal UserDetails userDetails,
+            Authentication authentication,
             Model model,
             RedirectAttributes redirectAttributes) {
 
@@ -170,8 +177,9 @@ public class ResourceController {
             return "resources/upload";
         }
 
-        // Resolve the authenticated user entity from the database.
-        User uploader = userRepository.findByEmail(userDetails.getUsername())
+        // Resolve the authenticated user via Authentication.getName() — works for
+        // both form-login (UserDetails principal) and Google Sign-In (String principal).
+        User uploader = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
         try {
@@ -196,17 +204,16 @@ public class ResourceController {
     // ----------------------------------------------------------------
 
     @GetMapping("/my")
-    public String myResources(
-            @AuthenticationPrincipal UserDetails userDetails,
-            Model model) {
+    public String myResources(Authentication authentication, Model model) {
 
-        User uploader = userRepository.findByEmail(userDetails.getUsername())
+        // Authentication.getName() works for both form-login and Google Sign-In principals.
+        User uploader = userRepository.findByEmail(authentication.getName())
                 .orElseThrow(() -> new IllegalStateException("Authenticated user not found"));
 
         List<Resource> resources = resourceService.findByUploader(uploader);
         model.addAttribute("resources", resources);
         model.addAttribute("user", uploader);
-        model.addAttribute("pageTitle", "My Uploads");
+        model.addAttribute("pageTitle", "My Resources");
         return "resources/my-resources";
     }
 }

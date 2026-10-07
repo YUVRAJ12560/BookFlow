@@ -1,6 +1,9 @@
 # Secrets and OAuth credentials
 secrets/
 
+# Local development properties (contain secrets like Google Client ID — never commit)
+src/main/resources/application-local.properties
+
 # Maven build output
 target/
 

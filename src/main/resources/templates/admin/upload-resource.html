@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Official Resource | BookFlow Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        body { background:#f1f5f9; }
+
+        /* Shared admin navbar styles (duplicated from dashboard for standalone page) */
+        .adm-nav { background:#0f172a; border-bottom:1px solid rgba(255,255,255,.07); padding:.55rem 0; }
+        .adm-brand { display:inline-flex; align-items:center; gap:.5rem; color:#fff !important; font-size:1.05rem; font-weight:700; text-decoration:none; }
+        .adm-brand-icon { width:28px; height:28px; background:#2563eb; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; color:#fff; flex-shrink:0; }
+        .adm-badge { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:4px; font-size:.65rem; font-weight:700; padding:.1rem .45rem; letter-spacing:.04em; text-transform:uppercase; }
+        .adm-link { color:rgba(255,255,255,.7) !important; font-size:.84rem; font-weight:500; padding:.3rem .65rem; border-radius:6px; text-decoration:none; transition:background .15s,color .15s; }
+        .adm-link:hover, .adm-link.active { color:#fff !important; background:rgba(255,255,255,.1); }
+        .adm-avatar { width:26px; height:26px; background:#2563eb; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#fff; }
+        .adm-user-trigger { color:rgba(255,255,255,.8) !important; font-size:.84rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; padding:.28rem .6rem; border-radius:6px; text-decoration:none; transition:background .15s; }
+        .adm-user-trigger:hover { background:rgba(255,255,255,.08); color:#fff !important; }
+        .adm-nav .dropdown-menu { border:1px solid #e2e8f0; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.1); padding:.35rem; min-width:180px; margin-top:.4rem; }
+        .adm-nav .dropdown-item { border-radius:6px; font-size:.84rem; padding:.4rem .7rem; color:#1e293b; display:flex; align-items:center; gap:.5rem; }
+        .adm-nav .dropdown-item:hover { background:#eff6ff; color:#2563eb; }
+        .adm-nav .dropdown-item.text-danger:hover { background:#fff1f2; color:#b91c1c !important; }
+        .adm-chip-pending { background:#fef9c3; color:#92400e; border:1px solid #fde68a; border-radius:999px; padding:.15rem .55rem; font-size:.71rem; font-weight:600; }
+
+        /* Page header */
+        .adm-page-header { background:#fff; border-bottom:1px solid #e2e8f0; padding:1.1rem 0; }
+        .adm-page-title { font-size:1.2rem; font-weight:700; color:#0f172a; margin:0; }
+        .adm-page-sub { font-size:.82rem; color:#64748b; margin:.15rem 0 0; }
+
+        /* Upload form card */
+        .adm-form-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
+        .adm-form-card-header { background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:.9rem 1.5rem; }
+        .adm-form-card-header h6 { font-size:.875rem; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:.5rem; }
+        .adm-form-card-body { padding:1.5rem; }
+
+        /* Notice banner */
+        .adm-notice { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:.75rem 1rem; display:flex; align-items:flex-start; gap:.75rem; font-size:.84rem; color:#1e40af; }
+        .adm-notice i { flex-shrink:0; font-size:.95rem; margin-top:.05rem; }
+
+        /* Upload zone */
+        .adm-upload-zone { border:2px dashed #bfdbfe; border-radius:10px; background:#f8fafc; padding:1.5rem 1rem; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; position:relative; }
+        .adm-upload-zone:hover, .adm-upload-zone:focus-within { border-color:#2563eb; background:#eff6ff; }
+        .adm-upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+        .adm-upload-icon { font-size:1.75rem; color:#93c5fd; margin-bottom:.5rem; display:block; }
+        .adm-upload-label { font-size:.875rem; font-weight:600; color:#1e293b; margin-bottom:.2rem; }
+        .adm-upload-hint { font-size:.78rem; color:#64748b; }
+
+        /* Form fields */
+        .adm-form-card .form-label { font-size:.82rem; font-weight:600; color:#1e293b; margin-bottom:.3rem; }
+        .adm-form-card .form-control, .adm-form-card .form-select { font-size:.875rem; border-radius:7px; }
+        .adm-form-card .invalid-feedback { font-size:.77rem; }
+        .adm-section-divider { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin:0 0 .75rem; }
+
+        /* Submit button */
+        .adm-submit-btn { background:#2563eb; color:#fff !important; border:none; border-radius:8px; padding:.6rem 1.5rem; font-size:.9rem; font-weight:700; display:inline-flex; align-items:center; gap:.4rem; transition:background .15s,transform .1s,box-shadow .15s; }
+        .adm-submit-btn:hover { background:#1d4ed8; transform:translateY(-1px); box-shadow:0 4px 12px rgba(37,99,235,.35); }
+        .adm-cancel-btn { background:transparent; color:#64748b !important; border:1.5px solid #e2e8f0; border-radius:8px; padding:.6rem 1.25rem; font-size:.875rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:.35rem; transition:background .15s; }
+        .adm-cancel-btn:hover { background:#f8fafc; color:#1e293b !important; }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════ NAVBAR ═══════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg adm-nav">
+    <div class="container-fluid px-4">
+        <a class="adm-brand me-3" th:href="@{/admin/dashboard}">
+            <span class="adm-brand-icon"><i class="bi bi-book-half"></i></span>
+            BookFlow
+            <span class="adm-badge ms-1">Admin</span>
+        </a>
+        <button class="navbar-toggler border-0" type="button"
+                data-bs-toggle="collapse" data-bs-target="#navAdminUp"
+                aria-controls="navAdminUp" aria-expanded="false" aria-label="Toggle navigation"
+                style="color:rgba(255,255,255,.7);">
+            <i class="bi bi-list fs-5"></i>
+        </button>
+        <div class="collapse navbar-collapse" id="navAdminUp">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
+                <li class="nav-item">
+                    <a class="adm-link" th:href="@{/admin/dashboard}">
+                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="adm-link" th:href="@{/admin/resources/pending}">
+                        <i class="bi bi-hourglass-split me-1"></i>Pending Resources
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="adm-link active" th:href="@{/admin/resources/upload}">
+                        <i class="bi bi-cloud-upload me-1"></i>Upload Resource
+                    </a>
+                </li>
+            </ul>
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <div class="dropdown">
+                    <a class="adm-user-trigger dropdown-toggle" href="#"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="adm-avatar"
+                              th:text="${#strings.substring(admin.name,0,1).toUpperCase()}">A</span>
+                        <span class="d-none d-sm-inline" th:text="${admin.name}">Admin</span>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-header" style="font-size:.75rem;" th:text="${admin.email}">admin@college.edu</span></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li>
+                            <form th:action="@{/admin-logout}" method="post" class="m-0">
+                                <button type="submit" class="dropdown-item text-danger">
+                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- ═══════════ PAGE HEADER ══════════════════════════════════ -->
+<div class="adm-page-header">
+    <div class="container-fluid px-4">
+        <h1 class="adm-page-title">
+            <i class="bi bi-cloud-upload me-2" style="font-size:1rem;color:#2563eb;"></i>
+            Upload Official Resource
+        </h1>
+        <p class="adm-page-sub">
+            Resources uploaded by administrators are published directly to the library.
+        </p>
+    </div>
+</div>
+
+<!-- ═══════════ BODY ══════════════════════════════════════════ -->
+<main style="padding:1.5rem 0 3rem;">
+    <div class="container-fluid px-4">
+        <div class="row justify-content-center">
+            <div class="col-lg-8 col-xl-7">
+
+                <!-- Admin upload notice -->
+                <div class="adm-notice mb-4">
+                    <i class="bi bi-shield-fill-check text-primary"></i>
+                    <div>
+                        <strong>Admin upload.</strong>
+                        This resource will be published immediately as
+                        <strong>Approved</strong> and will be visible to all users in the library.
+                        Student uploads require admin review before publication.
+                    </div>
+                </div>
+
+                <!-- Error alerts — th:if and th:text preserved exactly -->
+                <div th:if="${fileError}"
+                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                    <i class="bi bi-x-circle-fill flex-shrink-0"></i>
+                    <span th:text="${fileError}"></span>
+                </div>
+                <div th:if="${uploadError}"
+                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                    <span th:text="${uploadError}"></span>
+                </div>
+
+                <!-- Upload form — enctype and th:object preserved exactly -->
+                <form th:action="@{/admin/resources/upload}"
+                      th:object="${resourceUploadDto}"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <!-- Resource Details card -->
+                    <div class="adm-form-card mb-3">
+                        <div class="adm-form-card-header">
+                            <h6><i class="bi bi-file-earmark-text text-primary"></i> Resource Details</h6>
+                        </div>
+                        <div class="adm-form-card-body">
+
+                            <!-- Title -->
+                            <div class="mb-3">
+                                <label for="title" class="form-label">
+                                    Title <span class="text-danger">*</span>
+                                </label>
+                                <input type="text" id="title" th:field="*{title}"
+                                       class="form-control"
+                                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
+                                       placeholder="e.g. Data Structures Unit 3 Notes">
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('title')}"
+                                     th:errors="*{title}"></div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea id="description" th:field="*{description}"
+                                          class="form-control"
+                                          th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"
+                                          rows="3"
+                                          placeholder="Brief description (optional)"></textarea>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('description')}"
+                                     th:errors="*{description}"></div>
+                            </div>
+
+                            <!-- Type -->
+                            <div class="mb-3">
+                                <label for="type" class="form-label">
+                                    Resource Type <span class="text-danger">*</span>
+                                </label>
+                                <select id="type" th:field="*{type}"
+                                        class="form-select"
+                                        th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'">
+                                    <option value="">-- Select type --</option>
+                                    <option th:each="t : ${resourceTypes}"
+                                            th:value="${t}"
+                                            th:text="${t.displayName}"></option>
+                                </select>
+                                <div class="invalid-feedback"
+                                     th:if="${#fields.hasErrors('type')}"
+                                     th:errors="*{type}"></div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Academic Details card -->
+                    <div class="adm-form-card mb-3">
+                        <div class="adm-form-card-header">
+                            <h6><i class="bi bi-mortarboard text-primary"></i> Academic Details</h6>
+                        </div>
+                        <div class="adm-form-card-body">
+
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6">
+                                    <label for="branch" class="form-label">
+                                        Branch <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="branch" th:field="*{branch}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
+                                           placeholder="e.g. Computer Engineering">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('branch')}"
+                                         th:errors="*{branch}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="subject" class="form-label">
+                                        Subject <span class="text-danger">*</span>
+                                    </label>
+                                    <input type="text" id="subject" th:field="*{subject}"
+                                           class="form-control"
+                                           th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
+                                           placeholder="e.g. Data Structures">
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('subject')}"
+                                         th:errors="*{subject}"></div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="year" class="form-label">
+                                        Year <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="year" th:field="*{year}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'">
+                                        <option value="">-- Select year --</option>
+                                        <option value="1">First Year</option>
+                                        <option value="2">Second Year</option>
+                                        <option value="3">Third Year</option>
+                                        <option value="4">Fourth Year</option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('year')}"
+                                         th:errors="*{year}"></div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="semester" class="form-label">
+                                        Semester <span class="text-danger">*</span>
+                                    </label>
+                                    <select id="semester" th:field="*{semester}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'">
+                                        <option value="">-- Select semester --</option>
+                                        <option th:each="s : ${#numbers.sequence(1,8)}"
+                                                th:value="${s}"
+                                                th:text="'Semester ' + ${s}"></option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('semester')}"
+                                         th:errors="*{semester}"></div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- File card -->
+                    <div class="adm-form-card mb-4">
+                        <div class="adm-form-card-header">
+                            <h6><i class="bi bi-file-arrow-up text-primary"></i> File</h6>
+                        </div>
+                        <div class="adm-form-card-body">
+                            <div class="adm-upload-zone">
+                                <i class="bi bi-cloud-arrow-up adm-upload-icon"></i>
+                                <p class="adm-upload-label">Click to choose a file</p>
+                                <p class="adm-upload-hint">PDF, DOC, DOCX — max 20 MB</p>
+                                <input type="file" id="file" name="file"
+                                       accept=".pdf,.doc,.docx"
+                                       onchange="updateFileLabel(this)">
+                            </div>
+                            <p id="file-label" class="mt-2 mb-0"
+                               style="font-size:.8rem;color:#16a34a;font-weight:500;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-3 align-items-center">
+                        <button type="submit" class="adm-submit-btn">
+                            <i class="bi bi-cloud-upload"></i> Publish Resource
+                        </button>
+                        <a th:href="@{/admin/dashboard}" class="adm-cancel-btn">
+                            <i class="bi bi-arrow-left"></i> Cancel
+                        </a>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Footer -->
+<footer style="background:#0f172a;border-top:1px solid rgba(255,255,255,.06);padding:.875rem 0;margin-top:auto;">
+    <div class="container-fluid px-4">
+        <div class="d-flex justify-content-between align-items-center"
+             style="font-size:.78rem;color:rgba(255,255,255,.35);">
+            <span>&copy; 2026 BookFlow</span>
+            <span>Admin Panel</span>
+        </div>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
+<script th:src="@{/js/main.js}"></script>
+<script>
+    function updateFileLabel(input) {
+        var lbl = document.getElementById('file-label');
+        if (input.files && input.files[0]) {
+            lbl.textContent = 'Selected: ' + input.files[0].name;
+        }
+    }
+</script>
+</body>
+</html>

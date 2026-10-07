@@ -12,11 +12,259 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        body { background: #f8fafc; }
+
+        /* ── Library page header ────────────────────────────── */
+        .lib-header {
+            background: #0f172a;
+            padding: 2rem 0 1.75rem;
+            border-bottom: 1px solid rgba(255,255,255,.06);
+        }
+        .lib-header__title {
+            color: #fff;
+            font-size: clamp(1.4rem, 2.5vw, 1.9rem);
+            font-weight: 800;
+            letter-spacing: -.025em;
+            margin: 0 0 .3rem;
+        }
+        .lib-header__sub {
+            color: rgba(255,255,255,.55);
+            font-size: .875rem;
+            margin: 0;
+        }
+        .lib-header__upload-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            background: #2563eb;
+            color: #fff !important;
+            border: none;
+            border-radius: 8px;
+            padding: .5rem 1.1rem;
+            font-size: .875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background .15s;
+            white-space: nowrap;
+        }
+        .lib-header__upload-btn:hover { background: #1d4ed8; }
+
+        /* ── Section label ──────────────────────────────────── */
+        .lib-section-label {
+            font-size: .7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .07em;
+            color: #94a3b8;
+            margin: 0 0 .75rem;
+        }
+
+        /* ── Category cards ─────────────────────────────────── */
+        .lib-cat {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.25rem 1.1rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            cursor: pointer;
+            transition: box-shadow .18s, transform .18s, border-color .18s;
+            text-decoration: none;
+        }
+        .lib-cat:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+            transform: translateY(-2px);
+            border-color: #bfdbfe;
+            text-decoration: none;
+        }
+        .lib-cat__icon {
+            width: 44px; height: 44px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            margin-bottom: .85rem;
+            flex-shrink: 0;
+        }
+        .lib-cat__name  { font-size: .93rem; font-weight: 700; color: #0f172a; margin: 0 0 .2rem; }
+        .lib-cat__desc  { font-size: .775rem; color: #64748b; line-height: 1.5; flex: 1; margin: 0 0 .75rem; }
+        .lib-cat__count { font-size: .75rem; font-weight: 600; color: #2563eb; margin: 0; }
+        .lib-cat__cta   {
+            display: inline-flex; align-items: center; gap: .3rem;
+            font-size: .78rem; font-weight: 700; color: #2563eb; margin-top: auto;
+        }
+        .lib-cat:hover .lib-cat__cta i { transform: translateX(2px); }
+        .lib-cat__cta i { font-size: .7rem; transition: transform .15s; }
+
+        .lib-icon-blue   { background: #dbeafe; color: #2563eb; }
+        .lib-icon-green  { background: #dcfce7; color: #16a34a; }
+        .lib-icon-amber  { background: #fef3c7; color: #d97706; }
+        .lib-icon-teal   { background: #ccfbf1; color: #0d9488; }
+        .lib-icon-purple { background: #ede9fe; color: #7c3aed; }
+
+        /* ── Filter card ────────────────────────────────────── */
+        .lib-filter {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 1.1rem 1.25rem;
+        }
+        .lib-filter .form-label {
+            font-size: .73rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: #64748b;
+            margin-bottom: .28rem;
+        }
+        .lib-filter .form-control,
+        .lib-filter .form-select { font-size: .855rem; border-radius: 7px; }
+
+        /* ── Result summary ─────────────────────────────────── */
+        .lib-result-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: .85rem;
+        }
+        .lib-result-count { font-size: .84rem; color: #64748b; }
+        .lib-result-count strong { color: #0f172a; }
+
+        /* ── Resource card ──────────────────────────────────── */
+        .lib-res-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow .18s, transform .18s, border-color .18s;
+        }
+        .lib-res-card:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,.08);
+            transform: translateY(-2px);
+            border-color: #bfdbfe;
+        }
+        .lib-res-card__top {
+            padding: .65rem 1rem;
+            background: #f8fafc;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: .5rem;
+        }
+        .lib-res-card__body {
+            padding: .9rem 1rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .lib-res-card__title {
+            font-size: .92rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0 0 .4rem;
+            line-height: 1.35;
+        }
+        .lib-res-card__meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .3rem;
+            margin-bottom: .5rem;
+        }
+        .lib-res-card__desc {
+            font-size: .79rem;
+            color: #64748b;
+            line-height: 1.55;
+            flex: 1;
+            margin: 0;
+        }
+        .lib-res-card__file {
+            font-size: .75rem;
+            color: #94a3b8;
+            border-top: 1px solid #f1f5f9;
+            margin-top: .6rem;
+            padding-top: .5rem;
+            display: flex;
+            align-items: center;
+            gap: .25rem;
+        }
+        .lib-res-card__footer {
+            padding: .6rem 1rem;
+            border-top: 1px solid #f1f5f9;
+            background: #fff;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: .5rem;
+        }
+        .lib-res-card__uploader {
+            font-size: .775rem;
+            color: #64748b;
+            display: flex; align-items: center; gap: .3rem;
+            overflow: hidden;
+        }
+        .lib-res-card__uploader span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 110px; }
+
+        /* Type chip */
+        .lib-type-chip {
+            font-size: .72rem; font-weight: 600;
+            padding: .18rem .6rem; border-radius: 5px;
+            background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+            white-space: nowrap;
+        }
+
+        /* Meta badges */
+        .lib-meta {
+            font-size: .72rem; font-weight: 600;
+            padding: .16rem .55rem; border-radius: 4px;
+            border: 1px solid #e2e8f0; color: #475569; background: #f8fafc;
+            white-space: nowrap;
+        }
+        .lib-meta-subj { background: #eff6ff; color: #1e40af; border-color: #bfdbfe; }
+        .lib-meta-yr   { background: #f5f3ff; color: #6d28d9; border-color: #ddd6fe; }
+
+        /* View button */
+        .lib-view-btn {
+            display: inline-flex; align-items: center; gap: .3rem;
+            background: #2563eb; color: #fff !important;
+            border: none; border-radius: 6px;
+            padding: .3rem .8rem; font-size: .78rem; font-weight: 700;
+            text-decoration: none; transition: background .15s;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .lib-view-btn:hover { background: #1d4ed8; }
+
+        /* Empty state */
+        .lib-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+        }
+        .lib-empty__icon {
+            width: 56px; height: 56px;
+            background: #f1f5f9; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #94a3b8;
+            margin: 0 auto .875rem;
+        }
+        .lib-empty h5 { font-size: 1rem; font-weight: 700; color: #0f172a; margin-bottom: .35rem; }
+        .lib-empty p  { font-size: .84rem; color: #64748b; margin-bottom: 1rem; }
+
+        @media (max-width: 767.98px) {
+            .lib-header { padding: 1.5rem 0 1.25rem; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ── Navbar ──────────────────────────────────────────────── -->
-<nav class="navbar navbar-expand-lg bf-navbar bf-topbar">
+<!-- ── Navbar ────────────────────────────────────────────── -->
+<nav class="navbar navbar-expand-lg bf-navbar">
     <div class="container">
         <a class="bf-brand" th:href="@{/}">
             <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
@@ -29,23 +277,64 @@
         </button>
         <div class="collapse navbar-collapse" id="navLib">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-                <li class="nav-item"><a class="bf-nav-link" th:href="@{/}">Home</a></li>
-                <li class="nav-item"><a class="bf-nav-link active" th:href="@{/resources}">Browse Resources</a></li>
                 <li class="nav-item" sec:authorize="isAuthenticated()">
                     <a class="bf-nav-link" th:href="@{/user/dashboard}">Dashboard</a>
                 </li>
+                <li class="nav-item">
+                    <a class="bf-nav-link active" th:href="@{/resources}">Library</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <a class="bf-nav-link" th:href="@{/resources/upload}">Upload Resource</a>
+                </li>
             </ul>
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center gap-2">
+                <!-- Guest -->
                 <li class="nav-item" sec:authorize="isAnonymous()">
                     <a class="bf-nav-btn bf-nav-btn-outline" th:href="@{/login}">Login</a>
                 </li>
                 <li class="nav-item" sec:authorize="isAnonymous()">
                     <a class="bf-nav-btn bf-nav-btn-solid" th:href="@{/register}">Register</a>
                 </li>
+                <!-- Authenticated -->
                 <li class="nav-item" sec:authorize="isAuthenticated()">
-                    <form th:action="@{/logout}" method="post" class="m-0">
-                        <button type="submit" class="bf-nav-btn bf-nav-btn-outline border-0">
-                            <i class="bi bi-box-arrow-right"></i> Logout
+                    <div class="dropdown">
+                        <a class="bf-user-trigger dropdown-toggle" href="#"
+                           data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="bf-avatar"><i class="bi bi-person" style="font-size:.65rem;"></i></span>
+                            <span class="d-none d-sm-inline" sec:authentication="name">User</span>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><span class="dropdown-header" sec:authentication="name">User</span></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/resources/upload}">
+                                    <i class="bi bi-cloud-upload"></i> Upload Resource
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" th:href="@{/resources/my}">
+                                    <i class="bi bi-file-earmark-text"></i> My Resources
+                                </a>
+                            </li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li>
+                                <form th:action="@{/logout}" method="post" class="m-0">
+                                    <button type="submit" class="dropdown-item text-danger">
+                                        <i class="bi bi-box-arrow-right"></i> Logout
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="nav-item" sec:authorize="isAuthenticated()">
+                    <form th:action="@{/logout}" method="post" class="m-0 d-none d-lg-block">
+                        <button type="submit" class="bf-nav-btn bf-nav-btn-outline border-0"
+                                style="font-size:0.84rem;padding:0.35rem 0.85rem;">
+                            <i class="bi bi-box-arrow-right me-1"></i>Logout
                         </button>
                     </form>
                 </li>
@@ -54,182 +343,277 @@
     </div>
 </nav>
 
-<!-- ── Page banner ─────────────────────────────────────────── -->
-<div class="bf-page-banner">
+<!-- ── Page header ───────────────────────────────────────── -->
+<div class="lib-header">
     <div class="container">
-        <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-2">
+        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
             <div>
-                <h1><i class="bi bi-journals me-2" style="font-size:1.1rem;"></i>Resource Library</h1>
-                <p>Browse verified academic resources — PVPP College of Engineering</p>
+                <h1 class="lib-header__title">Resource Library</h1>
+                <p class="lib-header__sub">Find verified academic resources for your studies.</p>
             </div>
             <a sec:authorize="isAuthenticated()"
-               th:href="@{/resources/upload}"
-               class="bf-btn-view" style="font-size:.84rem;padding:.42rem 1rem;">
+               th:href="@{/resources/upload}" class="lib-header__upload-btn">
                 <i class="bi bi-cloud-upload"></i> Upload Resource
             </a>
         </div>
     </div>
 </div>
 
-<!-- ── Content ─────────────────────────────────────────────── -->
-<main style="padding:1.25rem 0 2.5rem;">
+<!-- ── Main ──────────────────────────────────────────────── -->
+<main style="padding:1.75rem 0 3rem;">
     <div class="container">
 
-        <!-- Search & Filter — th:object, th:field all preserved exactly -->
-        <div class="bf-filter-card">
+        <!-- ── Category cards ─────────────────────────────── -->
+        <p class="lib-section-label">Browse by Category</p>
+        <div class="row g-3 mb-4">
+
+            <!-- Lecture Notes -->
+            <div class="col-6 col-md-4 col-lg">
+                <a th:href="@{/resources(type=NOTES)}" class="lib-cat">
+                    <div class="lib-cat__icon lib-icon-blue">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <p class="lib-cat__name">Lecture Notes</p>
+                    <p class="lib-cat__desc">Class notes and topic summaries for exam prep.</p>
+                    <p class="lib-cat__count"
+                       th:text="${countNotes} + ' resource' + (${countNotes} != 1 ? 's' : '')">0 resources</p>
+                    <span class="lib-cat__cta">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+            </div>
+
+            <!-- Previous Year Papers -->
+            <div class="col-6 col-md-4 col-lg">
+                <a th:href="@{/resources(type=PYQ)}" class="lib-cat">
+                    <div class="lib-cat__icon lib-icon-green">
+                        <i class="bi bi-file-earmark-check"></i>
+                    </div>
+                    <p class="lib-cat__name">Previous Year Papers</p>
+                    <p class="lib-cat__desc">Past exam papers with solutions and patterns.</p>
+                    <p class="lib-cat__count"
+                       th:text="${countPYQ} + ' resource' + (${countPYQ} != 1 ? 's' : '')">0 resources</p>
+                    <span class="lib-cat__cta">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+            </div>
+
+            <!-- Internal Exams -->
+            <div class="col-6 col-md-4 col-lg">
+                <a th:href="@{/resources(type=INTERNAL_PAPER)}" class="lib-cat">
+                    <div class="lib-cat__icon lib-icon-amber">
+                        <i class="bi bi-file-earmark-ruled"></i>
+                    </div>
+                    <p class="lib-cat__name">Internal Exams</p>
+                    <p class="lib-cat__desc">Internal examination papers from previous terms.</p>
+                    <p class="lib-cat__count"
+                       th:text="${countInternalPaper} + ' resource' + (${countInternalPaper} != 1 ? 's' : '')">0 resources</p>
+                    <span class="lib-cat__cta">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+            </div>
+
+            <!-- Paper Patterns -->
+            <div class="col-6 col-md-4 col-lg">
+                <a th:href="@{/resources(type=EXAM_PATTERN)}" class="lib-cat">
+                    <div class="lib-cat__icon lib-icon-teal">
+                        <i class="bi bi-file-earmark-bar-graph"></i>
+                    </div>
+                    <p class="lib-cat__name">Paper Patterns</p>
+                    <p class="lib-cat__desc">Question paper formats and marking schemes.</p>
+                    <p class="lib-cat__count"
+                       th:text="${countExamPattern} + ' resource' + (${countExamPattern} != 1 ? 's' : '')">0 resources</p>
+                    <span class="lib-cat__cta">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+            </div>
+
+            <!-- Reference Books -->
+            <div class="col-6 col-md-4 col-lg">
+                <a th:href="@{/resources(type=REFERENCE_BOOK)}" class="lib-cat">
+                    <div class="lib-cat__icon lib-icon-purple">
+                        <i class="bi bi-book"></i>
+                    </div>
+                    <p class="lib-cat__name">Reference Books</p>
+                    <p class="lib-cat__desc">Textbooks and recommended reading materials.</p>
+                    <p class="lib-cat__count"
+                       th:text="${countRefBook} + ' resource' + (${countRefBook} != 1 ? 's' : '')">0 resources</p>
+                    <span class="lib-cat__cta">Explore <i class="bi bi-arrow-right"></i></span>
+                </a>
+            </div>
+
+        </div><!-- /categories -->
+
+        <!-- ── Search & Filters ───────────────────────────── -->
+        <!--
+            th:action, th:object, th:field bindings preserved exactly.
+            ResourceFilterDto fields: keyword, type, branch, subject, year, semester.
+        -->
+        <p class="lib-section-label">Search &amp; Filter</p>
+        <div class="lib-filter mb-3">
             <form th:action="@{/resources}" method="get" th:object="${filter}" id="filterForm">
 
-                <!-- Keyword row -->
-                <div class="row g-2 align-items-end mb-2">
-                    <div class="col">
+                <!-- Search row -->
+                <div class="row g-2 align-items-end mb-3">
+                    <div class="col-md-7">
                         <label for="keyword" class="form-label">Search</label>
                         <div class="input-group">
-                            <span class="input-group-text bg-white" style="border:1.5px solid #e2e8f0;border-right:none;border-radius:6px 0 0 6px;">
-                                <i class="bi bi-search text-muted" style="font-size:.8rem;"></i>
+                            <span class="input-group-text bg-white"
+                                  style="border:1.5px solid #cbd5e1;border-right:none;border-radius:7px 0 0 7px;">
+                                <i class="bi bi-search" style="font-size:.82rem;color:#94a3b8;"></i>
                             </span>
                             <input type="text" id="keyword" th:field="*{keyword}"
-                                   class="form-control" style="border-left:none;"
-                                   placeholder="Search by title, subject, or description…">
+                                   class="form-control"
+                                   style="border-left:none;border-radius:0 7px 7px 0;"
+                                   placeholder="Search by title or subject…">
                         </div>
                     </div>
-                    <div class="col-auto d-flex gap-2">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-search me-1"></i>Search
+                    <div class="col-md-5 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-grow-1">
+                            <i class="bi bi-search me-1"></i>Apply Filters
                         </button>
                         <a th:href="@{/resources}" class="btn btn-outline-secondary">
-                            <i class="bi bi-x"></i>
+                            <i class="bi bi-x-circle me-1"></i>Clear
                         </a>
                     </div>
                 </div>
 
-                <!-- Filters row -->
+                <!-- Filter row -->
                 <div class="row g-2">
                     <div class="col-6 col-sm-4 col-md-2">
-                        <label for="type" class="form-label">Type</label>
+                        <label for="type" class="form-label">Resource Type</label>
                         <select id="type" th:field="*{type}" class="form-select form-select-sm">
                             <option value="">All Types</option>
-                            <option th:each="t : ${resourceTypes}" th:value="${t}" th:text="${t.displayName}"></option>
+                            <option th:each="t : ${resourceTypes}"
+                                    th:value="${t}"
+                                    th:text="${t.displayName}"></option>
                         </select>
                     </div>
                     <div class="col-6 col-sm-4 col-md-3">
                         <label for="branch" class="form-label">Branch</label>
                         <input type="text" id="branch" th:field="*{branch}"
-                               class="form-control form-control-sm" placeholder="e.g. Computer Engg">
+                               class="form-control form-control-sm"
+                               placeholder="e.g. Computer Engineering">
                     </div>
                     <div class="col-6 col-sm-4 col-md-3">
                         <label for="subject" class="form-label">Subject</label>
                         <input type="text" id="subject" th:field="*{subject}"
-                               class="form-control form-control-sm" placeholder="e.g. Data Structures">
+                               class="form-control form-control-sm"
+                               placeholder="e.g. Data Structures">
                     </div>
                     <div class="col-3 col-sm-2 col-md-2">
                         <label for="year" class="form-label">Year</label>
                         <select id="year" th:field="*{year}" class="form-select form-select-sm">
                             <option value="">Any</option>
-                            <option value="1">1st</option>
-                            <option value="2">2nd</option>
-                            <option value="3">3rd</option>
-                            <option value="4">4th</option>
+                            <option value="1">Year 1</option>
+                            <option value="2">Year 2</option>
+                            <option value="3">Year 3</option>
+                            <option value="4">Year 4</option>
                         </select>
                     </div>
                     <div class="col-3 col-sm-2 col-md-2">
-                        <label for="semester" class="form-label">Sem</label>
+                        <label for="semester" class="form-label">Semester</label>
                         <select id="semester" th:field="*{semester}" class="form-select form-select-sm">
                             <option value="">Any</option>
                             <option th:each="s : ${#numbers.sequence(1,8)}"
-                                    th:value="${s}" th:text="'S' + ${s}"></option>
+                                    th:value="${s}"
+                                    th:text="'Sem ' + ${s}"></option>
                         </select>
                     </div>
                 </div>
 
             </form>
-        </div>
+        </div><!-- /filter card -->
 
-        <!-- Result bar -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <p class="mb-0 text-muted" style="font-size:.84rem;">
+        <!-- ── Results ────────────────────────────────────── -->
+        <div class="lib-result-bar">
+            <p class="lib-result-count mb-0">
                 <span th:if="${#lists.isEmpty(resources)}">No resources found.</span>
                 <span th:if="${!#lists.isEmpty(resources)}">
-                    <strong th:text="${#lists.size(resources)}"></strong>
-                    approved resource<span th:if="${#lists.size(resources) != 1}">s</span> found
+                    Showing <strong th:text="${#lists.size(resources)}"></strong>
+                    approved resource<span th:if="${#lists.size(resources) != 1}">s</span>
                 </span>
             </p>
         </div>
 
         <!-- Empty state -->
-        <div th:if="${#lists.isEmpty(resources)}" class="bf-empty-state">
-            <div class="bf-empty-icon"><i class="bi bi-search"></i></div>
-            <h5>No resources match your search</h5>
-            <p>Try different keywords or clear the filters.</p>
+        <div th:if="${#lists.isEmpty(resources)}" class="lib-empty">
+            <div class="lib-empty__icon"><i class="bi bi-search"></i></div>
+            <h5>No resources found</h5>
+            <p>Try changing your search terms or clearing the filters.</p>
             <a th:href="@{/resources}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-x-circle me-1"></i>Clear all filters
+                <i class="bi bi-x-circle me-1"></i>Clear Filters
             </a>
         </div>
 
-        <!-- Resource grid — th:href @{/resources/{id}/download...} preserved exactly -->
+        <!-- Resource cards grid — all th:href, th:text, th:if preserved exactly -->
         <div class="row g-3" th:if="${!#lists.isEmpty(resources)}">
             <div class="col-sm-6 col-lg-4" th:each="r : ${resources}">
-                <div class="bf-res-card">
+                <div class="lib-res-card">
 
-                    <div class="bf-res-card-top">
-                        <span class="bf-badge-type" style="font-size:.73rem;padding:.22rem .6rem;border-radius:5px;"
-                              th:text="${r.type.displayName}"></span>
-                        <small class="text-muted" style="font-size:.73rem;white-space:nowrap;"
-                               th:text="${#temporals.format(r.createdAt, 'dd MMM yyyy')}"></small>
+                    <div class="lib-res-card__top">
+                        <span class="lib-type-chip" th:text="${r.type.displayName}"></span>
+                        <small style="font-size:.72rem;color:#94a3b8;white-space:nowrap;"
+                               th:text="${#temporals.format(r.createdAt,'dd MMM yyyy')}"></small>
                     </div>
 
-                    <div class="bf-res-card-body">
-                        <h6 class="bf-res-card-title" th:text="${r.title}"></h6>
+                    <div class="lib-res-card__body">
+                        <h6 class="lib-res-card__title" th:text="${r.title}"></h6>
 
-                        <div class="bf-res-card-meta">
-                            <span class="bf-meta-badge bf-meta-branch" th:text="${r.branch}"></span>
-                            <span class="bf-meta-badge bf-meta-subject" th:text="${r.subject}"></span>
-                            <span class="bf-meta-badge bf-meta-year"
-                                  th:text="'Y' + ${r.year} + '  S' + ${r.semester}"></span>
+                        <div class="lib-res-card__meta">
+                            <span class="lib-meta" th:text="${r.branch}"></span>
+                            <span class="lib-meta lib-meta-subj" th:text="${r.subject}"></span>
+                            <span class="lib-meta lib-meta-yr"
+                                  th:text="'Y' + ${r.year} + ' · S' + ${r.semester}"></span>
                         </div>
 
-                        <p class="bf-res-card-desc"
+                        <p class="lib-res-card__desc"
                            th:if="${r.description != null and !r.description.isEmpty()}"
-                           th:text="${#strings.abbreviate(r.description, 110)}"></p>
-                        <p class="bf-res-card-desc fst-italic"
+                           th:text="${#strings.abbreviate(r.description, 115)}"></p>
+                        <p class="lib-res-card__desc fst-italic"
                            th:if="${r.description == null or r.description.isEmpty()}">
                             No description provided.
                         </p>
 
-                        <div class="bf-res-card-file">
-                            <i class="bi bi-file-earmark me-1"></i>
+                        <div class="lib-res-card__file">
+                            <i class="bi bi-file-earmark"></i>
                             <span th:text="${r.originalFilename != null} ? ${r.originalFilename} : 'File'"></span>
                         </div>
                     </div>
 
-                    <div class="bf-res-card-footer">
-                        <div class="bf-res-uploader">
-                            <i class="bi bi-person-circle" style="font-size:.85rem;"></i>
+                    <div class="lib-res-card__footer">
+                        <div class="lib-res-card__uploader">
+                            <i class="bi bi-person-circle" style="font-size:.82rem;flex-shrink:0;"></i>
                             <span th:text="${r.uploadedBy.name}"></span>
                         </div>
-                        <!-- href and target preserved exactly -->
+                        <!-- href and target="_blank" preserved exactly as required by existing backend -->
                         <a th:href="@{/resources/{id}/download(id=${r.id})}"
-                           target="_blank" class="bf-btn-view">
+                           target="_blank" class="lib-view-btn">
                             <i class="bi bi-eye"></i> View
                         </a>
                     </div>
+
                 </div>
             </div>
-        </div>
+        </div><!-- /resource grid -->
 
     </div>
 </main>
 
-<footer class="bf-footer">
-    <div class="container text-center">&copy; 2026 BookFlow &mdash; PVPP College of Engineering</div>
+<!-- ── Footer ────────────────────────────────────────────── -->
+<footer class="bf-footer" style="padding:.875rem 0;">
+    <div class="container">
+        <div class="bf-footer-bottom" style="padding:.25rem 0;border-top:none;">
+            <span>&copy; 2026 BookFlow</span>
+        </div>
+    </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 <script>
-    ['type','year','semester'].forEach(function(id){
-        var el=document.getElementById(id);
-        if(el) el.addEventListener('change',function(){ document.getElementById('filterForm').submit(); });
+    /* Auto-submit on dropdown filter changes for a snappier experience */
+    ['type','year','semester'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.addEventListener('change', function() {
+            document.getElementById('filterForm').submit();
+        });
     });
 </script>
 </body>

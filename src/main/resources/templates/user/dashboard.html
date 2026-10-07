@@ -12,160 +12,569 @@
           integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
+    <style>
+        /* ── Dashboard page styles ───────────────────────────── */
+
+        /* Hero band */
+        .dash-hero {
+            background: #0f172a;
+            border-bottom: 1px solid rgba(255,255,255,0.06);
+            padding: 2rem 0;
+        }
+        .dash-hero-name {
+            color: #fff;
+            font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            margin: 0 0 0.3rem;
+        }
+        .dash-hero-sub {
+            color: rgba(255,255,255,0.55);
+            font-size: 0.875rem;
+            margin: 0 0 1.25rem;
+        }
+        .dash-year-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            background: rgba(59,130,246,0.18);
+            border: 1px solid rgba(59,130,246,0.35);
+            color: #93c5fd;
+            border-radius: 999px;
+            padding: 0.2rem 0.65rem;
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+        .dash-hero-btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: #fff;
+            color: #0f172a !important;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 1.15rem;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-decoration: none;
+            transition: background 0.15s, transform 0.15s;
+        }
+        .dash-hero-btn-primary:hover { background: #dbeafe; transform: translateY(-1px); }
+        .dash-hero-btn-ghost {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: transparent;
+            color: rgba(255,255,255,0.8) !important;
+            border: 1.5px solid rgba(255,255,255,0.25);
+            border-radius: 8px;
+            padding: 0.5rem 1.15rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.15s, border-color 0.15s;
+        }
+        .dash-hero-btn-ghost:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: rgba(255,255,255,0.5);
+            color: #fff !important;
+        }
+
+        /* Body */
+        .dash-body {
+            background: var(--bf-bg-canvas);
+            padding: 1.75rem 0 3rem;
+        }
+
+        /* Quick-action card */
+        .dash-qcard {
+            background: var(--bf-bg-surface);
+            border: 1px solid var(--bf-border-default);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            padding: 1.4rem 1.25rem 1.25rem;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
+            text-decoration: none;
+        }
+        .dash-qcard:hover {
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+            transform: translateY(-2px);
+            border-color: #bfdbfe;
+            text-decoration: none;
+        }
+        .dash-qcard-icon {
+            width: 42px; height: 42px;
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.15rem;
+            margin-bottom: 0.9rem;
+            flex-shrink: 0;
+        }
+        .dash-qcard-title {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--bf-text-primary);
+            margin: 0 0 0.25rem;
+        }
+        .dash-qcard-desc {
+            font-size: 0.8rem;
+            color: var(--bf-text-secondary);
+            line-height: 1.5;
+            flex: 1;
+            margin: 0 0 0.85rem;
+        }
+        .dash-qcard-cta {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--bf-blue-600);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: auto;
+        }
+        .dash-qcard:hover .dash-qcard-cta i { transform: translateX(2px); }
+        .dash-qcard-cta i { transition: transform 0.15s; font-size: 0.72rem; }
+
+        /* Profile card */
+        .dash-profile {
+            background: var(--bf-bg-surface);
+            border: 1px solid var(--bf-border-default);
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+        .dash-profile-header {
+            background: #0f172a;
+            padding: 1.25rem 1.35rem;
+            display: flex;
+            align-items: center;
+            gap: 0.875rem;
+        }
+        .dash-profile-avatar {
+            width: 48px; height: 48px;
+            background: #2563eb;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            flex-shrink: 0;
+            border: 2px solid rgba(255,255,255,0.15);
+        }
+        .dash-profile-name {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin: 0 0 0.1rem;
+        }
+        .dash-profile-email {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.76rem;
+            margin: 0;
+            word-break: break-all;
+        }
+        .dash-profile-body { padding: 0.25rem 0; }
+        .dash-profile-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.6rem 1.35rem;
+            font-size: 0.84rem;
+            border-bottom: 1px solid var(--bf-border-subtle);
+        }
+        .dash-profile-row:last-child { border-bottom: none; }
+        .dash-profile-label {
+            color: var(--bf-text-tertiary);
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+        .dash-profile-value { color: var(--bf-text-primary); font-weight: 600; }
+        .dash-chip-ok {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            background: var(--bf-success-bg); color: var(--bf-success-text);
+            border: 1px solid var(--bf-success-border);
+            border-radius: 999px; padding: 0.1rem 0.55rem;
+            font-size: 0.72rem; font-weight: 600;
+        }
+        .dash-chip-warn {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            background: var(--bf-warning-bg); color: var(--bf-warning-text);
+            border: 1px solid var(--bf-warning-border);
+            border-radius: 999px; padding: 0.1rem 0.55rem;
+            font-size: 0.72rem; font-weight: 600;
+        }
+        .dash-na { color: var(--bf-text-tertiary); font-style: italic; font-size: 0.8rem; font-weight: 400; }
+
+        /* Suggestion strip */
+        .dash-strip {
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 10px;
+            padding: 0.8rem 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.84rem;
+            color: #0369a1;
+        }
+        .dash-strip i { font-size: 1rem; flex-shrink: 0; color: #0284c7; }
+        .dash-strip a { color: #0369a1; font-weight: 700; }
+
+        @media (max-width: 767.98px) {
+            .dash-hero { padding: 1.5rem 0; }
+            .dash-body { padding: 1.25rem 0 2rem; }
+        }
+    </style>
 </head>
 <body>
 
-<!-- ── Navbar ──────────────────────────────────────────────── -->
+<!-- ═══════════ NAVBAR ═══════════════════════════════════════ -->
 <nav class="navbar navbar-expand-lg bf-navbar">
     <div class="container">
+
         <a class="bf-brand" th:href="@{/}">
             <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
             BookFlow
         </a>
+
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navDash"
                 aria-controls="navDash" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navDash">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/}">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources}">Browse Resources</a>
-                </li>
                 <li class="nav-item">
                     <a class="bf-nav-link active" th:href="@{/user/dashboard}">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources/my}">My Uploads</a>
+                    <a class="bf-nav-link" th:href="@{/resources}">Library</a>
+                </li>
+                <li class="nav-item">
+                    <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
                 </li>
             </ul>
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-lg-center">
-                <li class="nav-item dropdown">
+
+            <div class="d-flex align-items-center gap-2 ms-auto">
+                <!-- User dropdown -->
+                <div class="dropdown">
                     <a class="bf-user-trigger dropdown-toggle" href="#"
                        data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="bf-avatar" th:text="${#strings.substring(user.name,0,1).toUpperCase()}">U</span>
-                        <span th:text="${user.name}">User</span>
+                        <span class="bf-avatar"
+                              th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</span>
+                        <span class="d-none d-sm-inline" th:text="${user.name}">User</span>
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end">
+                        <li><span class="dropdown-header" th:text="${user.email}">user@college.edu</span></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
-                            <!-- logout POST preserved exactly -->
+                            <a class="dropdown-item" th:href="@{/resources/upload}">
+                                <i class="bi bi-cloud-upload"></i> Upload Resource
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" th:href="@{/resources/my}">
+                                <i class="bi bi-file-earmark-text"></i> My Resources
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li>
                             <form th:action="@{/logout}" method="post" class="m-0">
                                 <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    <i class="bi bi-box-arrow-right"></i> Logout
                                 </button>
                             </form>
                         </li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+
+                <!-- Logout button -->
+                <form th:action="@{/logout}" method="post" class="m-0 d-none d-lg-block">
+                    <button type="submit" class="bf-nav-btn bf-nav-btn-outline border-0"
+                            style="font-size:0.84rem;padding:0.35rem 0.85rem;">
+                        <i class="bi bi-box-arrow-right me-1"></i>Logout
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </nav>
 
-<!-- ── Dashboard header ────────────────────────────────────── -->
-<div class="bf-dash-header">
+<!-- ═══════════ HERO ═════════════════════════════════════════ -->
+<div class="dash-hero">
     <div class="container">
-        <div class="d-flex flex-column flex-sm-row align-items-sm-center justify-content-between gap-2">
-            <div>
-                <h1 class="h4 fw-bold mb-0">
-                    Welcome back, <span th:text="${user.name}">User</span> 👋
-                </h1>
-                <p class="text-muted mb-0 mt-1" style="font-size:.85rem;" th:text="${user.email}">
-                    user@pvppcoe.ac.in
-                </p>
-            </div>
-            <!-- Academic profile badges -->
-            <div class="d-flex gap-2 flex-wrap"
-                 th:if="${user.year != null and user.semester != null}">
-                <span class="badge bf-badge-type px-3 py-2" style="font-size:.82rem;">
-                    <i class="bi bi-mortarboard me-1"></i>Year <span th:text="${user.year}"></span>
-                </span>
-                <span class="badge bf-badge-type px-3 py-2" style="font-size:.82rem;">
-                    Semester <span th:text="${user.semester}"></span>
-                </span>
-            </div>
+        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"
+             th:if="${user.year != null and user.semester != null}">
+            <span class="dash-year-pill">
+                <i class="bi bi-mortarboard"></i>
+                Year <span th:text="${user.year}"></span>
+            </span>
+            <span class="dash-year-pill">
+                Semester <span th:text="${user.semester}"></span>
+            </span>
         </div>
 
-        <!-- Personalized suggestion -->
-        <div class="alert alert-info d-flex align-items-center gap-2 mt-3 mb-0"
-             role="alert"
-             th:if="${user.year != null and user.semester != null}">
-            <i class="bi bi-lightning-charge-fill flex-shrink-0" style="font-size:.85rem;"></i>
-            <span style="font-size:.85rem;">
-                Suggested for you —
-                <strong>Year <span th:text="${user.year}"></span>,
-                Semester <span th:text="${user.semester}"></span></strong>:
-                <a th:href="@{/resources(year=${user.year},semester=${user.semester})}"
-                   class="alert-link ms-1">Browse resources &rarr;</a>
-            </span>
+        <h1 class="dash-hero-name">
+            Welcome back, <span th:text="${user.name}">Student</span>
+        </h1>
+        <p class="dash-hero-sub">Discover and share academic resources with your peers.</p>
+
+        <div class="d-flex flex-wrap gap-2">
+            <a th:href="@{/resources}" class="dash-hero-btn-primary">
+                <i class="bi bi-search"></i> Browse Library
+            </a>
+            <a th:href="@{/resources/upload}" class="dash-hero-btn-ghost">
+                <i class="bi bi-cloud-upload"></i> Upload Resource
+            </a>
         </div>
     </div>
 </div>
 
-<!-- ── Dashboard body ──────────────────────────────────────── -->
-<main class="bf-dash-body">
+<!-- ═══════════ BODY ══════════════════════════════════════════ -->
+<main class="dash-body">
     <div class="container">
 
-        <p class="bf-section-label mb-3">Quick Actions</p>
+        <!-- Profile completion success flash -->
+        <div th:if="${profileSuccess}"
+             class="alert alert-success auto-dismiss d-flex align-items-center gap-2 mb-3"
+             role="alert">
+            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+            <span th:text="${profileSuccess}"></span>
+        </div>
 
-        <div class="row g-3">
+        <!-- Personalised suggestion — only when year + semester set -->
+        <div class="dash-strip" th:if="${user.year != null and user.semester != null}">
+            <i class="bi bi-lightning-charge-fill"></i>
+            <span>
+                Suggested for
+                <strong>Year <span th:text="${user.year}"></span>,
+                Sem <span th:text="${user.semester}"></span></strong> —
+                <a th:href="@{/resources(year=${user.year},semester=${user.semester})}">Browse now &rarr;</a>
+            </span>
+        </div>
 
-            <div class="col-sm-6 col-lg-4">
-                <div class="bf-action-card h-100">
-                    <div class="bf-action-icon bf-icon-teal">
-                        <i class="bi bi-journals"></i>
+        <div class="row g-4">
+
+            <!-- ─── Main column ──────────────────────────────── -->
+            <div class="col-lg-8">
+
+                <p class="bf-section-label mb-3">Quick Actions</p>
+                <div class="row g-3">
+
+                    <!-- Browse Library -->
+                    <div class="col-sm-4">
+                        <a th:href="@{/resources}" class="dash-qcard">
+                            <div class="dash-qcard-icon bf-icon-teal">
+                                <i class="bi bi-journals"></i>
+                            </div>
+                            <p class="dash-qcard-title">Browse Library</p>
+                            <p class="dash-qcard-desc">
+                                Explore verified notes, PYQs, and reference materials.
+                            </p>
+                            <span class="dash-qcard-cta">
+                                Open <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </a>
                     </div>
-                    <h6 class="bf-feature-tile-title mb-1">Resource Library</h6>
-                    <p class="bf-feature-tile-body mb-3">
-                        Discover and browse approved academic resources.
-                    </p>
-                    <a th:href="@{/resources}" class="btn btn-outline-primary btn-sm">
-                        <i class="bi bi-search me-1"></i>Browse Library
-                    </a>
+
+                    <!-- Upload Resource -->
+                    <div class="col-sm-4">
+                        <a th:href="@{/resources/upload}" class="dash-qcard">
+                            <div class="dash-qcard-icon bf-icon-blue">
+                                <i class="bi bi-cloud-upload"></i>
+                            </div>
+                            <p class="dash-qcard-title">Upload Resource</p>
+                            <p class="dash-qcard-desc">
+                                Share your notes. Submissions are reviewed before going live.
+                            </p>
+                            <span class="dash-qcard-cta">
+                                Upload <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </a>
+                    </div>
+
+                    <!-- My Resources -->
+                    <div class="col-sm-4">
+                        <a th:href="@{/resources/my}" class="dash-qcard">
+                            <div class="dash-qcard-icon bf-icon-green">
+                                <i class="bi bi-file-earmark-text"></i>
+                            </div>
+                            <p class="dash-qcard-title">My Resources</p>
+                            <p class="dash-qcard-desc">
+                                Track the status of your submissions — pending, approved, or rejected.
+                            </p>
+                            <span class="dash-qcard-cta">
+                                View <i class="bi bi-arrow-right"></i>
+                            </span>
+                        </a>
+                    </div>
+
                 </div>
             </div>
 
-            <div class="col-sm-6 col-lg-4">
-                <div class="bf-action-card h-100">
-                    <div class="bf-action-icon bf-icon-blue">
-                        <i class="bi bi-cloud-upload"></i>
-                    </div>
-                    <h6 class="bf-feature-tile-title mb-1">Upload Resource</h6>
-                    <p class="bf-feature-tile-body mb-3">
-                        Share your notes, PYQs, and study materials with fellow students.
-                    </p>
-                    <a th:href="@{/resources/upload}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-cloud-upload me-1"></i>Upload Now
-                    </a>
-                </div>
-            </div>
+            <!-- ─── Profile column ───────────────────────────── -->
+            <div class="col-lg-4">
 
-            <div class="col-sm-6 col-lg-4">
-                <div class="bf-action-card h-100">
-                    <div class="bf-action-icon bf-icon-green">
-                        <i class="bi bi-file-earmark-text"></i>
+                <!-- ── COMPLETE PROFILE STATE ─────────────────── -->
+                <div class="dash-profile" th:if="${user.year != null and user.semester != null}">
+
+                    <div class="dash-profile-header">
+                        <div class="dash-profile-avatar"
+                             th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</div>
+                        <div style="min-width:0;">
+                            <p class="dash-profile-name"
+                               th:text="${#strings.toUpperCase(user.name)}">STUDENT NAME</p>
+                            <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
+                        </div>
                     </div>
-                    <h6 class="bf-feature-tile-title mb-1">My Uploads</h6>
-                    <p class="bf-feature-tile-body mb-3">
-                        Track the status of your submitted resources.
-                    </p>
-                    <a th:href="@{/resources/my}" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-list-ul me-1"></i>View Uploads
-                    </a>
+
+                    <div class="dash-profile-body">
+
+                        <!-- Email verification status -->
+                        <div class="dash-profile-row">
+                            <span class="dash-profile-label">
+                                <i class="bi bi-shield-check"></i> Status
+                            </span>
+                            <span th:if="${user.emailVerified}" class="dash-chip-ok">
+                                <i class="bi bi-check-circle-fill"></i> Verified
+                            </span>
+                            <span th:if="${!user.emailVerified}" class="dash-chip-warn">
+                                <i class="bi bi-exclamation-circle-fill"></i> Unverified
+                            </span>
+                        </div>
+
+                        <!-- Year — word form -->
+                        <div class="dash-profile-row">
+                            <span class="dash-profile-label">
+                                <i class="bi bi-mortarboard"></i> Year
+                            </span>
+                            <span class="dash-profile-value">
+                                <th:block th:switch="${user.year}">
+                                    <span th:case="1">First Year</span>
+                                    <span th:case="2">Second Year</span>
+                                    <span th:case="3">Third Year</span>
+                                    <span th:case="4">Fourth Year</span>
+                                    <span th:case="*" th:text="'Year ' + ${user.year}"></span>
+                                </th:block>
+                            </span>
+                        </div>
+
+                        <!-- Semester -->
+                        <div class="dash-profile-row">
+                            <span class="dash-profile-label">
+                                <i class="bi bi-bookmark-check"></i> Semester
+                            </span>
+                            <span class="dash-profile-value"
+                                  th:text="'Semester ' + ${user.semester}">Semester 6</span>
+                        </div>
+
+                        <!-- Role -->
+                        <div class="dash-profile-row">
+                            <span class="dash-profile-label">
+                                <i class="bi bi-person-badge"></i> Role
+                            </span>
+                            <span class="dash-profile-value" th:text="${user.role}">USER</span>
+                        </div>
+
+                    </div>
+
+                    <!-- Edit Profile CTA -->
+                    <div style="padding:1rem 1.35rem;border-top:1px solid var(--bf-border-subtle);">
+                        <a th:href="@{/user/complete-profile}"
+                           class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-pencil me-1"></i> Edit Profile
+                        </a>
+                    </div>
+
                 </div>
+                <!-- end complete state -->
+
+                <!-- ── INCOMPLETE PROFILE STATE ───────────────── -->
+                <div class="dash-profile" th:if="${user.year == null or user.semester == null}">
+
+                    <!-- Header — same avatar/name/email layout -->
+                    <div class="dash-profile-header">
+                        <div class="dash-profile-avatar"
+                             th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</div>
+                        <div style="min-width:0;">
+                            <p class="dash-profile-name"
+                               th:text="${#strings.toUpperCase(user.name)}">STUDENT NAME</p>
+                            <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
+                        </div>
+                    </div>
+
+                    <!-- Verification status row -->
+                    <div class="dash-profile-body">
+                        <div class="dash-profile-row">
+                            <span class="dash-profile-label">
+                                <i class="bi bi-shield-check"></i> Status
+                            </span>
+                            <span th:if="${user.emailVerified}" class="dash-chip-ok">
+                                <i class="bi bi-check-circle-fill"></i> Verified
+                            </span>
+                            <span th:if="${!user.emailVerified}" class="dash-chip-warn">
+                                <i class="bi bi-exclamation-circle-fill"></i> Unverified
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- Incomplete warning -->
+                    <div style="padding:1rem 1.35rem;">
+                        <div style="
+                            background:#fffbeb;
+                            border:1px solid #fde68a;
+                            border-radius:8px;
+                            padding:0.85rem 1rem;
+                            margin-bottom:0.85rem;">
+                            <p style="
+                                font-size:0.82rem;
+                                font-weight:700;
+                                color:#92400e;
+                                margin:0 0 0.25rem;
+                                display:flex;
+                                align-items:center;
+                                gap:0.35rem;">
+                                <i class="bi bi-exclamation-triangle-fill"></i>
+                                Profile incomplete
+                            </p>
+                            <p style="
+                                font-size:0.78rem;
+                                color:#a16207;
+                                margin:0;
+                                line-height:1.5;">
+                                Add your academic year and semester to personalise
+                                your BookFlow experience.
+                            </p>
+                        </div>
+                        <a th:href="@{/user/complete-profile}"
+                           class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-person-check me-1"></i> Complete Profile
+                        </a>
+                    </div>
+
+                </div>
+                <!-- end incomplete state -->
+
             </div>
+            <!-- end profile column -->
 
         </div>
     </div>
 </main>
 
-<!-- ── Footer ──────────────────────────────────────────────── -->
-<footer class="bf-footer">
-    <div class="container text-center">
-        &copy; 2026 BookFlow &mdash; PVPP College of Engineering
+<!-- ═══════════ FOOTER ═══════════════════════════════════════ -->
+<footer class="bf-footer" style="padding:0.875rem 0;">
+    <div class="container">
+        <div class="bf-footer-bottom" style="padding:0.25rem 0;">
+            <span>&copy; 2026 BookFlow</span>
+        </div>
     </div>
 </footer>
 

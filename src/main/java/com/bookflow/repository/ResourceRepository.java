@@ -27,6 +27,25 @@ public interface ResourceRepository extends JpaRepository<Resource, Long> {
     List<Resource> findByStatusOrderByCreatedAtAsc(ResourceStatus status);
 
     /**
+     * Counts resources by status. Used by the admin dashboard statistics.
+     * Spring Data derives the query automatically from the method name.
+     */
+    long countByStatus(ResourceStatus status);
+
+    /**
+     * Counts resources by status AND type.
+     * Used by the library category cards to show real resource counts.
+     */
+    long countByStatusAndType(ResourceStatus status, ResourceType type);
+
+    /**
+     * Returns the N most-recently created resources across all statuses.
+     * Used by the admin dashboard recent-activity panel.
+     */
+    @Query("SELECT r FROM Resource r ORDER BY r.createdAt DESC LIMIT :limit")
+    List<Resource> findRecentResources(@Param("limit") int limit);
+
+    /**
      * Public resource library query.
      *
      * Enforces status = APPROVED at the database level — this is non-negotiable
