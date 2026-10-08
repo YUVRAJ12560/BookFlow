@@ -9,6 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.List;
 
 @Getter
 @Setter
@@ -42,7 +43,6 @@ public class ResourceUploadDto {
     @Max(value = 8, message = "Semester must be between 1 and 8")
     private Integer semester;
 
-    // File validation (required, non-empty) is handled in ResourceService
-    // because @NotNull on MultipartFile does not catch empty files.
-    private MultipartFile file;
+    // File validation (required, non-empty) is handled in ResourceService.
+    private List<MultipartFile> files;
 }

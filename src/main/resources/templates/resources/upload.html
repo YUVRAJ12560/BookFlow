@@ -206,7 +206,7 @@
                                 </div>
                             </div>
 
-                            <!-- File — name="file" preserved exactly -->
+                            <!-- Multiple file upload -->
                             <div class="mb-4">
                                 <label for="file" class="form-label">
                                     File <span class="text-danger">*</span>
@@ -220,18 +220,19 @@
                                     <p class="mb-0" style="font-size:.77rem;color:#64748b;">
                                         PDF, DOC, DOCX — max 20 MB
                                     </p>
-                                    <input type="file" id="file" name="file"
-                                           accept=".pdf,.doc,.docx"
-                                           onchange="updateLabel(this)"
-                                           style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                                    <input type="file" id="file" name="files"
+       multiple
+       accept=".pdf,.doc,.docx"
+       onchange="updateLabel(this)"
+       style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
                                 </div>
                                 <p id="file-label" class="form-text mt-1"></p>
                             </div>
 
-                            <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-cloud-upload me-1"></i>Submit for Review
-                                </button>
+                                                           <div class="d-flex gap-2">
+                                                               <button type="submit" class="btn btn-primary">
+                                                                   <i class="bi bi-cloud-upload me-1"></i>Submit for Review
+                                                               </button>
                                 <a th:href="@{/resources/my}" class="btn btn-outline-secondary">Cancel</a>
                             </div>
 
@@ -262,12 +263,23 @@
 <script th:src="@{/js/main.js}"></script>
 <script>
     function updateLabel(input) {
-        var lbl = document.getElementById('file-label');
-        if (input.files && input.files[0]) {
+    var lbl = document.getElementById('file-label');
+
+    if (input.files && input.files.length > 0) {
+        var count = input.files.length;
+
+        if (count === 1) {
             lbl.textContent = 'Selected: ' + input.files[0].name;
-            lbl.style.color = '#15803d';
+        } else {
+            lbl.textContent = 'Selected: ' + count + ' files';
         }
+
+        lbl.style.color = '#15803d';
+    } else {
+        lbl.textContent = 'No files selected';
+        lbl.style.color = '';
     }
+}
 </script>
 </body>
 </html>

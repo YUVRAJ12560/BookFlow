@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -36,20 +37,37 @@ public class ResourceService {
      * @throws IOException              if the file cannot be written to disk
      */
     @Transactional
-    public Resource upload(ResourceUploadDto dto, User uploader) throws IOException {
-        String storedFilename = fileStorageService.store(dto.getFile());
+    public void upload(ResourceUploadDto dto, User uploader) throws IOException {
+
+    if (dto.getFiles() == null || dto.getFiles().isEmpty()) {
+        throw new IllegalArgumentException("Please select at least one file to upload.");
+    }
+
+    for (MultipartFile file : dto.getFiles()) {
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "One of the selected files is empty.");
+        }
+
+        String storedFilename = fileStorageService.store(file);
+
         String safeOriginalName = fileStorageService
-                .sanitiseOriginalFilename(dto.getFile().getOriginalFilename());
+                .sanitiseOriginalFilename(file.getOriginalFilename());
 
         Resource resource = new Resource();
+
         resource.setTitle(dto.getTitle().trim());
         resource.setDescription(
-                dto.getDescription() != null ? dto.getDescription().trim() : null);
+                dto.getDescription() != null
+                        ? dto.getDescription().trim()
+                        : null);
         resource.setType(dto.getType());
         resource.setBranch(dto.getBranch().trim());
         resource.setSubject(dto.getSubject().trim());
         resource.setYear(dto.getYear());
         resource.setSemester(dto.getSemester());
+
         resource.setFilePath(storedFilename);
         resource.setOriginalFilename(safeOriginalName);
 
@@ -57,8 +75,9 @@ public class ResourceService {
         resource.setUploadedBy(uploader);
         resource.setStatus(ResourceStatus.PENDING);
 
-        return resourceRepository.save(resource);
+        resourceRepository.save(resource);
     }
+}
 
     /**
      * Returns all resources uploaded by the given user, newest first.
@@ -106,31 +125,52 @@ public class ResourceService {
      * which enforces PENDING status.
      */
     @Transactional
-    public Resource uploadAsAdmin(ResourceUploadDto dto, User admin) throws IOException {
-        String storedFilename  = fileStorageService.store(dto.getFile());
+    public void uploadAsAdmin(
+        ResourceUploadDto dto,
+        User admin) throws IOException {
+
+    if (dto.getFiles() == null || dto.getFiles().isEmpty()) {
+        throw new IllegalArgumentException("Please select at least one file to upload.");
+    }
+
+    for (MultipartFile file : dto.getFiles()) {
+
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException(
+                    "One of the selected files is empty.");
+        }
+
+        String storedFilename = fileStorageService.store(file);
+
         String safeOriginalName = fileStorageService
-                .sanitiseOriginalFilename(dto.getFile().getOriginalFilename());
+                .sanitiseOriginalFilename(file.getOriginalFilename());
 
         Resource resource = new Resource();
+
         resource.setTitle(dto.getTitle().trim());
         resource.setDescription(
-                dto.getDescription() != null ? dto.getDescription().trim() : null);
+                dto.getDescription() != null
+                        ? dto.getDescription().trim()
+                        : null);
         resource.setType(dto.getType());
         resource.setBranch(dto.getBranch().trim());
         resource.setSubject(dto.getSubject().trim());
         resource.setYear(dto.getYear());
         resource.setSemester(dto.getSemester());
+
         resource.setFilePath(storedFilename);
         resource.setOriginalFilename(safeOriginalName);
+
         resource.setUploadedBy(admin);
 
-        // Admin uploads are pre-approved — no student review needed.
+        // Admin uploads are pre-approved.
         resource.setStatus(ResourceStatus.APPROVED);
         resource.setVerifiedBy(admin);
-        resource.setVerifiedAt(java.time.LocalDateTime.now());
+        resource.setVerifiedAt(LocalDateTime.now());
 
-        return resourceRepository.save(resource);
+        resourceRepository.save(resource);
     }
+}
 
     // ----------------------------------------------------------------
     // Dashboard statistics
