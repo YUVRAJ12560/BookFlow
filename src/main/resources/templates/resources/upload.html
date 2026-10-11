@@ -220,6 +220,9 @@
                                     <p class="mb-0" style="font-size:.77rem;color:#64748b;">
                                         PDF, DOC, DOCX — max 20 MB
                                     </p>
+					<div id="file-list"
+    					     style="margin-top:12px;text-align:left;font-size:.85rem;color:#334155;">
+					</div>
                                     <input type="file" id="file" name="files"
        multiple
        accept=".pdf,.doc,.docx"
@@ -264,20 +267,35 @@
 <script>
     function updateLabel(input) {
     var lbl = document.getElementById('file-label');
+    var fileList = document.getElementById('file-list');
+
+    fileList.innerHTML = '';
 
     if (input.files && input.files.length > 0) {
-        var count = input.files.length;
+        for (var i = 0; i < input.files.length; i++) {
+            var fileItem = document.createElement('div');
 
-        if (count === 1) {
-            lbl.textContent = 'Selected: ' + input.files[0].name;
-        } else {
-            lbl.textContent = 'Selected: ' + count + ' files';
+            fileItem.style.marginTop = '5px';
+            fileItem.style.padding = '4px 8px';
+            fileItem.style.borderRadius = '6px';
+            fileItem.style.backgroundColor = '#f0fdf4';
+
+            fileItem.innerHTML =
+                '<span style="color:#15803d;font-weight:600;">✓</span> ' +
+                input.files[i].name;
+
+            fileList.appendChild(fileItem);
         }
+
+        lbl.textContent = 'Selected: ' + input.files.length +
+            (input.files.length === 1 ? ' file' : ' files');
 
         lbl.style.color = '#15803d';
     } else {
         lbl.textContent = 'No files selected';
         lbl.style.color = '';
+
+        fileList.innerHTML = '';
     }
 }
 </script>

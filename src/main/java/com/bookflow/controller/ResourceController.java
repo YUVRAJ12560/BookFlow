@@ -1,5 +1,9 @@
 package com.bookflow.controller;
 
+import java.util.Map;
+import java.util.LinkedHashMap;
+import java.util.stream.Collectors;
+import com.bookflow.dto.ResourceGroupDto;
 import com.bookflow.dto.ResourceFilterDto;
 import com.bookflow.dto.ResourceUploadDto;
 import com.bookflow.entity.Resource;
@@ -49,24 +53,60 @@ public class ResourceController {
     // Only APPROVED resources are returned — enforced server-side.
     // ----------------------------------------------------------------
 
-    @GetMapping("")
-    public String resourceLibrary(ResourceFilterDto filter, Model model) {
-        List<Resource> resources = resourceService.findApproved(filter);
+    
+@GetMapping("")
+public String resourceLibrary(ResourceFilterDto filter, Model model) {
+    List<Resource> resources = resourceService.findApproved(filter);
 
-        model.addAttribute("resources", resources);
-        model.addAttribute("filter", filter);
-        model.addAttribute("resourceTypes", ResourceType.values());
-        model.addAttribute("pageTitle", "Resource Library");
+    Map<String, List<Resource>> grouped = resources.stream()
+            .collect(Collectors.groupingBy(
+                    r -> String.join("|",
+                            r.getTitle().trim().toLowerCase(),
+                            r.getType().name(),
+                            r.getBranch().trim().toLowerCase(),
+                            r.getSubject().trim().toLowerCase(),
+                            String.valueOf(r.getYear()),
+                            String.valueOf(r.getSemester())),
+                    LinkedHashMap::new,
+                    Collectors.toList()
+            ));
 
-        // Per-category counts for the category cards — real data, APPROVED only
-        model.addAttribute("countNotes",         resourceService.countApprovedByType(ResourceType.NOTES));
-        model.addAttribute("countPYQ",           resourceService.countApprovedByType(ResourceType.PYQ));
-        model.addAttribute("countInternalPaper", resourceService.countApprovedByType(ResourceType.INTERNAL_PAPER));
-        model.addAttribute("countExamPattern",   resourceService.countApprovedByType(ResourceType.EXAM_PATTERN));
-        model.addAttribute("countRefBook",       resourceService.countApprovedByType(ResourceType.REFERENCE_BOOK));
+    List<ResourceGroupDto> resourceGroups = grouped.values().stream()
+            .map(files -> {
+                Resource first = files.get(0);
+                return new ResourceGroupDto(
+                        first.getTitle(),
+                        first.getDescription(),
+                        first.getType().getDisplayName(),
+                        first.getBranch(),
+                        first.getSubject(),
+                        first.getYear(),
+                        first.getSemester(),
+                        files
+                );
+            })
+            .toList();
 
-        return "resources/library";
-    }
+    model.addAttribute("resources", resources);
+    model.addAttribute("resourceGroups", resourceGroups);
+    model.addAttribute("filter", filter);
+    model.addAttribute("resourceTypes", ResourceType.values());
+    model.addAttribute("pageTitle", "Resource Library");
+
+    model.addAttribute("countNotes",
+            resourceService.countApprovedByType(ResourceType.NOTES));
+    model.addAttribute("countPYQ",
+            resourceService.countApprovedByType(ResourceType.PYQ));
+    model.addAttribute("countInternalPaper",
+            resourceService.countApprovedByType(ResourceType.INTERNAL_PAPER));
+    model.addAttribute("countExamPattern",
+            resourceService.countApprovedByType(ResourceType.EXAM_PATTERN));
+    model.addAttribute("countRefBook",
+            resourceService.countApprovedByType(ResourceType.REFERENCE_BOOK));
+
+    return "resources/library";
+}
+
 
     // ----------------------------------------------------------------
     // Public Resource Download — GET /resources/{id}/download
@@ -128,17 +168,10 @@ public class ResourceController {
                 ? resource.getOriginalFilename()
                 : resource.getFilePath();
 
-        HttpHeaders headers = new HttpHeaders();
-        if (storedName.endsWith(".pdf")) {
-            // PDFs open inline in the browser viewer.
-            headers.setContentDisposition(
-                    ContentDisposition.inline().filename(downloadName).build());
-        } else {
-            // DOC/DOCX are downloaded as attachments.
-            headers.setContentDisposition(
-                    ContentDisposition.attachment().filename(downloadName).build());
-        }
-
+      HttpHeaders headers = new HttpHeaders();
+headers.setContentDisposition(
+        ContentDisposition.inline().filename(downloadName).build());
+ 
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentType(mediaType)

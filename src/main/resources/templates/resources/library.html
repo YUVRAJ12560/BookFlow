@@ -525,8 +525,8 @@
             <p class="lib-result-count mb-0">
                 <span th:if="${#lists.isEmpty(resources)}">No resources found.</span>
                 <span th:if="${!#lists.isEmpty(resources)}">
-                    Showing <strong th:text="${#lists.size(resources)}"></strong>
-                    approved resource<span th:if="${#lists.size(resources) != 1}">s</span>
+                    Showing <strong th:text="${#lists.size(resourceGroups)}"></strong>
+		    resource group<span th:if="${#lists.size(resourceGroups) != 1}">s</span>
                 </span>
             </p>
         </div>
@@ -541,56 +541,55 @@
             </a>
         </div>
 
-        <!-- Resource cards grid — all th:href, th:text, th:if preserved exactly -->
-        <div class="row g-3" th:if="${!#lists.isEmpty(resources)}">
-            <div class="col-sm-6 col-lg-4" th:each="r : ${resources}">
-                <div class="lib-res-card">
 
-                    <div class="lib-res-card__top">
-                        <span class="lib-type-chip" th:text="${r.type.displayName}"></span>
-                        <small style="font-size:.72rem;color:#94a3b8;white-space:nowrap;"
-                               th:text="${#temporals.format(r.createdAt,'dd MMM yyyy')}"></small>
-                    </div>
+<!-- Grouped resource cards -->
+<div class="row g-3" th:if="${!#lists.isEmpty(resourceGroups)}">
+    <div class="col-sm-6 col-lg-4" th:each="group : ${resourceGroups}">
+        <div class="lib-res-card">
 
-                    <div class="lib-res-card__body">
-                        <h6 class="lib-res-card__title" th:text="${r.title}"></h6>
+            <div class="lib-res-card__top">
+                <span class="lib-type-chip" th:text="${group.type}"></span>
+                <span class="badge text-bg-primary"
+                      th:text="${#lists.size(group.files)} + ' file(s)'"></span>
+            </div>
 
-                        <div class="lib-res-card__meta">
-                            <span class="lib-meta" th:text="${r.branch}"></span>
-                            <span class="lib-meta lib-meta-subj" th:text="${r.subject}"></span>
-                            <span class="lib-meta lib-meta-yr"
-                                  th:text="'Y' + ${r.year} + ' · S' + ${r.semester}"></span>
-                        </div>
+            <div class="lib-res-card__body">
+                <h6 class="lib-res-card__title" th:text="${group.title}"></h6>
 
-                        <p class="lib-res-card__desc"
-                           th:if="${r.description != null and !r.description.isEmpty()}"
-                           th:text="${#strings.abbreviate(r.description, 115)}"></p>
-                        <p class="lib-res-card__desc fst-italic"
-                           th:if="${r.description == null or r.description.isEmpty()}">
-                            No description provided.
-                        </p>
+                <div class="lib-res-card__meta">
+                    <span class="lib-meta" th:text="${group.branch}"></span>
+                    <span class="lib-meta lib-meta-subj" th:text="${group.subject}"></span>
+                    <span class="lib-meta lib-meta-yr"
+                          th:text="'Y' + ${group.year} + ' · S' + ${group.semester}"></span>
+                </div>
 
-                        <div class="lib-res-card__file">
-                            <i class="bi bi-file-earmark"></i>
-                            <span th:text="${r.originalFilename != null} ? ${r.originalFilename} : 'File'"></span>
-                        </div>
-                    </div>
+                <p class="lib-res-card__desc"
+                   th:if="${group.description != null and !group.description.isEmpty()}"
+                   th:text="${#strings.abbreviate(group.description, 115)}"></p>
+                <p class="lib-res-card__desc fst-italic"
+                   th:if="${group.description == null or group.description.isEmpty()}">
+                    No description provided.
+                </p>
 
-                    <div class="lib-res-card__footer">
-                        <div class="lib-res-card__uploader">
-                            <i class="bi bi-person-circle" style="font-size:.82rem;flex-shrink:0;"></i>
-                            <span th:text="${r.uploadedBy.name}"></span>
-                        </div>
-                        <!-- href and target="_blank" preserved exactly as required by existing backend -->
-                        <a th:href="@{/resources/{id}/download(id=${r.id})}"
-                           target="_blank" class="lib-view-btn">
+                <div class="mt-3">
+                    <div class="d-flex align-items-center gap-2 mb-2"
+                         th:each="file : ${group.files}">
+                        <i class="bi bi-file-earmark-text text-primary"></i>
+                        <span class="text-break small flex-grow-1"
+                              th:text="${file.originalFilename != null ? file.originalFilename : 'File'}"></span>
+                        <a th:href="@{/resources/{id}/download(id=${file.id})}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-primary flex-shrink-0">
                             <i class="bi bi-eye"></i> View
                         </a>
                     </div>
-
                 </div>
             </div>
-        </div><!-- /resource grid -->
+
+        </div>
+    </div>
+</div><!-- /grouped resource grid -->
+
 
     </div>
 </main>

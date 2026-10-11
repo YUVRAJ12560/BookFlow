@@ -311,6 +311,9 @@
                                 <i class="bi bi-cloud-arrow-up adm-upload-icon"></i>
                                 <p class="adm-upload-label">Click to choose a file</p>
                                 <p class="adm-upload-hint">PDF, DOC, DOCX — max 20 MB</p>
+<div id="file-list"
+     style="margin-top:12px;text-align:left;width:100%;font-size:.85rem;color:#334155;">
+</div>
                                 <input type="file" id="file" name="files" multiple
                                        accept=".pdf,.doc,.docx"
                                        onchange="updateFileLabel(this)">
@@ -353,11 +356,42 @@
 <script th:src="@{/js/main.js}"></script>
 <script>
     function updateFileLabel(input) {
-        var lbl = document.getElementById('file-label');
-        if (input.files && input.files[0]) {
-            lbl.textContent = 'Selected: ' + input.files[0].name;
+        
+function updateFileLabel(input) {
+    var lbl = document.getElementById('file-label');
+    var fileList = document.getElementById('file-list');
+
+    fileList.innerHTML = '';
+
+    if (input.files && input.files.length > 0) {
+        for (var i = 0; i < input.files.length; i++) {
+            var fileItem = document.createElement('div');
+            fileItem.style.marginTop = '5px';
+            fileItem.style.padding = '4px 8px';
+            fileItem.style.borderRadius = '6px';
+            fileItem.style.backgroundColor = '#f0fdf4';
+
+            var check = document.createElement('span');
+            check.textContent = '✓';
+            check.style.color = '#15803d';
+            check.style.fontWeight = '600';
+
+            fileItem.appendChild(check);
+            fileItem.appendChild(
+                document.createTextNode(' ' + input.files[i].name)
+            );
+            fileList.appendChild(fileItem);
         }
+
+        lbl.textContent = 'Selected: ' + input.files.length +
+            (input.files.length === 1 ? ' file' : ' files');
+        lbl.style.color = '#15803d';
+    } else {
+        lbl.textContent = 'No files selected';
+        lbl.style.color = '';
     }
+}
+
 </script>
 </body>
 </html>
