@@ -240,10 +240,18 @@
                                     <label for="branch" class="form-label">
                                         Branch <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" id="branch" th:field="*{branch}"
-                                           class="form-control"
-                                           th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
-                                           placeholder="e.g. Computer Engineering">
+                                    
+<select id="branch" th:field="*{branch}"
+        class="form-select"
+        th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'">
+    <option value="">-- Select branch --</option>
+    <option value="Computer Engineering">Computer Engineering</option>
+    <option value="Information Technology">Information Technology</option>
+    <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
+    <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
+    <option value="Mechatronics">Mechatronics</option>
+</select>
+
                                     <div class="invalid-feedback"
                                          th:if="${#fields.hasErrors('branch')}"
                                          th:errors="*{branch}"></div>

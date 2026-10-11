@@ -97,13 +97,17 @@
                 </div>
 
                 <!-- Upload form — enctype, th:action, th:object all preserved exactly -->
-                <div class="bf-card">
-                    <div class="bf-card-header">Resource Details</div>
-                    <div class="bf-card-body">
-                        <form th:action="@{/resources/upload}"
-                              th:object="${resourceUploadDto}"
-                              method="post"
-                              enctype="multipart/form-data">
+                <form th:action="@{/resources/upload}"
+                      th:object="${resourceUploadDto}"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <!-- Resource Details card -->
+                    <div class="bf-card mb-3">
+                        <div class="bf-card-header">
+                            <i class="bi bi-file-earmark-text text-primary me-2"></i>Resource Details
+                        </div>
+                        <div class="bf-card-body">
 
                             <!-- Title -->
                             <div class="mb-3">
@@ -146,17 +150,34 @@
                                      th:errors="*{type}"></div>
                             </div>
 
-                            <!-- Branch / Subject -->
+                        </div>
+                    </div>
+
+                    <!-- Academic Details card -->
+                    <div class="bf-card mb-3">
+                        <div class="bf-card-header">
+                            <i class="bi bi-mortarboard text-primary me-2"></i>Academic Details
+                        </div>
+                        <div class="bf-card-body">
+
+                            <!-- Branch / Subject row -->
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label for="branch" class="form-label">
                                         Branch <span class="text-danger">*</span>
                                     </label>
-                                    <input type="text" id="branch" th:field="*{branch}"
-                                           class="form-control"
-                                           th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
-                                           placeholder="e.g. Computer Engineering">
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('branch')}"
+                                    <select id="branch" th:field="*{branch}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'">
+                                        <option value="">-- Select branch --</option>
+                                        <option value="Computer Engineering">Computer Engineering</option>
+                                        <option value="Information Technology">Information Technology</option>
+                                        <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
+                                        <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
+                                        <option value="Mechatronics">Mechatronics</option>
+                                    </select>
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('branch')}"
                                          th:errors="*{branch}"></div>
                                 </div>
                                 <div class="col-md-6">
@@ -167,13 +188,14 @@
                                            class="form-control"
                                            th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
                                            placeholder="e.g. Data Structures">
-                                    <div class="invalid-feedback" th:if="${#fields.hasErrors('subject')}"
+                                    <div class="invalid-feedback"
+                                         th:if="${#fields.hasErrors('subject')}"
                                          th:errors="*{subject}"></div>
                                 </div>
                             </div>
 
-                            <!-- Year / Semester -->
-                            <div class="row g-3 mb-3">
+                            <!-- Year / Semester row -->
+                            <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="year" class="form-label">
                                         Year <span class="text-danger">*</span>
@@ -206,42 +228,48 @@
                                 </div>
                             </div>
 
-                            <!-- Multiple file upload -->
-                            <div class="mb-4">
-                                <label for="file" class="form-label">
-                                    File <span class="text-danger">*</span>
-                                </label>
-                                <div class="bf-upload-zone position-relative">
-                                    <i class="bi bi-cloud-arrow-up d-block"
-                                       style="font-size:2rem;color:#3b82f6;margin-bottom:.4rem;"></i>
-                                    <p class="mb-1" style="font-size:.875rem;font-weight:600;color:#1e293b;">
-                                        Click to choose a file
-                                    </p>
-                                    <p class="mb-0" style="font-size:.77rem;color:#64748b;">
-                                        PDF, DOC, DOCX — max 20 MB
-                                    </p>
-					<div id="file-list"
-    					     style="margin-top:12px;text-align:left;font-size:.85rem;color:#334155;">
-					</div>
-                                    <input type="file" id="file" name="files"
-       multiple
-       accept=".pdf,.doc,.docx"
-       onchange="updateLabel(this)"
-       style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
-                                </div>
-                                <p id="file-label" class="form-text mt-1"></p>
-                            </div>
-
-                                                           <div class="d-flex gap-2">
-                                                               <button type="submit" class="btn btn-primary">
-                                                                   <i class="bi bi-cloud-upload me-1"></i>Submit for Review
-                                                               </button>
-                                <a th:href="@{/resources/my}" class="btn btn-outline-secondary">Cancel</a>
-                            </div>
-
-                        </form>
+                        </div>
                     </div>
-                </div>
+
+                    <!-- File card -->
+                    <div class="bf-card mb-4">
+                        <div class="bf-card-header">
+                            <i class="bi bi-file-arrow-up text-primary me-2"></i>File
+                        </div>
+                        <div class="bf-card-body">
+                            <div class="bf-upload-zone position-relative">
+                                <i class="bi bi-cloud-arrow-up d-block"
+                                   style="font-size:1.75rem;color:#93c5fd;margin-bottom:.5rem;"></i>
+                                <p class="mb-1" style="font-size:.875rem;font-weight:600;color:#1e293b;">
+                                    Click to choose a file
+                                </p>
+                                <p class="mb-0" style="font-size:.78rem;color:#64748b;">
+                                    PDF, DOC, DOCX — max 20 MB
+                                </p>
+                                <div id="file-list"
+                                     style="margin-top:12px;text-align:left;width:100%;font-size:.85rem;color:#334155;">
+                                </div>
+                                <input type="file" id="file" name="files" multiple
+                                       accept=".pdf,.doc,.docx"
+                                       onchange="updateLabel(this)"
+                                       style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;">
+                            </div>
+                            <p id="file-label" class="form-text mt-2 mb-0"
+                               style="font-size:.8rem;color:#16a34a;font-weight:500;"></p>
+                        </div>
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="d-flex gap-3 align-items-center">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload me-1"></i>Submit for Review
+                        </button>
+                        <a th:href="@{/resources/my}" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left me-1"></i>Cancel
+                        </a>
+                    </div>
+
+                </form>
 
                 <!-- Info note -->
                 <div class="alert alert-info d-flex gap-2 mt-3" role="alert" style="font-size:.845rem;">
