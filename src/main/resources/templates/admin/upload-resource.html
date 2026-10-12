@@ -12,67 +12,93 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <style>
-        body { background:#f1f5f9; }
+        body { background: #f1f5f9; }
 
-        /* Shared admin navbar styles (duplicated from dashboard for standalone page) */
-        .adm-nav { background:#0f172a; border-bottom:1px solid rgba(255,255,255,.07); padding:.55rem 0; }
-        .adm-brand { display:inline-flex; align-items:center; gap:.5rem; color:#fff !important; font-size:1.05rem; font-weight:700; text-decoration:none; }
+        /* Admin navbar — same as dashboard */
+        .adm-nav { background:#0f172a; border-bottom:1px solid rgba(255,255,255,.07); padding:.5rem 0; position:sticky; top:0; z-index:1030; }
+        .adm-brand { display:inline-flex; align-items:center; gap:.5rem; color:#fff !important; font-size:1.05rem; font-weight:700; text-decoration:none; letter-spacing:-.015em; }
         .adm-brand-icon { width:28px; height:28px; background:#2563eb; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; color:#fff; flex-shrink:0; }
-        .adm-badge { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:4px; font-size:.65rem; font-weight:700; padding:.1rem .45rem; letter-spacing:.04em; text-transform:uppercase; }
-        .adm-link { color:rgba(255,255,255,.7) !important; font-size:.84rem; font-weight:500; padding:.3rem .65rem; border-radius:6px; text-decoration:none; transition:background .15s,color .15s; }
+        .adm-badge { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:4px; font-size:.63rem; font-weight:700; padding:.1rem .45rem; letter-spacing:.04em; text-transform:uppercase; }
+        .adm-link { color:rgba(255,255,255,.7) !important; font-size:.84rem; font-weight:500; padding:.3rem .7rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:.3rem; transition:background .15s,color .15s; }
         .adm-link:hover, .adm-link.active { color:#fff !important; background:rgba(255,255,255,.1); }
-        .adm-avatar { width:26px; height:26px; background:#2563eb; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#fff; }
-        .adm-user-trigger { color:rgba(255,255,255,.8) !important; font-size:.84rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; padding:.28rem .6rem; border-radius:6px; text-decoration:none; transition:background .15s; }
+        .adm-avatar { width:26px; height:26px; background:#2563eb; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#fff; text-transform:uppercase; }
+        .adm-user-trigger { color:rgba(255,255,255,.8) !important; font-size:.84rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; padding:.28rem .6rem; border-radius:6px; cursor:pointer; transition:background .15s; background:transparent; border:none; font-family:inherit; line-height:inherit; }
         .adm-user-trigger:hover { background:rgba(255,255,255,.08); color:#fff !important; }
         .adm-nav .dropdown-menu { border:1px solid #e2e8f0; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.1); padding:.35rem; min-width:180px; margin-top:.4rem; }
         .adm-nav .dropdown-item { border-radius:6px; font-size:.84rem; padding:.4rem .7rem; color:#1e293b; display:flex; align-items:center; gap:.5rem; }
         .adm-nav .dropdown-item:hover { background:#eff6ff; color:#2563eb; }
         .adm-nav .dropdown-item.text-danger:hover { background:#fff1f2; color:#b91c1c !important; }
-        .adm-chip-pending { background:#fef9c3; color:#92400e; border:1px solid #fde68a; border-radius:999px; padding:.15rem .55rem; font-size:.71rem; font-weight:600; }
 
         /* Page header */
-        .adm-page-header { background:#fff; border-bottom:1px solid #e2e8f0; padding:1.1rem 0; }
+        .adm-page-header { background:#fff; border-bottom:1px solid #e2e8f0; padding:1rem 0; }
         .adm-page-title { font-size:1.2rem; font-weight:700; color:#0f172a; margin:0; }
-        .adm-page-sub { font-size:.82rem; color:#64748b; margin:.15rem 0 0; }
-
-        /* Upload form card */
-        .adm-form-card { background:#fff; border:1px solid #e2e8f0; border-radius:12px; overflow:hidden; }
-        .adm-form-card-header { background:#f8fafc; border-bottom:1px solid #e2e8f0; padding:.9rem 1.5rem; }
-        .adm-form-card-header h6 { font-size:.875rem; font-weight:700; color:#0f172a; margin:0; display:flex; align-items:center; gap:.5rem; }
-        .adm-form-card-body { padding:1.5rem; }
-
-        /* Notice banner */
-        .adm-notice { background:#eff6ff; border:1px solid #bfdbfe; border-radius:8px; padding:.75rem 1rem; display:flex; align-items:flex-start; gap:.75rem; font-size:.84rem; color:#1e40af; }
-        .adm-notice i { flex-shrink:0; font-size:.95rem; margin-top:.05rem; }
+        .adm-page-sub { font-size:.82rem; color:#64748b; margin:.1rem 0 0; }
 
         /* Upload zone */
-        .adm-upload-zone { border:2px dashed #bfdbfe; border-radius:10px; background:#f8fafc; padding:1.5rem 1rem; text-align:center; cursor:pointer; transition:border-color .15s,background .15s; position:relative; }
-        .adm-upload-zone:hover, .adm-upload-zone:focus-within { border-color:#2563eb; background:#eff6ff; }
-        .adm-upload-zone input[type=file] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
-        .adm-upload-icon { font-size:1.75rem; color:#93c5fd; margin-bottom:.5rem; display:block; }
-        .adm-upload-label { font-size:.875rem; font-weight:600; color:#1e293b; margin-bottom:.2rem; }
-        .adm-upload-hint { font-size:.78rem; color:#64748b; }
+        .adm-upload-zone {
+            border: 2px dashed #bfdbfe; border-radius: 10px;
+            background: #f8fafc; padding: 1.75rem 1rem;
+            text-align: center; cursor: pointer;
+            transition: border-color .15s, background .15s;
+            position: relative;
+        }
+        .adm-upload-zone:hover, .adm-upload-zone:focus-within {
+            border-color: #2563eb; background: #eff6ff;
+        }
+        .adm-upload-zone input[type=file] {
+            position: absolute; inset: 0; opacity: 0;
+            cursor: pointer; width: 100%; height: 100%;
+        }
+        .adm-upload-icon { font-size: 1.75rem; color: #93c5fd; margin-bottom: .5rem; display: block; }
+        .adm-upload-label { font-size: .875rem; font-weight: 600; color: #1e293b; margin-bottom: .2rem; }
+        .adm-upload-hint { font-size: .78rem; color: #64748b; }
 
-        /* Form fields */
-        .adm-form-card .form-label { font-size:.82rem; font-weight:600; color:#1e293b; margin-bottom:.3rem; }
-        .adm-form-card .form-control, .adm-form-card .form-select { font-size:.875rem; border-radius:7px; }
-        .adm-form-card .invalid-feedback { font-size:.77rem; }
-        .adm-section-divider { font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:#94a3b8; margin:0 0 .75rem; }
+        /* Notice banner */
+        .adm-notice {
+            background: #eff6ff; border: 1px solid #bfdbfe;
+            border-radius: 8px; padding: .75rem 1rem;
+            display: flex; align-items: flex-start; gap: .75rem;
+            font-size: .84rem; color: #1e40af;
+        }
+        .adm-notice i { flex-shrink: 0; font-size: .95rem; margin-top: .05rem; }
 
-        /* Submit button */
-        .adm-submit-btn { background:#2563eb; color:#fff !important; border:none; border-radius:8px; padding:.6rem 1.5rem; font-size:.9rem; font-weight:700; display:inline-flex; align-items:center; gap:.4rem; transition:background .15s,transform .1s,box-shadow .15s; }
-        .adm-submit-btn:hover { background:#1d4ed8; transform:translateY(-1px); box-shadow:0 4px 12px rgba(37,99,235,.35); }
-        .adm-cancel-btn { background:transparent; color:#64748b !important; border:1.5px solid #e2e8f0; border-radius:8px; padding:.6rem 1.25rem; font-size:.875rem; font-weight:600; text-decoration:none; display:inline-flex; align-items:center; gap:.35rem; transition:background .15s; }
-        .adm-cancel-btn:hover { background:#f8fafc; color:#1e293b !important; }
+        /* Submit / cancel buttons */
+        .adm-submit-btn {
+            background: #2563eb; color: #fff !important; border: none;
+            border-radius: 8px; padding: .6rem 1.5rem; font-size: .9rem;
+            font-weight: 700; display: inline-flex; align-items: center; gap: .4rem;
+            transition: background .15s, transform .1s, box-shadow .15s;
+        }
+        .adm-submit-btn:hover {
+            background: #1d4ed8; transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(37,99,235,.35);
+        }
+        .adm-cancel-btn {
+            background: transparent; color: #64748b !important;
+            border: 1.5px solid #e2e8f0; border-radius: 8px;
+            padding: .6rem 1.25rem; font-size: .875rem; font-weight: 600;
+            text-decoration: none; display: inline-flex; align-items: center; gap: .35rem;
+            transition: background .15s;
+        }
+        .adm-cancel-btn:hover { background: #f8fafc; color: #1e293b !important; }
+
+        /* Form labels inside bf-card */
+        .bf-card .form-label {
+            font-size: .82rem; font-weight: 600;
+            color: var(--bf-text-primary); margin-bottom: .3rem;
+        }
+        .bf-card .form-control,
+        .bf-card .form-select { font-size: .875rem; border-radius: 7px; }
+        .bf-card .invalid-feedback { font-size: .77rem; }
     </style>
 </head>
 <body>
 
-<!-- ═══════════ NAVBAR ═══════════════════════════════════════ -->
-<nav class="navbar navbar-expand-lg adm-nav">
+<!-- ═══════════ ADMIN NAVBAR ════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg adm-nav" aria-label="Admin navigation">
     <div class="container-fluid px-4">
         <a class="adm-brand me-3" th:href="@{/admin/dashboard}">
-            <span class="adm-brand-icon"><i class="bi bi-book-half"></i></span>
+            <span class="adm-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
             BookFlow
             <span class="adm-badge ms-1">Admin</span>
         </a>
@@ -80,41 +106,51 @@
                 data-bs-toggle="collapse" data-bs-target="#navAdminUp"
                 aria-controls="navAdminUp" aria-expanded="false" aria-label="Toggle navigation"
                 style="color:rgba(255,255,255,.7);">
-            <i class="bi bi-list fs-5"></i>
+            <i class="bi bi-list fs-5" aria-hidden="true"></i>
         </button>
         <div class="collapse navbar-collapse" id="navAdminUp">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
                 <li class="nav-item">
                     <a class="adm-link" th:href="@{/admin/dashboard}">
-                        <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                        <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="adm-link" th:href="@{/admin/resources/pending}">
-                        <i class="bi bi-hourglass-split me-1"></i>Pending Resources
+                        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Pending Resources
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="adm-link active" th:href="@{/admin/resources/upload}">
-                        <i class="bi bi-cloud-upload me-1"></i>Upload Resource
+                    <a class="adm-link active" aria-current="page" th:href="@{/admin/resources/upload}">
+                        <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
                     </a>
                 </li>
             </ul>
             <div class="d-flex align-items-center gap-2 ms-auto">
                 <div class="dropdown">
-                    <a class="adm-user-trigger dropdown-toggle" href="#"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="adm-avatar"
-                              th:text="${#strings.substring(admin.name,0,1).toUpperCase()}">A</span>
+                    <button class="adm-user-trigger dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <span class="adm-avatar-lg" th:text="${#strings.substring(admin.name,0,1)}" aria-hidden="true">A</span>
                         <span class="d-none d-sm-inline" th:text="${admin.name}">Admin</span>
-                    </a>
+                    </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><span class="dropdown-header" style="font-size:.75rem;" th:text="${admin.email}">admin@college.edu</span></li>
-                        <li><hr class="dropdown-divider my-1"></li>
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <div class="fw-700" style="font-size:.875rem;color:var(--bf-text-primary);" th:text="${admin.name}">Admin</div>
+                            <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${admin.email}">admin@college.edu</div>
+                        </li>
+                        <li><a class="dropdown-item" th:href="@{/admin/dashboard}">
+                            <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Admin Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/admin/resources/pending}">
+                            <i class="bi bi-hourglass-split me-2" aria-hidden="true"></i>Pending Resources
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
                         <li>
                             <form th:action="@{/admin-logout}" method="post" class="m-0">
                                 <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                    <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
                                 </button>
                             </form>
                         </li>
@@ -129,7 +165,7 @@
 <div class="adm-page-header">
     <div class="container-fluid px-4">
         <h1 class="adm-page-title">
-            <i class="bi bi-cloud-upload me-2" style="font-size:1rem;color:#2563eb;"></i>
+            <i class="bi bi-cloud-upload me-2" style="font-size:1rem;color:#2563eb;" aria-hidden="true"></i>
             Upload Official Resource
         </h1>
         <p class="adm-page-sub">
@@ -139,18 +175,18 @@
 </div>
 
 <!-- ═══════════ BODY ══════════════════════════════════════════ -->
-<main style="padding:1.5rem 0 3rem;">
+<main class="bf-page-main" style="background:#f1f5f9;" id="main-content">
     <div class="container-fluid px-4">
         <div class="row justify-content-center">
             <div class="col-lg-8 col-xl-7">
 
-                <!-- Admin upload notice -->
-                <div class="adm-notice mb-4">
-                    <i class="bi bi-shield-fill-check text-primary"></i>
+                <!-- Admin notice -->
+                <div class="adm-notice mb-4" role="note">
+                    <i class="bi bi-shield-fill-check text-primary" aria-hidden="true"></i>
                     <div>
                         <strong>Admin upload.</strong>
                         This resource will be published immediately as
-                        <strong>Approved</strong> and will be visible to all users in the library.
+                        <strong>Approved</strong> and visible to all users in the library.
                         Student uploads require admin review before publication.
                     </div>
                 </div>
@@ -158,43 +194,47 @@
                 <!-- Error alerts — th:if and th:text preserved exactly -->
                 <div th:if="${fileError}"
                      class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
-                    <i class="bi bi-x-circle-fill flex-shrink-0"></i>
+                    <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
                     <span th:text="${fileError}"></span>
                 </div>
                 <div th:if="${uploadError}"
                      class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
+                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
                     <span th:text="${uploadError}"></span>
                 </div>
 
-                <!-- Upload form — enctype and th:object preserved exactly -->
+                <!--
+                    Upload form — enctype and th:object preserved exactly.
+                    CSRF injected by Thymeleaf + Spring Security.
+                -->
                 <form th:action="@{/admin/resources/upload}"
                       th:object="${resourceUploadDto}"
                       method="post"
-                      enctype="multipart/form-data">
+                      enctype="multipart/form-data"
+                      novalidate>
 
                     <!-- Resource Details card -->
-                    <div class="adm-form-card mb-3">
-                        <div class="adm-form-card-header">
-                            <h6><i class="bi bi-file-earmark-text text-primary"></i> Resource Details</h6>
+                    <div class="bf-card mb-3">
+                        <div class="bf-card-header">
+                            <i class="bi bi-file-earmark-text text-primary me-2" aria-hidden="true"></i>
+                            Resource Details
                         </div>
-                        <div class="adm-form-card-body">
+                        <div class="bf-card-body">
 
-                            <!-- Title -->
                             <div class="mb-3">
                                 <label for="title" class="form-label">
-                                    Title <span class="text-danger">*</span>
+                                    Title <span class="text-danger" aria-label="required">*</span>
                                 </label>
                                 <input type="text" id="title" th:field="*{title}"
                                        class="form-control"
                                        th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
-                                       placeholder="e.g. Data Structures Unit 3 Notes">
+                                       placeholder="e.g. Data Structures Unit 3 Notes"
+                                       aria-required="true">
                                 <div class="invalid-feedback"
                                      th:if="${#fields.hasErrors('title')}"
                                      th:errors="*{title}"></div>
                             </div>
 
-                            <!-- Description -->
                             <div class="mb-3">
                                 <label for="description" class="form-label">Description</label>
                                 <textarea id="description" th:field="*{description}"
@@ -207,18 +247,17 @@
                                      th:errors="*{description}"></div>
                             </div>
 
-                            <!-- Type -->
                             <div class="mb-3">
                                 <label for="type" class="form-label">
-                                    Resource Type <span class="text-danger">*</span>
+                                    Resource Type <span class="text-danger" aria-label="required">*</span>
                                 </label>
                                 <select id="type" th:field="*{type}"
                                         class="form-select"
-                                        th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'">
+                                        th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'"
+                                        aria-required="true">
                                     <option value="">-- Select type --</option>
                                     <option th:each="t : ${resourceTypes}"
-                                            th:value="${t}"
-                                            th:text="${t.displayName}"></option>
+                                            th:value="${t}" th:text="${t.displayName}"></option>
                                 </select>
                                 <div class="invalid-feedback"
                                      th:if="${#fields.hasErrors('type')}"
@@ -229,41 +268,42 @@
                     </div>
 
                     <!-- Academic Details card -->
-                    <div class="adm-form-card mb-3">
-                        <div class="adm-form-card-header">
-                            <h6><i class="bi bi-mortarboard text-primary"></i> Academic Details</h6>
+                    <div class="bf-card mb-3">
+                        <div class="bf-card-header">
+                            <i class="bi bi-mortarboard text-primary me-2" aria-hidden="true"></i>
+                            Academic Details
                         </div>
-                        <div class="adm-form-card-body">
+                        <div class="bf-card-body">
 
                             <div class="row g-3 mb-3">
                                 <div class="col-md-6">
                                     <label for="branch" class="form-label">
-                                        Branch <span class="text-danger">*</span>
+                                        Branch <span class="text-danger" aria-label="required">*</span>
                                     </label>
-                                    
-<select id="branch" th:field="*{branch}"
-        class="form-select"
-        th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'">
-    <option value="">-- Select branch --</option>
-    <option value="Computer Engineering">Computer Engineering</option>
-    <option value="Information Technology">Information Technology</option>
-    <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
-    <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
-    <option value="Mechatronics">Mechatronics</option>
-</select>
-
+                                    <select id="branch" th:field="*{branch}"
+                                            class="form-select"
+                                            th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
+                                            aria-required="true">
+                                        <option value="">-- Select branch --</option>
+                                        <option value="Computer Engineering">Computer Engineering</option>
+                                        <option value="Information Technology">Information Technology</option>
+                                        <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
+                                        <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
+                                        <option value="Mechatronics">Mechatronics</option>
+                                    </select>
                                     <div class="invalid-feedback"
                                          th:if="${#fields.hasErrors('branch')}"
                                          th:errors="*{branch}"></div>
                                 </div>
                                 <div class="col-md-6">
                                     <label for="subject" class="form-label">
-                                        Subject <span class="text-danger">*</span>
+                                        Subject <span class="text-danger" aria-label="required">*</span>
                                     </label>
                                     <input type="text" id="subject" th:field="*{subject}"
                                            class="form-control"
                                            th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
-                                           placeholder="e.g. Data Structures">
+                                           placeholder="e.g. Data Structures"
+                                           aria-required="true">
                                     <div class="invalid-feedback"
                                          th:if="${#fields.hasErrors('subject')}"
                                          th:errors="*{subject}"></div>
@@ -273,11 +313,12 @@
                             <div class="row g-3">
                                 <div class="col-md-6">
                                     <label for="year" class="form-label">
-                                        Year <span class="text-danger">*</span>
+                                        Year <span class="text-danger" aria-label="required">*</span>
                                     </label>
                                     <select id="year" th:field="*{year}"
                                             class="form-select"
-                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'">
+                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
+                                            aria-required="true">
                                         <option value="">-- Select year --</option>
                                         <option value="1">First Year</option>
                                         <option value="2">Second Year</option>
@@ -290,15 +331,15 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="semester" class="form-label">
-                                        Semester <span class="text-danger">*</span>
+                                        Semester <span class="text-danger" aria-label="required">*</span>
                                     </label>
                                     <select id="semester" th:field="*{semester}"
                                             class="form-select"
-                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'">
+                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'"
+                                            aria-required="true">
                                         <option value="">-- Select semester --</option>
                                         <option th:each="s : ${#numbers.sequence(1,8)}"
-                                                th:value="${s}"
-                                                th:text="'Semester ' + ${s}"></option>
+                                                th:value="${s}" th:text="'Semester ' + ${s}"></option>
                                     </select>
                                     <div class="invalid-feedback"
                                          th:if="${#fields.hasErrors('semester')}"
@@ -310,34 +351,59 @@
                     </div>
 
                     <!-- File card -->
-                    <div class="adm-form-card mb-4">
-                        <div class="adm-form-card-header">
-                            <h6><i class="bi bi-file-arrow-up text-primary"></i> File</h6>
+                    <div class="bf-card mb-4">
+                        <div class="bf-card-header d-flex justify-content-between align-items-center">
+                            <span>
+                                <i class="bi bi-file-earmark-arrow-up text-primary me-2" aria-hidden="true"></i>
+                                Resource Files <span class="text-danger" aria-label="required">*</span>
+                            </span>
+                            <span class="badge bg-light text-secondary border fw-normal" style="font-size:0.75rem;">
+                                Max 20 MB / file
+                            </span>
                         </div>
-                        <div class="adm-form-card-body">
-                            <div class="adm-upload-zone">
-                                <i class="bi bi-cloud-arrow-up adm-upload-icon"></i>
-                                <p class="adm-upload-label">Click to choose a file</p>
-                                <p class="adm-upload-hint">PDF, DOC, DOCX — max 20 MB</p>
-<div id="file-list"
-     style="margin-top:12px;text-align:left;width:100%;font-size:.85rem;color:#334155;">
-</div>
+                        <div class="bf-card-body">
+                            <div class="adm-upload-zone position-relative"
+                                 id="adminUploadZone"
+                                 role="button"
+                                 tabindex="0"
+                                 aria-label="Click to browse files or drag and drop files here">
+                                <i class="bi bi-cloud-arrow-up adm-upload-icon" aria-hidden="true"></i>
+                                <p class="adm-upload-label">Click to choose files or drag &amp; drop here</p>
+                                <p class="adm-upload-hint text-muted">Supported formats: <strong>PDF, DOC, DOCX</strong> &bull; Multiple files allowed</p>
                                 <input type="file" id="file" name="files" multiple
                                        accept=".pdf,.doc,.docx"
-                                       onchange="updateFileLabel(this)">
+                                       style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;"
+                                       aria-label="Choose files to upload">
                             </div>
-                            <p id="file-label" class="mt-2 mb-0"
-                               style="font-size:.8rem;color:#16a34a;font-weight:500;"></p>
+
+                            <!-- Live error notification for invalid file type or oversized file -->
+                            <div id="file-error-alert" class="alert alert-danger align-items-center gap-2 mt-3 mb-0"
+                                 style="display:none;" role="alert" aria-live="assertive">
+                                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+                                <div id="file-error-text" class="small"></div>
+                            </div>
+
+                            <!-- Selected files container (outside the dropzone overlay so remove buttons are directly clickable) -->
+                            <div id="selected-files-container" class="mt-3" style="display:none;">
+                                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+                                    <span class="fw-semibold text-secondary small" id="file-count-label">Attached files</span>
+                                    <button type="button" class="btn btn-link btn-sm text-danger text-decoration-none p-0" id="clearAllFilesBtn">
+                                        <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Remove all
+                                    </button>
+                                </div>
+                                <ul id="file-list" class="bf-upload-file-list list-unstyled mb-0" role="list"></ul>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Actions -->
-                    <div class="d-flex gap-3 align-items-center">
+                    <div class="bf-upload-actions">
                         <button type="submit" class="adm-submit-btn">
-                            <i class="bi bi-cloud-upload"></i> Publish Resource
+                            <i class="bi bi-cloud-upload" aria-hidden="true"></i> Publish Resource
                         </button>
-                        <a th:href="@{/admin/dashboard}" class="adm-cancel-btn">
-                            <i class="bi bi-arrow-left"></i> Cancel
+                        <a th:href="@{/admin/dashboard}" class="bf-back-link">
+                            <i class="bi bi-arrow-left" aria-hidden="true"></i>
+                            Back to Dashboard
                         </a>
                     </div>
 
@@ -348,8 +414,9 @@
     </div>
 </main>
 
-<!-- Footer -->
-<footer style="background:#0f172a;border-top:1px solid rgba(255,255,255,.06);padding:.875rem 0;margin-top:auto;">
+<!-- ═══════════ FOOTER ════════════════════════════════════════ -->
+<footer style="background:#0f172a;border-top:1px solid rgba(255,255,255,.06);padding:.875rem 0;margin-top:auto;"
+        role="contentinfo">
     <div class="container-fluid px-4">
         <div class="d-flex justify-content-between align-items-center"
              style="font-size:.78rem;color:rgba(255,255,255,.35);">
@@ -360,46 +427,8 @@
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
-<script>
-    function updateFileLabel(input) {
-        
-function updateFileLabel(input) {
-    var lbl = document.getElementById('file-label');
-    var fileList = document.getElementById('file-list');
 
-    fileList.innerHTML = '';
-
-    if (input.files && input.files.length > 0) {
-        for (var i = 0; i < input.files.length; i++) {
-            var fileItem = document.createElement('div');
-            fileItem.style.marginTop = '5px';
-            fileItem.style.padding = '4px 8px';
-            fileItem.style.borderRadius = '6px';
-            fileItem.style.backgroundColor = '#f0fdf4';
-
-            var check = document.createElement('span');
-            check.textContent = '✓';
-            check.style.color = '#15803d';
-            check.style.fontWeight = '600';
-
-            fileItem.appendChild(check);
-            fileItem.appendChild(
-                document.createTextNode(' ' + input.files[i].name)
-            );
-            fileList.appendChild(fileItem);
-        }
-
-        lbl.textContent = 'Selected: ' + input.files.length +
-            (input.files.length === 1 ? ' file' : ' files');
-        lbl.style.color = '#15803d';
-    } else {
-        lbl.textContent = 'No files selected';
-        lbl.style.color = '';
-    }
-}
-
-</script>
 </body>
 </html>

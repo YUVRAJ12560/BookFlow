@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | BookFlow</title>
+    <title>Sign In | BookFlow</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,193 +12,240 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body style="margin:0;padding:0;min-height:100vh;display:flex;flex-direction:column;">
 
-<!-- ── Navbar ────────────────────────────────────────────── -->
-<nav class="navbar navbar-expand-lg bf-navbar">
-    <div class="container">
+<!-- Slim top nav — keeps brand visible without distracting from the form -->
+<nav class="navbar bf-navbar" aria-label="Site navigation" style="flex-shrink:0;">
+    <div class="container-fluid px-4">
         <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
+            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
             BookFlow
         </a>
         <div class="ms-auto d-flex align-items-center gap-2">
-            <a class="bf-nav-btn bf-nav-btn-solid" th:href="@{/login}">Login</a>
-            <a class="bf-nav-btn bf-nav-btn-outline" th:href="@{/register}">Register</a>
+            <span class="text-white-50 d-none d-sm-inline" style="font-size:.875rem;">
+                New to BookFlow?
+            </span>
+            <a class="bf-nav-btn bf-nav-btn-outline" th:href="@{/register}">Create Account</a>
         </div>
     </div>
 </nav>
 
-<!-- ── Page ──────────────────────────────────────────────── -->
-<main class="auth-page">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-11 col-sm-9 col-md-7 col-lg-5" style="max-width:420px;">
+<!-- Split-panel layout: brand column (desktop only) + form column -->
+<div class="auth-split" style="flex:1;" id="main-content">
 
-                <!-- Card header -->
-                <div class="auth-header">
-                    <div class="auth-header__icon">
-                        <i class="bi bi-book-half"></i>
-                    </div>
-                    <h1 class="auth-header__title">Welcome back</h1>
-                    <p class="auth-header__sub">Sign in to your BookFlow account</p>
-                </div>
+    <!-- LEFT: Brand / feature highlights (desktop only, ≥1024px) -->
+    <div class="auth-split__brand" aria-hidden="true">
+        <a class="auth-split__brand-logo" th:href="@{/}">
+            <span class="auth-split__brand-icon"><i class="bi bi-book-half"></i></span>
+            BookFlow
+        </a>
 
-                <!-- Card -->
-                <div class="auth-card">
-                    <div class="auth-card__body">
+        <div>
+            <p class="auth-split__brand-tagline">
+                Your campus academic resource hub — verified notes, past papers,
+                and reference materials, all in one place.
+            </p>
+        </div>
 
-                        <!-- Status alerts — all Thymeleaf conditions preserved exactly -->
-                        <div th:if="${verificationSuccess}"
-                             class="alert alert-success auto-dismiss d-flex align-items-center gap-2"
-                             role="alert">
-                            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
-                            <span th:text="${verificationSuccess}"></span>
-                        </div>
-                        <div th:if="${googleError}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                            <span th:text="${googleError}"></span>
-                        </div>
-                        <div th:if="${param.error != null and #arrays.contains(param.error, 'domain')}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                            <span>Please use your college Google account (@pvppcoe.ac.in) to continue.</span>
-                        </div>
-                        <div th:if="${param.error != null and #arrays.contains(param.error, 'google')}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                            <span>Google Sign-In failed. Please try again or use email/password.</span>
-                        </div>
-                        <div th:if="${param.error != null
-                                      and !#arrays.contains(param.error, 'domain')
-                                      and !#arrays.contains(param.error, 'google')}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0"></i>
-                            <span>Incorrect email or password. Please try again.</span>
-                        </div>
-                        <div th:if="${param.logout}"
-                             class="alert alert-info auto-dismiss d-flex align-items-center gap-2"
-                             role="alert">
-                            <i class="bi bi-box-arrow-left flex-shrink-0"></i>
-                            <span>You have been logged out successfully.</span>
-                        </div>
-
-                        <!--
-                            Hidden form — receives the Google ID token and POSTs to backend.
-                            CSRF token injected automatically by Thymeleaf + Spring Security.
-                        -->
-                        <form id="googleAuthForm"
-                              th:action="@{/auth/google}" method="post"
-                              style="display:none;">
-                            <input type="hidden" id="googleCredential" name="credential" value="">
-                        </form>
-
-                        <!--
-                            Google button wrapper.
-                            gsi-wrap:          renderButton() target.
-                            gsi-btn:           visible fallback before SDK loads.
-                            gsi-rendered class hides the fallback after GIS renders.
-                        -->
-                        <div id="googleBtnWrap" class="gsi-wrap">
-                            <button type="button" class="gsi-btn"
-                                    onclick="triggerGoogleSignIn()">
-                                <svg class="gsi-btn__icon" viewBox="0 0 24 24"
-                                     xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                </svg>
-                                Continue with Google
-                            </button>
-                        </div>
-
-                        <div class="auth-divider">or continue with email</div>
-
-                        <!-- Email / password form — field names required by Spring Security -->
-                        <form th:action="@{/login}" method="post">
-
-                            <div class="mb-3">
-                                <label for="email" class="form-label">College Email</label>
-                                <input type="email" id="email" name="email"
-                                       class="form-control"
-                                       placeholder="yourname@pvppcoe.ac.in"
-                                       autocomplete="email" required>
-                            </div>
-
-                            <div class="mb-4">
-                                <label for="password" class="form-label">Password</label>
-                                <div class="auth-pass-wrap">
-                                    <input type="password" id="password" name="password"
-                                           class="form-control"
-                                           placeholder="••••••••"
-                                           autocomplete="current-password" required>
-                                    <button type="button"
-                                            class="auth-pass-toggle"
-                                            aria-label="Toggle password visibility"
-                                            onclick="togglePass('password', this)">
-                                        <i class="bi bi-eye"></i>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">
-                                    Sign In <i class="bi bi-arrow-right ms-1"></i>
-                                </button>
-                            </div>
-                        </form>
-
-                        <!-- Footer link -->
-                        <div class="auth-footer">
-                            Don't have an account?
-                            <a th:href="@{/register}">Create one &rarr;</a>
-                        </div>
-
-                    </div>
-                </div><!-- /auth-card -->
-
+        <div style="display:flex;flex-direction:column;gap:0.875rem;">
+            <div class="auth-split__brand-feature">
+                <i class="bi bi-shield-check"></i>
+                Every resource reviewed before publication
+            </div>
+            <div class="auth-split__brand-feature">
+                <i class="bi bi-mortarboard"></i>
+                Organised by branch, year, and semester
+            </div>
+            <div class="auth-split__brand-feature">
+                <i class="bi bi-cloud-upload"></i>
+                Share your notes and help fellow students
+            </div>
+            <div class="auth-split__brand-feature">
+                <i class="bi bi-download"></i>
+                Download approved resources instantly
             </div>
         </div>
     </div>
-</main>
 
-<!-- ── Footer ────────────────────────────────────────────── -->
-<footer class="bf-footer" style="padding:0.875rem 0;">
-    <div class="container">
-        <div class="bf-footer-bottom" style="padding:0.25rem 0;border-top:none;">
-            <span>&copy; 2026 BookFlow</span>
-            <a th:href="@{/}">
-                <i class="bi bi-arrow-left me-1"></i>Home
-            </a>
+    <!-- RIGHT: Sign-in form -->
+    <div class="auth-split__form">
+        <div class="auth-form-col">
+
+            <!-- Heading — left-aligned on the form panel -->
+            <div class="mb-4">
+                <!-- Small brand logo on mobile (split brand column is hidden) -->
+                <a class="bf-brand d-lg-none mb-3 d-inline-flex" th:href="@{/}" style="color:#0f172a!important;gap:.5rem;">
+                    <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
+                    BookFlow
+                </a>
+                <h1 style="font-size:1.625rem;font-weight:800;color:var(--bf-navy-900);letter-spacing:-.025em;margin:0 0 .3rem;">
+                    Welcome back
+                </h1>
+                <p style="font-size:.9375rem;color:var(--bf-text-secondary);margin:0;">
+                    Sign in to access your academic resources.
+                </p>
+            </div>
+
+            <!-- Status alerts — all Thymeleaf conditions preserved exactly -->
+            <div th:if="${verificationSuccess}"
+                 class="alert alert-success auto-dismiss d-flex align-items-center gap-2 mb-3"
+                 role="alert" aria-live="polite">
+                <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
+                <span th:text="${verificationSuccess}"></span>
+            </div>
+
+            <div th:if="${googleError}"
+                 class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+                <span th:text="${googleError}"></span>
+            </div>
+
+            <div th:if="${param.error != null and #arrays.contains(param.error, 'domain')}"
+                 class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+                <div>
+                    <strong>Wrong Google account.</strong>
+                    Please use your college Google account
+                    (<strong>@pvppcoe.ac.in</strong>) to continue.
+                </div>
+            </div>
+
+            <div th:if="${param.error != null and #arrays.contains(param.error, 'google')}"
+                 class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+                <div>
+                    <strong>Google Sign-In failed.</strong>
+                    Please try again, or sign in with your email and password below.
+                </div>
+            </div>
+
+            <div th:if="${param.error != null
+                          and !#arrays.contains(param.error, 'domain')
+                          and !#arrays.contains(param.error, 'google')}"
+                 class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
+                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+                <div>
+                    <strong>Incorrect email or password.</strong>
+                    Double-check your details and try again.
+                    If your account is unverified, check your college inbox.
+                </div>
+            </div>
+
+            <div th:if="${param.logout}"
+                 class="alert alert-info auto-dismiss d-flex align-items-center gap-2 mb-3"
+                 role="status" aria-live="polite">
+                <i class="bi bi-box-arrow-left flex-shrink-0" aria-hidden="true"></i>
+                <span>You have been signed out successfully.</span>
+            </div>
+
+            <!-- Hidden form receives the Google ID token.
+                 CSRF injected automatically by Thymeleaf + Spring Security. -->
+            <form id="googleAuthForm" th:action="@{/auth/google}" method="post" style="display:none;">
+                <input type="hidden" id="googleCredential" name="credential" value="">
+            </form>
+
+            <!-- Google button -->
+            <div id="googleBtnWrap" class="gsi-wrap">
+                <button type="button" class="gsi-btn" onclick="triggerGoogleSignIn()"
+                        aria-label="Continue with Google">
+                    <svg class="gsi-btn__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                    </svg>
+                    Continue with Google
+                </button>
+            </div>
+
+            <div class="auth-divider">or sign in with your email</div>
+
+            <!-- Email / password form — field names required by Spring Security -->
+            <form th:action="@{/login}" method="post" novalidate>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">
+                        College Email Address
+                    </label>
+                    <input type="email" id="email" name="email"
+                           class="form-control"
+                           placeholder="yourname@pvppcoe.ac.in"
+                           autocomplete="email"
+                           required
+                           aria-required="true"
+                           aria-describedby="email-hint">
+                    <div class="form-text" id="email-hint">
+                        Use your @pvppcoe.ac.in college address.
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between align-items-baseline mb-1">
+                        <label for="password" class="form-label mb-0">Password</label>
+                    </div>
+                    <div class="auth-pass-wrap">
+                        <input type="password" id="password" name="password"
+                               class="form-control"
+                               placeholder="Enter your password"
+                               autocomplete="current-password"
+                               required
+                               aria-required="true">
+                        <button type="button"
+                                class="auth-pass-toggle"
+                                aria-label="Show password"
+                                onclick="togglePass('password', this)">
+                            <i class="bi bi-eye" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-grid mb-3">
+                    <button type="submit" class="btn btn-primary" style="padding:.625rem 1rem;font-size:1rem;font-weight:700;">
+                        Sign In to BookFlow
+                    </button>
+                </div>
+
+            </form>
+
+            <!-- Register link -->
+            <p class="text-center" style="font-size:.875rem;color:var(--bf-text-secondary);margin:0;">
+                Don't have an account?
+                <a th:href="@{/register}" style="font-weight:600;">Create one free &rarr;</a>
+            </p>
+
         </div>
+    </div><!-- /auth-split__form -->
+</div><!-- /auth-split -->
+
+<!-- Compact footer -->
+<footer style="flex-shrink:0;background:var(--bf-bg-canvas);border-top:1px solid var(--bf-border-default);padding:.75rem 1rem;" role="contentinfo">
+    <div class="container-fluid px-4 d-flex justify-content-between align-items-center flex-wrap gap-2"
+         style="font-size:.8125rem;color:var(--bf-text-tertiary);">
+        <span>&copy; 2026 BookFlow</span>
+        <a th:href="@{/}" style="color:var(--bf-text-tertiary);font-size:.8125rem;">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Home
+        </a>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 
-<!-- GIS SDK — onload fires once the SDK is fully ready -->
-<script src="https://accounts.google.com/gsi/client"
-        async defer onload="initGoogleSignIn()"></script>
+<!-- Google Identity Services SDK — same pattern as before -->
+<script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignIn()"></script>
 
 <script th:inline="javascript">
 /*<![CDATA[*/
-// Client ID injected by Thymeleaf — never hardcoded in HTML/JS
 var _googleClientId = /*[[${googleClientId}]]*/ '';
 
 function _isClientIdValid(id) {
-    return id
-        && id.trim() !== ''
-        && !id.startsWith('placeholder')
-        && id !== 'REPLACE_WITH_YOUR_WEB_CLIENT_ID';
+    return id && id.trim() !== '' && !id.startsWith('placeholder') && id !== 'REPLACE_WITH_YOUR_WEB_CLIENT_ID';
 }
 
 function initGoogleSignIn() {
     if (!_isClientIdValid(_googleClientId)) { return; }
-
     google.accounts.id.initialize({
         client_id: _googleClientId.trim(),
         callback: function(response) {
@@ -208,36 +255,31 @@ function initGoogleSignIn() {
             }
         }
     });
-
     var wrap = document.getElementById('googleBtnWrap');
     google.accounts.id.renderButton(wrap, {
-        theme: 'outline',
-        size:  'large',
-        text:  'continue_with',
-        width: Math.min(wrap.offsetWidth || 380, 380)
+        theme: 'outline', size: 'large', text: 'continue_with',
+        width: Math.min(wrap.offsetWidth || 400, 400)
     });
-    // Hide the fallback button now that GIS has rendered its own
     wrap.classList.add('gsi-rendered');
 }
 
-// Called when user clicks the fallback button before the SDK has loaded
 function triggerGoogleSignIn() {
     if (window.google && window.google.accounts && window.google.accounts.id) {
         initGoogleSignIn();
     }
-    // If SDK still loading, onload will fire initGoogleSignIn() automatically
 }
 
-// Password visibility toggle
 function togglePass(fieldId, btn) {
     var input = document.getElementById(fieldId);
     var icon  = btn.querySelector('i');
     if (input.type === 'password') {
         input.type = 'text';
         icon.className = 'bi bi-eye-slash';
+        btn.setAttribute('aria-label', 'Hide password');
     } else {
         input.type = 'password';
         icon.className = 'bi bi-eye';
+        btn.setAttribute('aria-label', 'Show password');
     }
 }
 /*]]>*/

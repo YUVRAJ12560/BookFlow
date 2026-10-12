@@ -13,27 +13,27 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="stylesheet" th:href="@{/css/main.css}">
     <style>
-        /* ── Dashboard page styles ───────────────────────────── */
+        body { background: var(--bf-bg-canvas); }
 
-        /* Hero band */
+        /* ── Hero band ──────────────────────────────────────── */
         .dash-hero {
             background: #0f172a;
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            padding: 2rem 0;
+            padding: 2rem 0 1.75rem;
         }
         .dash-hero-name {
             color: #fff;
-            font-size: clamp(1.3rem, 2.4vw, 1.75rem);
+            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
             font-weight: 700;
             letter-spacing: -0.02em;
             margin: 0 0 0.3rem;
         }
         .dash-hero-sub {
-            color: rgba(255,255,255,0.55);
+            color: rgba(255,255,255,0.5);
             font-size: 0.875rem;
             margin: 0 0 1.25rem;
         }
-        .dash-year-pill {
+        .dash-pill {
             display: inline-flex;
             align-items: center;
             gap: 0.3rem;
@@ -46,31 +46,21 @@
             font-weight: 600;
         }
         .dash-hero-btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: #fff;
-            color: #0f172a !important;
-            border: none;
-            border-radius: 8px;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: #fff; color: #0f172a !important;
+            border: none; border-radius: 8px;
             padding: 0.5rem 1.15rem;
-            font-size: 0.875rem;
-            font-weight: 700;
+            font-size: 0.875rem; font-weight: 700;
             text-decoration: none;
             transition: background 0.15s, transform 0.15s;
         }
         .dash-hero-btn-primary:hover { background: #dbeafe; transform: translateY(-1px); }
         .dash-hero-btn-ghost {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            background: transparent;
-            color: rgba(255,255,255,0.8) !important;
-            border: 1.5px solid rgba(255,255,255,0.25);
-            border-radius: 8px;
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: transparent; color: rgba(255,255,255,0.8) !important;
+            border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px;
             padding: 0.5rem 1.15rem;
-            font-size: 0.875rem;
-            font-weight: 600;
+            font-size: 0.875rem; font-weight: 600;
             text-decoration: none;
             transition: background 0.15s, border-color 0.15s;
         }
@@ -80,24 +70,16 @@
             color: #fff !important;
         }
 
-        /* Body */
-        .dash-body {
-            background: var(--bf-bg-canvas);
-            padding: 1.75rem 0 3rem;
-        }
-
-        /* Quick-action card */
+        /* ── Quick-action cards ─────────────────────────────── */
         .dash-qcard {
             background: var(--bf-bg-surface);
             border: 1px solid var(--bf-border-default);
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 1.4rem 1.25rem 1.25rem;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
+            box-shadow: var(--bf-shadow-sm);
+            padding: 1.35rem 1.25rem 1.1rem;
+            display: flex; flex-direction: column;
+            height: 100%; text-decoration: none;
             transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
-            text-decoration: none;
         }
         .dash-qcard:hover {
             box-shadow: 0 6px 20px rgba(0,0,0,0.08);
@@ -106,92 +88,64 @@
             text-decoration: none;
         }
         .dash-qcard-icon {
-            width: 42px; height: 42px;
-            border-radius: 9px;
+            width: 42px; height: 42px; border-radius: 9px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.15rem;
-            margin-bottom: 0.9rem;
-            flex-shrink: 0;
+            font-size: 1.1rem; margin-bottom: 0.875rem; flex-shrink: 0;
         }
         .dash-qcard-title {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--bf-text-primary);
-            margin: 0 0 0.25rem;
+            font-size: 0.925rem; font-weight: 700;
+            color: var(--bf-text-primary); margin: 0 0 0.3rem;
         }
         .dash-qcard-desc {
-            font-size: 0.8rem;
-            color: var(--bf-text-secondary);
-            line-height: 1.5;
-            flex: 1;
-            margin: 0 0 0.85rem;
+            font-size: 0.8rem; color: var(--bf-text-secondary);
+            line-height: 1.5; flex: 1; margin: 0 0 0.75rem;
         }
         .dash-qcard-cta {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--bf-blue-600);
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
+            font-size: 0.8rem; font-weight: 600; color: var(--bf-blue-600);
+            display: inline-flex; align-items: center; gap: 0.3rem;
             margin-top: auto;
         }
         .dash-qcard:hover .dash-qcard-cta i { transform: translateX(2px); }
-        .dash-qcard-cta i { transition: transform 0.15s; font-size: 0.72rem; }
+        .dash-qcard-cta i { transition: transform 0.15s; font-size: 0.7rem; }
 
-        /* Profile card */
+        /* ── Profile card ───────────────────────────────────── */
         .dash-profile {
             background: var(--bf-bg-surface);
             border: 1px solid var(--bf-border-default);
             border-radius: 12px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            box-shadow: var(--bf-shadow-sm);
             overflow: hidden;
         }
         .dash-profile-header {
-            background: #0f172a;
-            padding: 1.25rem 1.35rem;
-            display: flex;
-            align-items: center;
-            gap: 0.875rem;
+            background: #0f172a; padding: 1.25rem 1.35rem;
+            display: flex; align-items: center; gap: 0.875rem;
         }
         .dash-profile-avatar {
-            width: 48px; height: 48px;
-            background: #2563eb;
+            width: 44px; height: 44px; background: #2563eb;
             border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #fff;
-            flex-shrink: 0;
-            border: 2px solid rgba(255,255,255,0.15);
+            font-size: 1.1rem; font-weight: 700; color: #fff;
+            flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15);
+            text-transform: uppercase;
         }
         .dash-profile-name {
-            color: #fff;
-            font-size: 0.95rem;
-            font-weight: 700;
-            margin: 0 0 0.1rem;
+            color: #fff; font-size: 0.9rem; font-weight: 700;
+            margin: 0 0 0.1rem; word-break: break-all;
         }
         .dash-profile-email {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.76rem;
-            margin: 0;
-            word-break: break-all;
+            color: rgba(255,255,255,0.45); font-size: 0.74rem;
+            margin: 0; word-break: break-all;
         }
-        .dash-profile-body { padding: 0.25rem 0; }
         .dash-profile-row {
-            display: flex;
-            align-items: center;
+            display: flex; align-items: center;
             justify-content: space-between;
-            padding: 0.6rem 1.35rem;
-            font-size: 0.84rem;
+            padding: 0.6rem 1.35rem; font-size: 0.84rem;
             border-bottom: 1px solid var(--bf-border-subtle);
         }
         .dash-profile-row:last-child { border-bottom: none; }
         .dash-profile-label {
-            color: var(--bf-text-tertiary);
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.35rem;
+            color: var(--bf-text-tertiary); font-weight: 500;
+            display: flex; align-items: center; gap: 0.35rem;
         }
         .dash-profile-value { color: var(--bf-text-primary); font-weight: 600; }
         .dash-chip-ok {
@@ -208,51 +162,41 @@
             border-radius: 999px; padding: 0.1rem 0.55rem;
             font-size: 0.72rem; font-weight: 600;
         }
-        .dash-na { color: var(--bf-text-tertiary); font-style: italic; font-size: 0.8rem; font-weight: 400; }
 
-        /* Suggestion strip */
+        /* ── Suggestion strip ───────────────────────────────── */
         .dash-strip {
-            background: #f0f9ff;
-            border: 1px solid #bae6fd;
-            border-radius: 10px;
-            padding: 0.8rem 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-            font-size: 0.84rem;
-            color: #0369a1;
+            background: #f0f9ff; border: 1px solid #bae6fd;
+            border-radius: 10px; padding: 0.8rem 1rem;
+            display: flex; align-items: center; gap: 0.75rem;
+            margin-bottom: 1.5rem; font-size: 0.84rem; color: #0369a1;
         }
         .dash-strip i { font-size: 1rem; flex-shrink: 0; color: #0284c7; }
         .dash-strip a { color: #0369a1; font-weight: 700; }
+        .dash-strip a:hover { text-decoration: underline; }
 
         @media (max-width: 767.98px) {
             .dash-hero { padding: 1.5rem 0; }
-            .dash-body { padding: 1.25rem 0 2rem; }
         }
     </style>
 </head>
 <body>
 
-<!-- ═══════════ NAVBAR ═══════════════════════════════════════ -->
-<nav class="navbar navbar-expand-lg bf-navbar">
+<!-- ═══════════ NAVBAR ════════════════════════════════════════ -->
+<nav class="navbar navbar-expand-lg bf-navbar" aria-label="Main navigation">
     <div class="container">
-
         <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
+            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
             BookFlow
         </a>
-
         <button class="navbar-toggler" type="button"
                 data-bs-toggle="collapse" data-bs-target="#navDash"
                 aria-controls="navDash" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-
         <div class="collapse navbar-collapse" id="navDash">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
                 <li class="nav-item">
-                    <a class="bf-nav-link active" th:href="@{/user/dashboard}">Dashboard</a>
+                    <a class="bf-nav-link active" aria-current="page" th:href="@{/user/dashboard}">Dashboard</a>
                 </li>
                 <li class="nav-item">
                     <a class="bf-nav-link" th:href="@{/resources}">Library</a>
@@ -260,100 +204,103 @@
                 <li class="nav-item">
                     <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
                 </li>
+                <li class="nav-item">
+                    <a class="bf-nav-link" th:href="@{/resources/upload}">Upload</a>
+                </li>
             </ul>
-
-            <div class="d-flex align-items-center gap-2 ms-auto">
-                <!-- User dropdown -->
-                <div class="dropdown">
-                    <a class="bf-user-trigger dropdown-toggle" href="#"
-                       data-bs-toggle="dropdown" aria-expanded="false">
-                        <span class="bf-avatar"
-                              th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</span>
-                        <span class="d-none d-sm-inline" th:text="${user.name}">User</span>
-                    </a>
+            <!-- User account dropdown — right side -->
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                    <button class="bf-user-trigger dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        <span class="bf-avatar-lg" th:text="${#strings.substring(user.name, 0, 1)}" aria-hidden="true">U</span>
+                        <span class="d-none d-md-inline ms-1" th:text="${user.name}">User</span>
+                    </button>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><span class="dropdown-header" th:text="${user.email}">user@college.edu</span></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/resources/upload}">
-                                <i class="bi bi-cloud-upload"></i> Upload Resource
+                        <!-- Identity -->
+                        <li class="px-3 py-2 border-bottom mb-1">
+                            <div class="fw-700" style="font-size:.875rem;color:var(--bf-text-primary);" th:text="${user.name}">Student</div>
+                            <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${user.email}">user@college.edu</div>
+                        </li>
+                        <!-- Nav items -->
+                        <li><a class="dropdown-item" th:href="@{/user/dashboard}">
+                            <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Dashboard
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/resources/my}">
+                            <i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i>My Resources
+                        </a></li>
+                        <li><a class="dropdown-item" th:href="@{/resources/upload}">
+                            <i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Upload a Resource
+                        </a></li>
+                        <li th:if="${user.year == null or user.semester == null}">
+                            <a class="dropdown-item text-warning" th:href="@{/user/complete-profile}">
+                                <i class="bi bi-exclamation-circle me-2" aria-hidden="true"></i>Complete Profile
                             </a>
                         </li>
-                        <li>
-                            <a class="dropdown-item" th:href="@{/resources/my}">
-                                <i class="bi bi-file-earmark-text"></i> My Resources
-                            </a>
-                        </li>
                         <li><hr class="dropdown-divider"></li>
+                        <!-- Logout — POST form -->
                         <li>
                             <form th:action="@{/logout}" method="post" class="m-0">
                                 <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right"></i> Logout
+                                    <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
                                 </button>
                             </form>
                         </li>
                     </ul>
-                </div>
-
-                <!-- Logout button -->
-                <form th:action="@{/logout}" method="post" class="m-0 d-none d-lg-block">
-                    <button type="submit" class="bf-nav-btn bf-nav-btn-outline border-0"
-                            style="font-size:0.84rem;padding:0.35rem 0.85rem;">
-                        <i class="bi bi-box-arrow-right me-1"></i>Logout
-                    </button>
-                </form>
-            </div>
+                </li>
+            </ul>
         </div>
     </div>
 </nav>
 
-<!-- ═══════════ HERO ═════════════════════════════════════════ -->
-<div class="dash-hero">
+<!-- ═══════════ HERO ══════════════════════════════════════════ -->
+<div class="dash-hero" aria-label="Dashboard welcome">
     <div class="container">
         <div class="d-flex flex-wrap align-items-center gap-2 mb-2"
              th:if="${user.year != null and user.semester != null}">
-            <span class="dash-year-pill">
-                <i class="bi bi-mortarboard"></i>
+            <span class="dash-pill">
+                <i class="bi bi-mortarboard" aria-hidden="true"></i>
                 Year <span th:text="${user.year}"></span>
             </span>
-            <span class="dash-year-pill">
+            <span class="dash-pill">
                 Semester <span th:text="${user.semester}"></span>
             </span>
         </div>
-
         <h1 class="dash-hero-name">
             Welcome back, <span th:text="${user.name}">Student</span>
         </h1>
         <p class="dash-hero-sub">Discover and share academic resources with your peers.</p>
-
         <div class="d-flex flex-wrap gap-2">
             <a th:href="@{/resources}" class="dash-hero-btn-primary">
-                <i class="bi bi-search"></i> Browse Library
+                <i class="bi bi-search" aria-hidden="true"></i> Browse Library
             </a>
             <a th:href="@{/resources/upload}" class="dash-hero-btn-ghost">
-                <i class="bi bi-cloud-upload"></i> Upload Resource
+                <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
             </a>
         </div>
     </div>
 </div>
 
-<!-- ═══════════ BODY ══════════════════════════════════════════ -->
-<main class="dash-body">
+<!-- ═══════════ MAIN BODY ═════════════════════════════════════ -->
+<main class="bf-page-main" id="main-content">
     <div class="container">
 
-        <!-- Profile completion success flash -->
+        <!-- Profile-completion success flash -->
         <div th:if="${profileSuccess}"
              class="alert alert-success auto-dismiss d-flex align-items-center gap-2 mb-3"
-             role="alert">
-            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+             role="status" aria-live="polite">
+            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
             <span th:text="${profileSuccess}"></span>
         </div>
 
-        <!-- Personalised suggestion — only when year + semester set -->
-        <div class="dash-strip" th:if="${user.year != null and user.semester != null}">
-            <i class="bi bi-lightning-charge-fill"></i>
+        <!-- Personalised suggestion strip -->
+        <div class="dash-strip" th:if="${user.year != null and user.semester != null}"
+             role="note">
+            <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
             <span>
-                Suggested for
+                Resources for
                 <strong>Year <span th:text="${user.year}"></span>,
                 Sem <span th:text="${user.semester}"></span></strong> —
                 <a th:href="@{/resources(year=${user.year},semester=${user.semester})}">Browse now &rarr;</a>
@@ -362,99 +309,67 @@
 
         <div class="row g-4">
 
-            <!-- ─── Main column ──────────────────────────────── -->
+            <!-- ── Quick actions ─────────────────────────── -->
             <div class="col-lg-8">
-
                 <p class="bf-section-label mb-3">Quick Actions</p>
                 <div class="row g-3">
 
-                    <!-- Browse Library -->
                     <div class="col-sm-4">
                         <a th:href="@{/resources}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-teal">
-                                <i class="bi bi-journals"></i>
-                            </div>
+                            <div class="dash-qcard-icon bf-icon-teal"><i class="bi bi-journals" aria-hidden="true"></i></div>
                             <p class="dash-qcard-title">Browse Library</p>
-                            <p class="dash-qcard-desc">
-                                Explore verified notes, PYQs, and reference materials.
-                            </p>
-                            <span class="dash-qcard-cta">
-                                Open <i class="bi bi-arrow-right"></i>
-                            </span>
+                            <p class="dash-qcard-desc">Explore verified notes, PYQs, and reference materials.</p>
+                            <span class="dash-qcard-cta">Open <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                         </a>
                     </div>
 
-                    <!-- Upload Resource -->
                     <div class="col-sm-4">
                         <a th:href="@{/resources/upload}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-blue">
-                                <i class="bi bi-cloud-upload"></i>
-                            </div>
+                            <div class="dash-qcard-icon bf-icon-blue"><i class="bi bi-cloud-upload" aria-hidden="true"></i></div>
                             <p class="dash-qcard-title">Upload Resource</p>
-                            <p class="dash-qcard-desc">
-                                Share your notes. Submissions are reviewed before going live.
-                            </p>
-                            <span class="dash-qcard-cta">
-                                Upload <i class="bi bi-arrow-right"></i>
-                            </span>
+                            <p class="dash-qcard-desc">Share your notes. Submissions are reviewed before going live.</p>
+                            <span class="dash-qcard-cta">Upload <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                         </a>
                     </div>
 
-                    <!-- My Resources -->
                     <div class="col-sm-4">
                         <a th:href="@{/resources/my}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-green">
-                                <i class="bi bi-file-earmark-text"></i>
-                            </div>
+                            <div class="dash-qcard-icon bf-icon-green"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></div>
                             <p class="dash-qcard-title">My Resources</p>
-                            <p class="dash-qcard-desc">
-                                Track the status of your submissions — pending, approved, or rejected.
-                            </p>
-                            <span class="dash-qcard-cta">
-                                View <i class="bi bi-arrow-right"></i>
-                            </span>
+                            <p class="dash-qcard-desc">Track your submissions — pending, approved, or rejected.</p>
+                            <span class="dash-qcard-cta">View <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                         </a>
                     </div>
 
                 </div>
             </div>
 
-            <!-- ─── Profile column ───────────────────────────── -->
+            <!-- ── Profile card ──────────────────────────── -->
             <div class="col-lg-4">
 
-                <!-- ── COMPLETE PROFILE STATE ─────────────────── -->
+                <!-- Complete profile -->
                 <div class="dash-profile" th:if="${user.year != null and user.semester != null}">
-
                     <div class="dash-profile-header">
                         <div class="dash-profile-avatar"
-                             th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</div>
+                             th:text="${#strings.substring(user.name, 0, 1)}"
+                             aria-hidden="true">U</div>
                         <div style="min-width:0;">
-                            <p class="dash-profile-name"
-                               th:text="${#strings.toUpperCase(user.name)}">STUDENT NAME</p>
+                            <p class="dash-profile-name" th:text="${user.name}">Student Name</p>
                             <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
                         </div>
                     </div>
-
-                    <div class="dash-profile-body">
-
-                        <!-- Email verification status -->
+                    <div>
                         <div class="dash-profile-row">
-                            <span class="dash-profile-label">
-                                <i class="bi bi-shield-check"></i> Status
-                            </span>
+                            <span class="dash-profile-label"><i class="bi bi-shield-check" aria-hidden="true"></i> Status</span>
                             <span th:if="${user.emailVerified}" class="dash-chip-ok">
-                                <i class="bi bi-check-circle-fill"></i> Verified
+                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Verified
                             </span>
                             <span th:if="${!user.emailVerified}" class="dash-chip-warn">
-                                <i class="bi bi-exclamation-circle-fill"></i> Unverified
+                                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Unverified
                             </span>
                         </div>
-
-                        <!-- Year — word form -->
                         <div class="dash-profile-row">
-                            <span class="dash-profile-label">
-                                <i class="bi bi-mortarboard"></i> Year
-                            </span>
+                            <span class="dash-profile-label"><i class="bi bi-mortarboard" aria-hidden="true"></i> Year</span>
                             <span class="dash-profile-value">
                                 <th:block th:switch="${user.year}">
                                     <span th:case="1">First Year</span>
@@ -465,121 +380,76 @@
                                 </th:block>
                             </span>
                         </div>
-
-                        <!-- Semester -->
                         <div class="dash-profile-row">
-                            <span class="dash-profile-label">
-                                <i class="bi bi-bookmark-check"></i> Semester
-                            </span>
-                            <span class="dash-profile-value"
-                                  th:text="'Semester ' + ${user.semester}">Semester 6</span>
+                            <span class="dash-profile-label"><i class="bi bi-bookmark-check" aria-hidden="true"></i> Semester</span>
+                            <span class="dash-profile-value" th:text="'Semester ' + ${user.semester}">Semester 6</span>
                         </div>
-
-                        <!-- Role -->
                         <div class="dash-profile-row">
-                            <span class="dash-profile-label">
-                                <i class="bi bi-person-badge"></i> Role
-                            </span>
+                            <span class="dash-profile-label"><i class="bi bi-person-badge" aria-hidden="true"></i> Role</span>
                             <span class="dash-profile-value" th:text="${user.role}">USER</span>
                         </div>
-
                     </div>
-
-                    <!-- Edit Profile CTA -->
-                    <div style="padding:1rem 1.35rem;border-top:1px solid var(--bf-border-subtle);">
-                        <a th:href="@{/user/complete-profile}"
-                           class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-pencil me-1"></i> Edit Profile
+                    <div style="padding:0.875rem 1.35rem;border-top:1px solid var(--bf-border-subtle);">
+                        <a th:href="@{/user/complete-profile}" class="btn btn-outline-primary btn-sm w-100">
+                            <i class="bi bi-pencil me-1" aria-hidden="true"></i> Edit Profile
                         </a>
                     </div>
-
                 </div>
-                <!-- end complete state -->
 
-                <!-- ── INCOMPLETE PROFILE STATE ───────────────── -->
+                <!-- Incomplete profile -->
                 <div class="dash-profile" th:if="${user.year == null or user.semester == null}">
-
-                    <!-- Header — same avatar/name/email layout -->
                     <div class="dash-profile-header">
                         <div class="dash-profile-avatar"
-                             th:text="${#strings.substring(user.name, 0, 1).toUpperCase()}">U</div>
+                             th:text="${#strings.substring(user.name, 0, 1)}"
+                             aria-hidden="true">U</div>
                         <div style="min-width:0;">
-                            <p class="dash-profile-name"
-                               th:text="${#strings.toUpperCase(user.name)}">STUDENT NAME</p>
+                            <p class="dash-profile-name" th:text="${user.name}">Student Name</p>
                             <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
                         </div>
                     </div>
-
-                    <!-- Verification status row -->
-                    <div class="dash-profile-body">
+                    <div>
                         <div class="dash-profile-row">
-                            <span class="dash-profile-label">
-                                <i class="bi bi-shield-check"></i> Status
-                            </span>
+                            <span class="dash-profile-label"><i class="bi bi-shield-check" aria-hidden="true"></i> Status</span>
                             <span th:if="${user.emailVerified}" class="dash-chip-ok">
-                                <i class="bi bi-check-circle-fill"></i> Verified
+                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Verified
                             </span>
                             <span th:if="${!user.emailVerified}" class="dash-chip-warn">
-                                <i class="bi bi-exclamation-circle-fill"></i> Unverified
+                                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Unverified
                             </span>
                         </div>
                     </div>
-
-                    <!-- Incomplete warning -->
                     <div style="padding:1rem 1.35rem;">
-                        <div style="
-                            background:#fffbeb;
-                            border:1px solid #fde68a;
-                            border-radius:8px;
-                            padding:0.85rem 1rem;
-                            margin-bottom:0.85rem;">
-                            <p style="
-                                font-size:0.82rem;
-                                font-weight:700;
-                                color:#92400e;
-                                margin:0 0 0.25rem;
-                                display:flex;
-                                align-items:center;
-                                gap:0.35rem;">
-                                <i class="bi bi-exclamation-triangle-fill"></i>
+                        <div class="dash-profile-incomplete-warn" role="alert">
+                            <p class="dash-profile-incomplete-warn__title">
+                                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
                                 Profile incomplete
                             </p>
-                            <p style="
-                                font-size:0.78rem;
-                                color:#a16207;
-                                margin:0;
-                                line-height:1.5;">
-                                Add your academic year and semester to personalise
-                                your BookFlow experience.
+                            <p class="dash-profile-incomplete-warn__body">
+                                Add your academic year and semester to personalise your BookFlow experience.
                             </p>
                         </div>
-                        <a th:href="@{/user/complete-profile}"
-                           class="btn btn-primary btn-sm w-100">
-                            <i class="bi bi-person-check me-1"></i> Complete Profile
+                        <a th:href="@{/user/complete-profile}" class="btn btn-primary btn-sm w-100">
+                            <i class="bi bi-person-check me-1" aria-hidden="true"></i> Complete Profile
                         </a>
                     </div>
-
                 </div>
-                <!-- end incomplete state -->
 
             </div>
-            <!-- end profile column -->
-
         </div>
     </div>
 </main>
 
-<!-- ═══════════ FOOTER ═══════════════════════════════════════ -->
-<footer class="bf-footer" style="padding:0.875rem 0;">
+<!-- ═══════════ FOOTER ════════════════════════════════════════ -->
+<footer class="bf-footer bf-footer--compact" role="contentinfo">
     <div class="container">
-        <div class="bf-footer-bottom" style="padding:0.25rem 0;">
+        <div class="bf-footer-bottom">
             <span>&copy; 2026 BookFlow</span>
         </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

@@ -14,16 +14,17 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg bf-navbar">
+<!-- Minimal nav -->
+<nav class="navbar bf-navbar" aria-label="Site navigation">
     <div class="container">
         <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon"><i class="bi bi-book-half"></i></span>
+            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
             BookFlow
         </a>
     </div>
 </nav>
 
-<div class="bf-auth-wrap">
+<main class="auth-page" id="main-content">
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
@@ -31,12 +32,12 @@
                 <div class="bf-card">
                     <div class="bf-card-body text-center">
 
-                        <!-- Icon -->
-                        <div class="bf-verify-icon">
+                        <!-- Email icon -->
+                        <div class="bf-verify-icon" aria-hidden="true">
                             <i class="bi bi-envelope-at"></i>
                         </div>
 
-                        <h2 class="h5 fw-bold mb-1">Check your college email</h2>
+                        <h1 class="h5 fw-bold mb-1">Check your college email</h1>
                         <p class="text-muted mb-4" style="font-size:.875rem;">
                             We sent a verification link to your
                             <strong class="text-dark">college</strong> address.
@@ -46,18 +47,19 @@
                         <!-- Mail delivery failure -->
                         <div th:if="${mailError}"
                              class="alert alert-danger d-flex align-items-start gap-2 text-start mb-3"
-                             role="alert">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1"></i>
+                             role="alert" aria-live="polite">
+                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1" aria-hidden="true"></i>
                             <div style="font-size:.85rem;">
-                                <strong>Email not sent.</strong> <span th:text="${mailError}"></span>
+                                <strong>Email not sent.</strong>
+                                <span th:text="${mailError}"></span>
                             </div>
                         </div>
 
-                        <!-- Registration flash -->
+                        <!-- Registration email flash -->
                         <div th:if="${registeredEmail}"
                              class="alert alert-info d-flex align-items-center gap-2 text-start mb-3"
-                             role="alert">
-                            <i class="bi bi-info-circle-fill flex-shrink-0"></i>
+                             role="status" aria-live="polite">
+                            <i class="bi bi-info-circle-fill flex-shrink-0" aria-hidden="true"></i>
                             <span style="font-size:.85rem;">
                                 Verification email sent to
                                 <strong th:text="${registeredEmail}"></strong>.
@@ -67,22 +69,21 @@
                         <!-- Resend success -->
                         <div th:if="${resendSuccess}"
                              class="alert alert-success auto-dismiss d-flex align-items-center gap-2 text-start mb-3"
-                             role="alert">
-                            <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                             role="status" aria-live="polite">
+                            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
                             <span style="font-size:.85rem;" th:text="${resendSuccess}"></span>
                         </div>
 
-                        <!-- Tip -->
-                        <div class="alert alert-warning d-flex align-items-start gap-2 text-start mb-4"
-                             role="alert">
-                            <i class="bi bi-lightbulb flex-shrink-0 mt-1" style="font-size:.85rem;"></i>
+                        <!-- Spam tip -->
+                        <div class="alert alert-warning d-flex align-items-start gap-2 text-start mb-4" role="note">
+                            <i class="bi bi-lightbulb flex-shrink-0 mt-1" style="font-size:.85rem;" aria-hidden="true"></i>
                             <div style="font-size:.82rem;">
-                                <strong>Didn't receive it?</strong> Check your spam/junk folder.
-                                Links expire after 24 hours.
+                                <strong>Didn't receive it?</strong>
+                                Check your spam or junk folder. Links expire after 24 hours.
                             </div>
                         </div>
 
-                        <!-- Resend form — action/name preserved exactly -->
+                        <!-- Resend form — action and field name preserved exactly -->
                         <form th:action="@{/resend-verification}" method="post" class="mb-3">
                             <label class="form-label text-start d-block" style="font-size:.82rem;">
                                 Request a new verification link
@@ -91,16 +92,18 @@
                                 <input type="email" name="email"
                                        class="form-control"
                                        th:value="${email}"
-                                       placeholder="your.email@college.edu"
+                                       placeholder="your.email@pvppcoe.ac.in"
+                                       autocomplete="email"
+                                       aria-label="Email address for resend"
                                        required>
                                 <button type="submit" class="btn btn-primary">Resend</button>
                             </div>
                         </form>
 
-                        <div class="bf-divider"></div>
+                        <hr class="bf-divider">
 
                         <a th:href="@{/login}" class="text-muted" style="font-size:.82rem;">
-                            <i class="bi bi-arrow-left me-1"></i>Back to Login
+                            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Sign In
                         </a>
 
                     </div>
@@ -109,16 +112,18 @@
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<footer class="bf-footer">
-    <div class="container text-center">
-        &copy; 2026 BookFlow
+<footer class="bf-footer bf-footer--compact" role="contentinfo">
+    <div class="container">
+        <div class="bf-footer-bottom" style="padding:.4rem 0;border-top:none;">
+            <span>&copy; 2026 BookFlow</span>
+        </div>
     </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

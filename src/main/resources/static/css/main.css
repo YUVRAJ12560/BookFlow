@@ -198,6 +198,12 @@ a:hover { color: #1d4ed8; text-decoration: none; }
     border-radius: var(--bf-radius-md);
     transition: var(--bf-transition-fast);
     border: 1px solid transparent;
+    /* Support <button> as the trigger element */
+    background: transparent;
+    line-height: inherit;
+    font-family: inherit;
+    cursor: pointer;
+    text-decoration: none;
 }
 .bf-user-trigger:hover {
     color: #ffffff !important;
@@ -229,11 +235,9 @@ a:hover { color: #1d4ed8; text-decoration: none; }
     padding: 0.5rem;
     min-width: 220px;
     margin-top: 0.5rem;
-    animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes dropdownFadeIn {
-    from { opacity: 0; transform: translateY(-4px); }
-    to { opacity: 1; transform: translateY(0); }
+    /* NO animation here — Bootstrap 5 manages its own transition internally.
+       A custom CSS animation on .dropdown-menu conflicts with Bootstrap's
+       transitionend listener, preventing the dropdown from opening reliably. */
 }
 .dropdown-header {
     font-size: 0.75rem;
@@ -1005,6 +1009,69 @@ a:hover { color: #1d4ed8; text-decoration: none; }
    Home page — CTA section & site footer
    ============================================================= */
 
+/* ── Shared page components (used across authenticated pages) ─ */
+
+/* Profile incomplete warning card — used on user/dashboard.html */
+.dash-profile-incomplete-warn {
+    background: var(--bf-warning-bg);
+    border: 1px solid var(--bf-warning-border);
+    border-radius: 8px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 0.85rem;
+}
+.dash-profile-incomplete-warn__title {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--bf-warning-text);
+    margin: 0 0 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.dash-profile-incomplete-warn__body {
+    font-size: 0.78rem;
+    color: var(--bf-warning-text);
+    opacity: 0.85;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Compact footer — slim single-line version used on inner pages */
+.bf-footer--compact {
+    padding: 0.875rem 0;
+}
+.bf-footer--compact .bf-footer-bottom {
+    padding: 0.25rem 0;
+    border-top: none;
+}
+
+/* Page-level main padding — replaces inline style="padding:..." */
+.bf-page-main {
+    padding: 1.5rem 0 2.5rem;
+    background: var(--bf-bg-canvas);
+    flex: 1;
+}
+
+/* ── Homepage section wrappers ───────────────────────────── */
+/* Features — white background, border-bottom, controlled padding */
+.bf-features-section {
+    background: #ffffff;
+    border-bottom: 1px solid var(--bf-border-default);
+    padding: 3rem 0 2.75rem;
+}
+
+/* How It Works — light grey background, tight padding */
+.bf-workflow-section {
+    background: var(--bf-bg-canvas);
+    border-bottom: 1px solid var(--bf-border-default);
+    padding: 3rem 0 2.75rem;
+}
+
+@media (max-width: 767.98px) {
+    .bf-features-section,
+    .bf-workflow-section { padding: 2.25rem 0 2rem; }
+}
+
 /* ── CTA section ──────────────────────────────────────────── */
 .home-cta {
     background: var(--bf-navy-900);
@@ -1129,3 +1196,2147 @@ a:hover { color: #1d4ed8; text-decoration: none; }
         text-align: center;
     }
 }
+
+
+/* =============================================================
+   Hero v2  —  ported from Lovable ui-sketch-builder-main
+   oklch colors translated to hex/rgba; font: Inter (existing)
+   ============================================================= */
+
+/* ── Hero v2 section ──────────────────────────────────────── */
+.bf-hero2 {
+    position: relative;
+    /* Use clip-path instead of overflow:hidden so absolute cards
+       within bf-stage (which lives inside the grid, not outside it)
+       are never clipped, while the section boundary stays clean */
+    overflow: hidden;
+    color: #ffffff;
+    background:
+        radial-gradient(60% 70% at 85% 30%, rgba(59, 130, 246, 0.28) 0%, transparent 70%),
+        radial-gradient(50% 60% at 0% 100%, rgba(30, 58, 138, 0.50) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2744 0%, #1e2d4a 100%);
+}
+
+/* Grid pattern overlay */
+.bf-hero2::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(70% 70% at 70% 40%, black, transparent);
+    mask-image: radial-gradient(70% 70% at 70% 40%, black, transparent);
+}
+
+/* Two-column inner layout */
+.bf-hero2__inner {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 4rem;
+    align-items: center;
+    padding: 88px 1.5rem 80px;   /* tightened bottom: 96→80px */
+    max-width: 1200px;
+    margin: 0 auto;
+}
+@media (max-width: 960px) {
+    .bf-hero2__inner {
+        grid-template-columns: 1fr;
+        padding: 64px 1.5rem 64px;
+        gap: 2.5rem;
+    }
+}
+@media (max-width: 640px) {
+    .bf-hero2__inner {
+        padding: 48px 1rem 52px;
+    }
+}
+
+/* Constrain left column so heading/tagline don't stretch too wide on 1440px+ */
+.bf-hero2__inner > div:first-child {
+    max-width: 540px;
+}
+@media (max-width: 960px) {
+    .bf-hero2__inner > div:first-child {
+        max-width: none;  /* full width when stacked */
+    }
+}
+
+/* ── Eyebrow pill ─────────────────────────────────────────── */
+/* Shared entrance keyframe used by all left-column hero elements.
+   Each element references it with a different delay (0.05s–0.55s)
+   so they cascade into view sequentially on page load. */
+@keyframes bf-hero-enter {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+.bf-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 28px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.14);
+    background: rgba(255,255,255,0.04);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #b8c5e8;
+    /* Entrance: fade up, slightly delayed so page paint is done */
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.05s both;
+}
+/* the animated dot inside eyebrow */
+.bf-eyebrow i.bf-eyebrow-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 999px;
+    background: #6ea3f7;
+    display: inline-block;
+    font-style: normal;
+    flex-shrink: 0;
+}
+
+/* ── Hero heading (static) ────────────────────────────────── */
+.bf-h1 {
+    font-size: clamp(34px, 4.6vw, 54px);
+    line-height: 1.12;
+    letter-spacing: -0.03em;
+    font-weight: 800;
+    margin: 20px 0 0;
+    color: #ffffff;
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+/* Slightly muted second line of the heading — clearly smaller than line 1 */
+.bf-h1-sub {
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.72em;   /* e.g. ~39px at 54px — intentional size contrast */
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+@media (max-width: 640px) {
+    .bf-h1 { font-size: 32px; }
+}
+
+/* ── Animated supporting tagline ─────────────────────────── */
+/*
+  The tagline sits below the heading at a smaller font size.
+  It is a <p> with display:block so it always occupies the full
+  left-column width — long phrases wrap naturally, never overflowing
+  into the card area.
+
+  The rotator container uses position:relative + overflow:hidden to
+  clip the translateY slide. Its min-height reserves space for the
+  longest phrase so the layout never jumps between rotations.
+
+  Width budget (left column ≈ 556px at 1200px, 664px at 1440px):
+    "Previous Year Question Papers" at 22px Inter 600 ≈ 280px → 1 line ✓
+  At 375px mobile (≈ 343px usable, 18px font):
+    same phrase ≈ 215px → still 1 line ✓  — no wrapping needed at all.
+*/
+.bf-tagline {
+    margin: 16px 0 0;
+    padding: 0;
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.25s both;
+}
+
+.bf-tagline__rotator {
+    display: block;
+    position: relative;
+    overflow: hidden;
+    /* min-height = exactly one line at this font's line-height so layout
+       never collapses between rotation phases */
+    min-height: calc(1.5em + 2px);  /* line-height 1.5 + tiny breathing room */
+    font-size: clamp(16px, 1.5vw, 20px);
+    font-weight: 600;
+    line-height: 1.5;
+    color: #7ab3f8;
+    letter-spacing: -0.01em;
+}
+
+.bf-tagline__rotator > span {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    white-space: normal;
+    word-break: break-word;
+    opacity: 0;
+    /* 12s total: each phrase visible ~2s, 0.6s fade-in, 0.6s fade-out     */
+    animation: bf-tagline-rotate 12s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+.bf-tagline__rotator > span:nth-child(1) { animation-delay:  0s;  }
+.bf-tagline__rotator > span:nth-child(2) { animation-delay:  3s;  }
+.bf-tagline__rotator > span:nth-child(3) { animation-delay:  6s;  }
+.bf-tagline__rotator > span:nth-child(4) { animation-delay:  9s;  }
+
+/* Keyframe breakdown (12s cycle, 4 phrases × 3s slots):
+     0–5%   (0–0.6s)  : enter — fade up from +10px
+     6–19%  (0.7–2.3s) : hold fully visible
+     20–24% (2.4–2.9s) : exit  — fade up to -10px
+     25–100%           : hidden, off-stage                         */
+@keyframes bf-tagline-rotate {
+    0%          { opacity: 0; transform: translateY(10px);  }
+    5%,  19%    { opacity: 1; transform: translateY(0);     }
+    24%, 100%   { opacity: 0; transform: translateY(-10px); }
+}
+
+@media (max-width: 640px) {
+    .bf-tagline__rotator { min-height: 3em; }
+}
+
+/* Tombstone rules for removed classes — prevent any stale matches */
+.bf-h1-static,
+.bf-rotator,
+.bf-rotator > span,
+.bf-h1-suffix,
+.bf-h1-prefix,
+.bf-h1-prefix::after,
+.bf-rotator-inner { display: none !important; }
+
+/* ── Lead paragraph ───────────────────────────────────────── */
+.bf-hero2__lead {
+    margin-top: 20px;
+    font-size: 17px;
+    line-height: 1.6;
+    color: rgba(210, 220, 240, 0.85);
+    max-width: 50ch;
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+}
+
+/* ── CTA row ──────────────────────────────────────────────── */
+.bf-hero2__ctas {
+    display: flex;
+    gap: 12px;
+    margin-top: 32px;
+    flex-wrap: wrap;
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+}
+
+/* Sizing modifier */
+.bf-btn--lg {
+    height: 48px;
+    padding: 0 22px;
+    font-size: 0.9375rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, transform 0.15s, box-shadow 0.15s;
+    border: 1px solid transparent;
+    white-space: nowrap;
+}
+
+/* Hero primary button (accent blue) */
+.bf-btn--hero {
+    background: var(--bf-blue-600);
+    color: #ffffff !important;
+    box-shadow: 0 8px 24px -8px rgba(59,130,246,0.70);
+}
+.bf-btn--hero:hover {
+    background: #2563eb;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: 0 10px 28px -6px rgba(59,130,246,0.65);
+}
+.bf-btn--hero:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+/* Hero outline button (dark background) */
+.bf-btn--outline-dark {
+    background: transparent;
+    color: rgba(255,255,255,0.9) !important;
+    border-color: rgba(255,255,255,0.30);
+}
+.bf-btn--outline-dark:hover {
+    background: rgba(255,255,255,0.08);
+    color: #ffffff !important;
+    border-color: rgba(255,255,255,0.55);
+}
+.bf-btn--outline-dark:active {
+    transform: translateY(0);
+    filter: brightness(0.95);
+}
+
+/* ── Trust badge list ─────────────────────────────────────── */
+.bf-trust {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    margin: 28px 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.8125rem;
+    color: rgba(200,215,240,0.80);
+    animation: bf-hero-enter 0.7s cubic-bezier(0.22, 1, 0.36, 1) 0.55s both;
+}
+.bf-trust li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.bf-trust li i {
+    color: #6ea3f7;
+    font-size: 1rem;
+}
+
+/* ── Right-side stage (card cluster) ─────────────────────── */
+.bf-stage {
+    position: relative;
+    height: 520px;
+    overflow: visible; /* let card shadows breathe outside the box */
+}
+@media (max-width: 960px) {
+    .bf-stage {
+        height: 460px;
+        max-width: 520px;
+        width: 100%;
+        margin: 0 auto;
+    }
+}
+@media (max-width: 520px) {
+    .bf-stage {
+        height: auto;
+        display: grid;
+        gap: 12px;
+    }
+}
+
+/* ── Individual floating doc cards ───────────────────────── */
+.bf-doc {
+    position: absolute;
+    width: min(300px, 80%);
+    opacity: 0;
+    /* Each card gets its own entrance keyframe (--1/2/3) below
+       so the entry vector differs per card for depth variety.
+       animation-fill-mode: forwards keeps the final opacity:1 state. */
+}
+
+/* Card 1 — prominent foreground card, left-centre of stage */
+.bf-doc--1 {
+    top: 28%;
+    left: 4%;
+    z-index: 3;
+    animation: bf-enter-1 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.3s forwards;
+}
+/* Card 2 — top-right, slightly smaller perceived depth */
+.bf-doc--2 {
+    top: 2%;
+    right: 0%;
+    z-index: 2;
+    animation: bf-enter-2 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.55s forwards;
+}
+/* Card 3 — bottom-right, offset left so it doesn't stack directly under card 2 */
+.bf-doc--3 {
+    bottom: 2%;
+    right: 5%;
+    z-index: 1;
+    animation: bf-enter-3 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.8s forwards;
+}
+
+/* Three distinct entrance vectors — each starts with its own
+   translate+rotate so they visually arrive from different depths */
+@keyframes bf-enter-1 {
+    from { opacity: 0; transform: translateY(28px) translateX(-8px) rotate(-1.5deg); }
+    to   { opacity: 1; transform: translateY(0)    translateX(0)    rotate(0deg);    }
+}
+@keyframes bf-enter-2 {
+    from { opacity: 0; transform: translateY(-20px) translateX(12px) rotate(1.2deg); }
+    to   { opacity: 1; transform: translateY(0)     translateX(0)    rotate(0deg);   }
+}
+@keyframes bf-enter-3 {
+    from { opacity: 0; transform: translateY(20px) translateX(10px) rotate(0.8deg); }
+    to   { opacity: 1; transform: translateY(0)    translateX(0)    rotate(0deg);   }
+}
+
+/* ── Per-card floating idle animation ─────────────────────── */
+/* Each card floats on its own rhythm with a very subtle rotation
+   so the cluster feels alive but never distracting.
+   Delays start after the entrance completes (card 3 finishes at ~1.6s). */
+.bf-doc__float {
+    animation: bf-float-1 3.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) 1.2s infinite;
+}
+.bf-doc--2 .bf-doc__float {
+    animation: bf-float-2 4.5s cubic-bezier(0.45, 0.05, 0.55, 0.95) 1.4s infinite;
+}
+.bf-doc--3 .bf-doc__float {
+    animation: bf-float-3 5s cubic-bezier(0.45, 0.05, 0.55, 0.95) 1.6s infinite;
+}
+
+/* Card 1: slight upward bob with a barely perceptible tilt */
+@keyframes bf-float-1 {
+    0%,  100% { transform: translateY(0px)   rotate(0deg);     }
+    40%        { transform: translateY(-9px)  rotate(-0.4deg);  }
+    70%        { transform: translateY(-4px)  rotate( 0.2deg);  }
+}
+/* Card 2: gentler rise, opposite tilt phase */
+@keyframes bf-float-2 {
+    0%,  100% { transform: translateY(0px)   rotate(0deg);    }
+    45%        { transform: translateY(-7px)  rotate( 0.5deg); }
+    75%        { transform: translateY(-3px)  rotate(-0.2deg); }
+}
+/* Card 3: slowest, smallest movement — feels furthest back */
+@keyframes bf-float-3 {
+    0%,  100% { transform: translateY(0px)   rotate( 0deg);    }
+    50%        { transform: translateY(-5px)  rotate(-0.3deg);  }
+}
+
+/* Card surface — clean white with layered shadow for depth */
+.bf-doc__card {
+    display: block;
+    background: #ffffff;
+    color: #1e293b;
+    text-decoration: none;
+    border: 1px solid rgba(215, 225, 244, 0.85);
+    border-radius: 12px;
+    padding: 16px;
+    /* Multi-layer shadow: crisp near shadow + soft far shadow */
+    box-shadow:
+        0 1px 3px  rgba(15, 23, 42, 0.10),
+        0 8px 24px -6px  rgba(15, 23, 42, 0.22),
+        0 24px 48px -16px rgba(15, 23, 42, 0.18);
+    /* Very subtle hover lift handled by the float — no :hover needed */
+}
+/* Card 1 — blue-tinted glow to make it the visual focal point */
+.bf-doc--1 .bf-doc__card {
+    border-color: rgba(147, 197, 253, 0.40);
+    box-shadow:
+        0 0   0  1px rgba(99, 160, 255, 0.25),
+        0 8px 24px -6px  rgba(37,  99, 235, 0.20),
+        0 24px 48px -16px rgba(15, 23, 42,  0.28),
+        0 0  36px -8px  rgba(59, 130, 246, 0.18);
+}
+
+@media (max-width: 520px) {
+    .bf-doc { position: static; width: 100%; }
+    .bf-doc--3 { display: none; }
+}
+
+/* Card internals */
+.bf-doc__top {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+/* PDF file icon */
+.bf-fileicon {
+    flex-shrink: 0;
+    width: 36px;
+    height: 44px;
+    border-radius: 4px;
+    display: grid;
+    place-items: end center;
+    padding-bottom: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    position: relative;
+    background: #fff1f2;
+    color: #e02222;
+    border: 1px solid #fecaca;
+    font-style: normal;
+}
+.bf-fileicon::after {
+    content: "";
+    position: absolute;
+    top: -1px;
+    right: -1px;
+    width: 10px;
+    height: 10px;
+    background: linear-gradient(225deg, #1e2d4a 50%, #fecaca 50%);
+    border-bottom-left-radius: 3px;
+}
+
+.bf-doc__head { min-width: 0; }
+.bf-doc__cat {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--bf-blue-600);
+}
+.bf-doc__title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0f172a;
+    margin-top: 2px;
+    line-height: 1.3;
+}
+
+/* Skeleton lines */
+.bf-doc__lines {
+    margin-top: 12px;
+    display: grid;
+    gap: 6px;
+}
+.bf-doc__lines i {
+    display: block;
+    height: 6px;
+    border-radius: 3px;
+    background: #f1f5f9;
+    font-style: normal;
+}
+
+/* Meta badge row */
+.bf-doc__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #f1f5f9;
+}
+
+/* Mini badges inside cards */
+.bf-badge {
+    display: inline-flex;
+    align-items: center;
+    height: 22px;
+    padding: 0 8px;
+    border-radius: 4px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    color: #64748b;
+    white-space: nowrap;
+}
+.bf-badge--type {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+/* ── Category browse section ──────────────────────────────── */
+.bf-section {
+    padding: 64px 0 64px;   /* was 80px bottom — equalised for symmetry */
+}
+.bf-section-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+.bf-section-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--bf-navy-900);
+    margin: 0;
+}
+
+/* 5-column category grid */
+.bf-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+@media (max-width: 1024px) {
+    .bf-cat-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (max-width: 640px) {
+    .bf-cat-grid { grid-template-columns: 1fr; }
+}
+
+/* Individual category card */
+.bf-cat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.15s;
+}
+.bf-cat:hover {
+    border-color: var(--bf-blue-600);
+    box-shadow: 0 4px 12px rgba(37,99,235,0.1);
+    transform: translateY(-1px);
+    color: inherit;
+    text-decoration: none;
+}
+.bf-cat strong {
+    color: var(--bf-navy-900);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+.bf-cat span {
+    color: #64748b;
+    font-size: 0.8125rem;
+    line-height: 1.4;
+}
+
+/* Icon tile inside category card */
+.bf-icon-tile {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    background: #eff6ff;
+    color: var(--bf-blue-600);
+    display: grid;
+    place-items: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+/* Ghost button used in category section */
+.bf-btn--ghost {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    background: transparent;
+    color: #64748b;
+    border: none;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+}
+.bf-btn--ghost:hover {
+    background: #f1f5f9;
+    color: var(--bf-navy-900);
+    text-decoration: none;
+}
+
+/* ── Reduced-motion overrides ─────────────────────────────── */
+/*
+  Users who prefer reduced motion get:
+  - All cards visible immediately, no entrance or float animation
+  - Tagline shows first phrase statically, no rotation
+  - All left-column hero elements visible immediately (no fade-up)
+  - Button/card hover transitions disabled
+*/
+@media (prefers-reduced-motion: reduce) {
+
+    /* ── Hero left-column entrance — cancel and show immediately ── */
+    .bf-eyebrow,
+    .bf-h1,
+    .bf-tagline,
+    .bf-hero2__lead,
+    .bf-hero2__ctas,
+    .bf-trust {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+
+    /* ── Tagline rotator — freeze on first phrase ─────────────── */
+    .bf-tagline__rotator > span {
+        animation: none !important;
+        opacity: 0 !important;
+        transform: none !important;
+    }
+    .bf-tagline__rotator > span:first-child {
+        opacity: 1 !important;
+        /* Make first phrase flow in-document so the container has height */
+        position: relative !important;
+    }
+
+    /* ── Document cards — cancel entrance and float, show at rest ─ */
+    .bf-doc--1,
+    .bf-doc--2,
+    .bf-doc--3 {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+    }
+    .bf-doc__float {
+        animation: none !important;
+        transform: none !important;
+    }
+
+    /* ── Hover/interaction transitions ────────────────────────── */
+    .bf-btn--hero,
+    .bf-btn--outline-dark,
+    .bf-cat,
+    .bf-doc__card {
+        transition: none !important;
+    }
+}
+
+/* =============================================================
+   Missing component classes — used in templates but not yet
+   defined in main.css. Added in Part 2 audit.
+   ============================================================= */
+
+/* ── Upload zone refinements ──────────────────────────────── */
+/* Classes replacing inline styles in resources/upload.html   */
+.bf-upload-icon {
+    display: block;
+    font-size: 1.75rem;
+    color: #93c5fd;
+    margin-bottom: 0.5rem;
+}
+.bf-upload-zone__label {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #1e293b;
+}
+.bf-upload-zone__hint {
+    font-size: 0.78rem;
+    color: var(--bf-text-tertiary);
+}
+.bf-upload-file-list {
+    margin-top: 12px;
+    text-align: left;
+    width: 100%;
+    font-size: 0.85rem;
+    color: #334155;
+}
+.bf-upload-file-label {
+    font-size: 0.8rem;
+    color: var(--bf-success-text);
+    font-weight: 500;
+}
+
+/* ── View / action button (small, used on page headers) ───── */
+.bf-btn-view {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bf-blue-600);
+    color: #ffffff !important;
+    border: none;
+    border-radius: var(--bf-radius-md);
+    padding: 0.42rem 1rem;
+    font-size: 0.84rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--bf-transition-fast);
+    white-space: nowrap;
+}
+.bf-btn-view:hover { background: #1d4ed8; }
+
+/* ── My Resources table ───────────────────────────────────── */
+.bf-my-res-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+}
+.bf-my-res-table thead th {
+    background: var(--bf-bg-canvas);
+    color: var(--bf-text-tertiary);
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.65rem 1rem;
+    border-top: 1px solid var(--bf-border-default);
+    border-bottom: 1px solid var(--bf-border-default);
+    white-space: nowrap;
+}
+.bf-my-res-table thead th:first-child {
+    border-left: 1px solid var(--bf-border-default);
+    border-radius: 8px 0 0 0;
+}
+.bf-my-res-table thead th:last-child {
+    border-right: 1px solid var(--bf-border-default);
+    border-radius: 0 8px 0 0;
+}
+.bf-my-res-table tbody td {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--bf-border-subtle);
+    vertical-align: middle;
+    color: var(--bf-text-primary);
+}
+.bf-my-res-table tbody td:first-child { border-left: 1px solid var(--bf-border-default); }
+.bf-my-res-table tbody td:last-child  { border-right: 1px solid var(--bf-border-default); }
+.bf-my-res-table tbody tr:hover td    { background: var(--bf-bg-canvas); }
+.bf-my-res-table tbody tr:last-child td { border-bottom: 1px solid var(--bf-border-default); }
+.bf-my-res-table tbody tr:last-child td:first-child { border-radius: 0 0 0 8px; }
+.bf-my-res-table tbody tr:last-child td:last-child  { border-radius: 0 0 8px 0; }
+
+/* ── Empty state (shared across pages) ───────────────────── */
+.bf-empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    background: var(--bf-bg-surface);
+    border: 1px solid var(--bf-border-default);
+    border-radius: var(--bf-radius-lg);
+}
+.bf-empty-state h5 {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--bf-text-primary);
+    margin: 0 0 0.35rem;
+}
+.bf-empty-state p {
+    font-size: 0.84rem;
+    color: var(--bf-text-secondary);
+    margin: 0 0 1rem;
+}
+.bf-empty-icon {
+    width: 52px;
+    height: 52px;
+    background: var(--bf-bg-canvas);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    color: var(--bf-text-tertiary);
+    margin: 0 auto 0.875rem;
+}
+
+/* ── Pending resource review cards ───────────────────────── */
+.bf-pending-card {
+    background: var(--bf-bg-surface);
+    border: 1px solid var(--bf-border-default);
+    border-radius: var(--bf-radius-lg);
+    margin-bottom: 1rem;
+    overflow: hidden;
+    box-shadow: var(--bf-shadow-sm);
+}
+.bf-pending-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1rem 1.25rem 0.875rem;
+    background: var(--bf-bg-canvas);
+    border-bottom: 1px solid var(--bf-border-default);
+}
+.bf-pending-card-header h5 {
+    font-size: 0.975rem;
+    font-weight: 700;
+    color: var(--bf-text-primary);
+    margin: 0 0 0.4rem;
+    line-height: 1.3;
+    overflow-wrap: anywhere;
+}
+.bf-pending-card-body {
+    padding: 1.1rem 1.25rem;
+}
+.bf-pending-card-footer {
+    padding: 0.875rem 1.25rem;
+    background: var(--bf-bg-canvas);
+    border-top: 1px solid var(--bf-border-default);
+}
+
+/* Definition list inside pending card */
+.bf-dl {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 0;
+    margin: 0;
+}
+.bf-dl dt, .bf-dl dd {
+    padding: 0.45rem 0;
+    border-top: 1px solid var(--bf-border-subtle);
+    margin: 0;
+    font-size: 0.84rem;
+    line-height: 1.45;
+}
+.bf-dl dt {
+    color: var(--bf-text-tertiary);
+    font-weight: 600;
+    padding-right: 0.75rem;
+}
+.bf-dl dd {
+    color: var(--bf-text-primary);
+    overflow-wrap: anywhere;
+}
+.bf-dl > :nth-child(1),
+.bf-dl > :nth-child(2) { border-top: none; }
+
+/* Uploader chip inside pending card */
+.bf-uploader-chip {
+    background: var(--bf-bg-canvas);
+    border: 1px solid var(--bf-border-default);
+    border-radius: var(--bf-radius-md);
+    padding: 0.875rem 1rem;
+    height: 100%;
+}
+.bf-uploader-chip .name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--bf-text-primary);
+    overflow-wrap: anywhere;
+}
+.bf-uploader-chip .email {
+    font-size: 0.775rem;
+    color: var(--bf-text-tertiary);
+    overflow-wrap: anywhere;
+}
+
+/* Approve / reject action row */
+.bf-action-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: flex-start;
+}
+.bf-reject-input {
+    flex: 1 1 260px;
+    min-width: 0;
+}
+.bf-reject-input .form-control {
+    font-size: 0.855rem;
+}
+
+@media (max-width: 767.98px) {
+    .bf-action-row { flex-direction: column; }
+    .bf-reject-input { width: 100%; flex: none; }
+    .bf-dl { grid-template-columns: 90px 1fr; }
+}
+
+/* ── Dark compact footer (admin panel) ────────────────────── */
+.bf-footer--dark {
+    background: #0f172a;
+    border-top: 1px solid rgba(255,255,255,0.06);
+}
+.bf-footer--dark .bf-footer-bottom {
+    color: rgba(255,255,255,0.35);
+    border-top-color: rgba(255,255,255,0.06);
+}
+
+/* ── Page-main background override for grey pages ─────────── */
+/* Used on library and admin pages which have a grey canvas */
+.bf-page-main[style*="background:#f8fafc"],
+.bf-page-main[style*="background:#f1f5f9"] {
+    /* Let the inline background declaration win —
+       bf-page-main sets padding and flex, background is overridden per page */
+}
+
+
+/* =============================================================
+   Phase 4 — Fine details: typography, focus, overflow,
+   consistency, responsive polish
+   ============================================================= */
+
+/* ── Focus rings ──────────────────────────────────────────── */
+/* Visible keyboard focus for all interactive elements        */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid var(--bf-blue-500);
+    outline-offset: 2px;
+    border-radius: 3px;
+}
+/* Form controls already get a box-shadow focus ring in main.css;
+   suppress the outline duplicate for them */
+.form-control:focus-visible,
+.form-select:focus-visible {
+    outline: none;
+}
+/* Dropdown items and nav links */
+.dropdown-item:focus-visible {
+    outline: 2px solid var(--bf-blue-500);
+    outline-offset: -2px;
+}
+.bf-nav-link:focus-visible,
+.bf-nav-btn:focus-visible {
+    outline: 2px solid rgba(255,255,255,0.7);
+    outline-offset: 2px;
+}
+
+/* ── Long text overflow ───────────────────────────────────── */
+/* Prevent titles, emails, filenames overflowing their cells  */
+.bf-my-res-table td:first-child > div:first-child {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.bf-my-res-table td:first-child > div:last-child {
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+/* Table responsive: horizontal scroll on small screens */
+.bf-card .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+/* Lib resource card title — clamp to 2 lines */
+.lib-res-card__title {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+/* Pending card title — allow wrap, no clamp (admin needs full context) */
+.bf-pending-card-header h5 {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+}
+/* Admin table long emails and titles */
+.adm-table td {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.adm-table td:first-child { white-space: normal; word-break: break-word; }
+
+/* ── Page banner standardisation ─────────────────────────── */
+/* bf-page-banner is used on upload, my-resources, pending     */
+.bf-page-banner {
+    background-color: var(--bf-navy-900);
+    padding: 1.5rem 0;                    /* was 2rem, tightened */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+.bf-page-banner h1 {
+    color: #ffffff;
+    font-size: 1.375rem;
+    font-weight: 700;
+    margin: 0;
+    letter-spacing: -0.02em;
+    display: flex;
+    align-items: center;
+}
+.bf-page-banner p {
+    color: rgba(255,255,255,0.60);
+    font-size: 0.875rem;
+    margin: 0.2rem 0 0;
+}
+
+/* ── Button polish ────────────────────────────────────────── */
+/* Ensure all btn-sm have consistent padding */
+.btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.8125rem;
+    border-radius: var(--bf-radius-md);
+}
+/* Danger button hover */
+.btn-danger:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+    box-shadow: var(--bf-shadow-md);
+}
+.btn-success:hover {
+    filter: brightness(1.06);
+    transform: translateY(-1px);
+    box-shadow: var(--bf-shadow-md);
+}
+/* Remove the default Bootstrap outline */
+.btn:focus { outline: none; }
+.btn:focus-visible {
+    outline: 2px solid var(--bf-blue-500);
+    outline-offset: 2px;
+}
+
+/* ── Alert refinements ────────────────────────────────────── */
+.alert {
+    border-radius: var(--bf-radius-md);
+}
+/* Auto-dismiss alerts fade out (JS closes them, but transition helps) */
+.alert.fade { transition: opacity 0.3s ease; }
+
+/* ── Form label consistency ───────────────────────────────── */
+/* Required asterisk color */
+.text-danger { color: var(--bf-danger-text) !important; }
+/* Slightly larger touch target for selects on mobile */
+@media (max-width: 767.98px) {
+    .form-select,
+    .form-control {
+        min-height: 42px;
+        font-size: 1rem; /* prevents iOS zoom on focus */
+    }
+}
+
+/* ── Navbar toggler icon color fix ───────────────────────── */
+/* Bootstrap toggler icon on dark navbar needs white lines    */
+.bf-navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255%2c255%2c255%2c0.75%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+}
+.bf-navbar .navbar-toggler {
+    border-color: rgba(255,255,255,0.2);
+}
+
+/* ── Dropdown menu polish ─────────────────────────────────── */
+/* Shared styling for all dropdowns within the dark navbar.
+   No animation property — Bootstrap 5 manages show/hide via its
+   own internal transition listener; adding a CSS animation here
+   conflicts with that listener and prevents reliable opening.   */
+.bf-navbar .dropdown-menu {
+    margin-top: 0.35rem;
+}
+/* Dropdown header styling */
+.bf-navbar .dropdown-menu .dropdown-header {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--bf-text-tertiary);
+    padding: 0.5rem 0.75rem 0.2rem;
+    overflow-wrap: anywhere;
+}
+/* Sign-out button in dropdown — full width flush */
+.dropdown-menu form.m-0 { display: block; }
+.dropdown-menu form.m-0 .dropdown-item {
+    width: 100%;
+    text-align: left;
+}
+
+/* ── Responsive navbar collapse ──────────────────────────── */
+@media (max-width: 991.98px) {
+    /* Add padding between collapsed nav links */
+    .bf-navbar .navbar-collapse {
+        padding: 0.5rem 0 0.75rem;
+        border-top: 1px solid rgba(255,255,255,0.08);
+        margin-top: 0.35rem;
+    }
+    .bf-navbar .navbar-nav .bf-nav-link {
+        padding-left: 0.25rem;
+        padding-right: 0.25rem;
+    }
+    /* Stack sign-in/get-started buttons properly */
+    .bf-navbar .navbar-nav .nav-item .bf-nav-btn {
+        display: inline-flex;
+        margin: 0.2rem 0;
+    }
+    /* User dropdown on mobile — full width trigger */
+    .bf-navbar .dropdown-menu {
+        width: 100%;
+        border: 1px solid var(--bf-border-default);
+        margin-top: 0.25rem;
+    }
+}
+
+/* ── bf-card header icon alignment ───────────────────────── */
+.bf-card-header {
+    display: flex;
+    align-items: center;
+}
+
+/* ── Consistent section-eyebrow spacing ──────────────────── */
+.bf-section-eyebrow {
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* ── Smooth page transitions ─────────────────────────────── */
+/* Very subtle fade on alert auto-dismiss */
+.alert.auto-dismiss {
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
+
+/* ── bf-page-banner icon size reset ──────────────────────── */
+/* Removes need for inline style="font-size:1.1rem" on icons  */
+.bf-page-banner h1 i.bi {
+    font-size: 1.1rem;
+    margin-right: 0.5rem;
+    flex-shrink: 0;
+}
+
+/* ── Link colour in dark panels ──────────────────────────── */
+.dash-strip a:hover { text-decoration: underline; }
+
+/* ── Admin dashboard main background ─────────────────────── */
+/* admin/dashboard.html has bg:#f1f5f9, applied via inline style.
+   This ensures the body bg doesn't bleed if main doesn't cover fully. */
+.adm-page-main { background: #f1f5f9; }
+
+/* ── Responsive table fix for my-resources at 375px ──────── */
+@media (max-width: 575.98px) {
+    .bf-my-res-table thead th:nth-child(3),
+    .bf-my-res-table thead th:nth-child(4),
+    .bf-my-res-table tbody td:nth-child(3),
+    .bf-my-res-table tbody td:nth-child(4) {
+        display: none; /* hide Branch/Subject and Year/Sem on tiny screens */
+    }
+}
+
+/* ── Category grid gap on mobile ──────────────────────────── */
+@media (max-width: 640px) {
+    .bf-cat-grid { gap: 0.5rem; }
+    .bf-cat { padding: 0.875rem; }
+}
+
+/* ── Hero CTA buttons min-width on mobile ─────────────────── */
+@media (max-width: 480px) {
+    .bf-hero2__ctas { gap: 8px; }
+    .bf-btn--lg { padding: 0 16px; font-size: 0.875rem; height: 44px; }
+}
+
+/* ── Reduced-motion: disable bf-hero-enter on all elements ── */
+/* (Already handled in the prefers-reduced-motion block above;
+    this ensures the bf-features-section / bf-workflow-section
+    .step-circle has no stray animation if one is added later) */
+@media (prefers-reduced-motion: reduce) {
+    .step-circle { transition: none !important; }
+    .feature-card-clean,
+    .dash-qcard,
+    .lib-cat,
+    .lib-res-card,
+    .bf-cat { transition: none !important; transform: none !important; }
+}
+
+
+/* =============================================================
+   Supplement — missing component styles (verify pages, divider)
+   ============================================================= */
+
+/* ── Email verification icon ──────────────────────────────── */
+.bf-verify-icon {
+    width: 64px;
+    height: 64px;
+    background: linear-gradient(135deg, var(--bf-blue-50) 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--bf-blue-600);
+    margin: 0 auto 1.25rem;
+}
+
+/* ── Simple divider line ──────────────────────────────────── */
+.bf-divider {
+    height: 1px;
+    background: var(--bf-border-default);
+    margin: 1.25rem 0;
+    border: none;
+}
+
+/* ── Status icon for verify-error page ───────────────────── */
+.bf-status-icon-error {
+    width: 64px;
+    height: 64px;
+    background: var(--bf-danger-bg);
+    border: 1px solid var(--bf-danger-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    color: var(--bf-danger-text);
+    margin: 0 auto 1.25rem;
+}
+
+/* ── Improved complete-profile page layout ───────────────── */
+.bf-complete-profile-page {
+    background: var(--bf-bg-canvas);
+    min-height: calc(100vh - 56px);
+    display: flex;
+    align-items: center;
+    padding: 2.5rem 0;
+}
+
+/* ── Navbar active link indicator ────────────────────────── */
+.bf-nav-link.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.12);
+    position: relative;
+}
+
+/* ── Resource library page main padding ──────────────────── */
+.lib-page-main {
+    padding: 1.5rem 0 3rem;
+    background: #f8fafc;
+    flex: 1;
+}
+
+/* ── Improved resource card download button ──────────────── */
+.lib-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: var(--bf-blue-600);
+    color: #fff !important;
+    border: none;
+    border-radius: 6px;
+    padding: 0.28rem 0.75rem;
+    font-size: 0.775rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background var(--bf-transition-fast);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.lib-download-btn:hover { background: #1d4ed8; color: #fff !important; }
+
+/* ── Improved step circles (how-it-works) ─────────────────── */
+.step-number {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--bf-blue-600);
+    color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.125rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.3);
+    flex-shrink: 0;
+}
+
+/* ── Admin login card improvements ───────────────────────── */
+.bf-admin-login-top .icon {
+    width: 52px;
+    height: 52px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: #ffffff;
+    margin: 0 auto 1rem;
+}
+.bf-admin-login-top h1 {
+    color: #ffffff;
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem;
+}
+.bf-admin-login-top p {
+    color: rgba(255,255,255,0.55);
+    font-size: 0.875rem;
+    margin: 0;
+}
+
+/* ── Pagination (future use, standardised) ───────────────── */
+.bf-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    margin-top: 2rem;
+    flex-wrap: wrap;
+}
+.bf-pagination a,
+.bf-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    height: 36px;
+    padding: 0 0.625rem;
+    border-radius: var(--bf-radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    border: 1px solid var(--bf-border-default);
+    color: var(--bf-text-primary);
+    background: var(--bf-bg-surface);
+    transition: all var(--bf-transition-fast);
+}
+.bf-pagination a:hover {
+    border-color: var(--bf-blue-500);
+    color: var(--bf-blue-600);
+    background: var(--bf-blue-50);
+}
+.bf-pagination .active {
+    background: var(--bf-blue-600);
+    border-color: var(--bf-blue-600);
+    color: #ffffff;
+    font-weight: 700;
+}
+
+/* ── Resource file entry row (library grouped view) ──────── */
+.lib-file-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.75rem;
+    background: var(--bf-bg-canvas);
+    border: 1px solid var(--bf-border-default);
+    border-radius: var(--bf-radius-md);
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+}
+.lib-file-row:last-child { margin-bottom: 0; }
+.lib-file-row i { color: var(--bf-blue-500); font-size: 0.875rem; flex-shrink: 0; }
+.lib-file-row span {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--bf-text-secondary);
+    min-width: 0;
+}
+
+/* ── Info/note box ───────────────────────────────────────── */
+.bf-info-note {
+    background: var(--bf-info-bg);
+    border: 1px solid var(--bf-info-border);
+    border-radius: var(--bf-radius-md);
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.845rem;
+    color: var(--bf-info-text);
+}
+.bf-info-note i { flex-shrink: 0; font-size: 0.95rem; margin-top: 0.05rem; }
+
+/* ── Badge type (inline, not inside bf-badge-type from badges section) ── */
+.bf-badge-type {
+    background: var(--bf-info-bg);
+    color: var(--bf-info-text);
+    border: 1px solid var(--bf-info-border);
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+}
+
+/* ── Mobile responsive for dashboard quick cards ─────────── */
+@media (max-width: 575.98px) {
+    .dash-qcard { padding: 1rem 1rem 0.875rem; }
+    .dash-hero  { padding: 1.25rem 0; }
+}
+
+/* ── Hover state for bf-pending-card approve button ─────── */
+.bf-pending-card-footer .btn-success {
+    background: #16a34a;
+    border-color: #16a34a;
+    color: #fff !important;
+    font-weight: 600;
+}
+.bf-pending-card-footer .btn-success:hover {
+    background: #15803d;
+    border-color: #15803d;
+}
+
+/* ── Admin page header nav adjustment for full-width ─────── */
+.adm-nav-full { padding-left: 1.5rem; padding-right: 1.5rem; }
+
+/* ── Smooth scrollbar for table-responsive ───────────────── */
+.table-responsive { scrollbar-width: thin; scrollbar-color: #cbd5e1 transparent; }
+.table-responsive::-webkit-scrollbar { height: 5px; }
+.table-responsive::-webkit-scrollbar-track { background: transparent; }
+.table-responsive::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+
+/* ── Upload zone file list item ──────────────────────────── */
+.bf-file-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.625rem;
+    background: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--bf-radius-sm);
+    margin-top: 0.375rem;
+    font-size: 0.82rem;
+    color: #15803d;
+    font-weight: 500;
+}
+
+/* ── Section separator ───────────────────────────────────── */
+.bf-section-sep {
+    height: 1px;
+    background: var(--bf-border-default);
+    margin: 0;
+    border: none;
+}
+
+/* ── Hero section bg wrapper (ensures full bleed) ────────── */
+.bf-hero2-wrap {
+    background:
+        radial-gradient(60% 70% at 85% 30%, rgba(59, 130, 246, 0.28) 0%, transparent 70%),
+        radial-gradient(50% 60% at 0% 100%, rgba(30, 58, 138, 0.50) 0%, transparent 70%),
+        linear-gradient(180deg, #1a2744 0%, #1e2d4a 100%);
+}
+
+/* ── Ensure navbar collapses look clean on mobile ─────────── */
+@media (max-width: 991.98px) {
+    .bf-navbar .navbar-nav .nav-item + .nav-item { margin-top: 2px; }
+    .bf-navbar .navbar-nav { padding: 0.25rem 0; }
+    .bf-navbar .ms-auto.gap-3 { gap: 0.5rem !important; }
+    .bf-navbar .ms-auto.gap-3 .nav-item { margin: 0.15rem 0; }
+}
+
+/* ── Print styles ─────────────────────────────────────────── */
+@media print {
+    .bf-navbar, footer, .bf-hero2, .home-cta { display: none !important; }
+    body { background: #fff !important; }
+    .bf-card { box-shadow: none !important; border: 1px solid #ccc !important; }
+}
+
+
+/* =============================================================
+   UX Polish  — profile dropdowns, view buttons, status badges,
+   upload form, login page, guidance text
+   ============================================================= */
+
+/* ── Enhanced avatar dropdown trigger ───────────────────────
+   Works for both bf-user-trigger (student) and adm-user-trigger
+   (admin). Makes the avatar circle bigger and more tappable.   */
+.bf-avatar-lg {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--bf-blue-600);
+    border: 2px solid rgba(255,255,255,0.25);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    transition: border-color var(--bf-transition-fast);
+}
+.bf-user-trigger:hover .bf-avatar-lg,
+.bf-user-trigger:focus .bf-avatar-lg {
+    border-color: rgba(255,255,255,0.55);
+}
+/* Admin avatar variant */
+.adm-avatar-lg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #2563eb;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+    transition: border-color 0.15s;
+}
+
+/* ── Enriched dropdown menu ──────────────────────────────────
+   A wider, richer dropdown that shows the user's identity at
+   the top and groups items visually.                           */
+.bf-dropdown-identity {
+    padding: 0.875rem 1rem 0.75rem;
+    border-bottom: 1px solid var(--bf-border-default);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    /* Rounds top corners to match the dropdown-menu container */
+    border-radius: var(--bf-radius-lg) var(--bf-radius-lg) 0 0;
+}
+.bf-dropdown-identity__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bf-blue-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+.bf-dropdown-identity__info {
+    min-width: 0;
+    flex: 1;
+}
+.bf-dropdown-identity__name {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--bf-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0 0 0.15rem;
+    line-height: 1.3;
+}
+.bf-dropdown-identity__email {
+    font-size: 0.75rem;
+    color: var(--bf-text-tertiary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin: 0;
+    line-height: 1.3;
+}
+.bf-dropdown-identity__role {
+    display: inline-flex;
+    align-items: center;
+    margin-top: 0.2rem;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.1rem 0.45rem;
+    border-radius: 999px;
+}
+.bf-dropdown-identity__role--user {
+    background: var(--bf-blue-50);
+    color: var(--bf-blue-600);
+    border: 1px solid #bfdbfe;
+}
+.bf-dropdown-identity__role--admin {
+    background: #fee2e2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+}
+
+/* Wider dropdown for the richer identity block */
+.bf-dropdown-rich {
+    min-width: 240px;
+    padding: 0;
+    /* overflow:hidden was removed — it caused Bootstrap to miscalculate the
+       bounding box and close the dropdown on click near menu edges.
+       Border-radius is applied via the existing .dropdown-menu rule instead. */
+    overflow: visible;
+    border-radius: var(--bf-radius-lg);
+}
+.bf-dropdown-rich .dropdown-item {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    border-radius: var(--bf-radius-md);
+    margin: 0 0.25rem;
+}
+.bf-dropdown-rich .dropdown-item:first-child { margin-top: 0.35rem; }
+.bf-dropdown-rich .dropdown-divider { margin: 0.35rem 0; }
+/* Sign Out item — visible but not alarming */
+.bf-dropdown-rich .bf-dropdown-signout {
+    color: #dc2626 !important;
+    font-weight: 600;
+    padding-bottom: 0.625rem;
+    margin-bottom: 0.2rem;
+}
+.bf-dropdown-rich .bf-dropdown-signout:hover {
+    background-color: #fff5f5;
+    color: #b91c1c !important;
+}
+/* Profile-incomplete nudge item */
+.bf-dropdown-incomplete-nudge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 1rem;
+    font-size: 0.8125rem;
+    color: #92400e;
+    background: #fffbeb;
+    border-top: 1px solid #fef3c7;
+    border-bottom: 1px solid #fef3c7;
+    margin: 0.2rem 0;
+    font-weight: 500;
+    text-decoration: none;
+}
+.bf-dropdown-incomplete-nudge:hover {
+    background: #fef3c7;
+    color: #78350f;
+    text-decoration: none;
+}
+.bf-dropdown-incomplete-nudge i { flex-shrink: 0; }
+
+/* ── Unified "open / view / review" button ───────────────────
+   Replaces lib-download-btn and inline-styled bf-btn-view.
+   Used consistently in library cards, my-resources, and admin
+   pending-resources. Comes in two sizes.                       */
+.bf-action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    border-radius: var(--bf-radius-md);
+    font-weight: 600;
+    text-decoration: none;
+    transition: background var(--bf-transition-fast),
+                color var(--bf-transition-fast),
+                box-shadow var(--bf-transition-fast),
+                transform var(--bf-transition-fast);
+    white-space: nowrap;
+    border: none;
+    cursor: pointer;
+}
+.bf-action-btn:focus-visible {
+    outline: 2px solid var(--bf-blue-500);
+    outline-offset: 2px;
+}
+
+/* Primary open/view — blue filled */
+.bf-action-btn--primary {
+    background: var(--bf-blue-600);
+    color: #ffffff !important;
+    padding: 0.35rem 0.875rem;
+    font-size: 0.8125rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+.bf-action-btn--primary:hover {
+    background: #1d4ed8;
+    color: #ffffff !important;
+    transform: translateY(-1px);
+    box-shadow: var(--bf-shadow-md);
+}
+
+/* Ghost / secondary — outline */
+.bf-action-btn--ghost {
+    background: transparent;
+    color: var(--bf-blue-600) !important;
+    border: 1.5px solid #bfdbfe;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.8125rem;
+}
+.bf-action-btn--ghost:hover {
+    background: var(--bf-blue-50);
+    color: #1d4ed8 !important;
+    border-color: var(--bf-blue-500);
+}
+
+/* Compact size — for table cells and card footers */
+.bf-action-btn--sm {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.75rem;
+    border-radius: var(--bf-radius-sm);
+}
+
+/* ── Status explanation labels ───────────────────────────────
+   Added below status badges in my-resources to explain what
+   each status means to a student.                             */
+.bf-status-hint {
+    font-size: 0.72rem;
+    color: var(--bf-text-tertiary);
+    margin-top: 0.25rem;
+    line-height: 1.4;
+    display: block;
+}
+.bf-status-hint--pending  { color: #92400e; }
+.bf-status-hint--approved { color: var(--bf-success-text); }
+.bf-status-hint--rejected { color: var(--bf-danger-text); }
+
+/* ── Upload form actions bar ─────────────────────────────────
+   Clear hierarchy: primary submit dominates, back link is
+   clearly secondary and properly labelled.                    */
+.bf-upload-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
+}
+.bf-upload-actions .btn-primary {
+    min-width: 180px;
+}
+.bf-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    color: var(--bf-text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    padding: 0.375rem 0;
+    border-radius: var(--bf-radius-sm);
+    transition: color var(--bf-transition-fast);
+}
+.bf-back-link:hover {
+    color: var(--bf-text-primary);
+    text-decoration: none;
+}
+.bf-back-link i { font-size: 0.875rem; }
+
+/* ── Page guidance banner ────────────────────────────────────
+   Compact info strip shown under the page heading on empty
+   states and first-visit pages.                              */
+.bf-page-guide {
+    background: var(--bf-info-bg);
+    border: 1px solid var(--bf-info-border);
+    border-radius: var(--bf-radius-md);
+    padding: 0.875rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.845rem;
+    color: var(--bf-info-text);
+    margin-bottom: 1.25rem;
+}
+.bf-page-guide i { flex-shrink: 0; font-size: 1rem; margin-top: 0.1rem; }
+.bf-page-guide strong { color: var(--bf-navy-900); }
+
+/* ── Login page split-panel ──────────────────────────────────
+   A subtle left brand column on ≥ 1024px makes the login page
+   feel more premium without adding decoration on mobile.       */
+.auth-split {
+    min-height: calc(100vh - 56px);
+    display: flex;
+}
+.auth-split__brand {
+    display: none;
+    background: linear-gradient(145deg, #0f172a 0%, #1a2744 55%, #1e3a5f 100%);
+    flex: 0 0 380px;
+    padding: 3rem 2.5rem;
+    position: relative;
+    overflow: hidden;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1.5rem;
+}
+.auth-split__brand::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image:
+        linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+}
+@media (min-width: 1024px) {
+    .auth-split__brand { display: flex; }
+}
+.auth-split__form {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2.5rem 1rem;
+    background: var(--bf-bg-canvas);
+}
+.auth-split__brand-logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    color: #ffffff;
+    font-size: 1.125rem;
+    font-weight: 700;
+    text-decoration: none;
+    letter-spacing: -0.015em;
+}
+.auth-split__brand-icon {
+    width: 36px; height: 36px;
+    background: var(--bf-blue-600);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem; color: #fff;
+    box-shadow: 0 2px 8px rgba(37,99,235,0.4);
+}
+.auth-split__brand-tagline {
+    color: rgba(255,255,255,0.6);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 280px;
+}
+.auth-split__brand-feature {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: rgba(255,255,255,0.75);
+    font-size: 0.875rem;
+}
+.auth-split__brand-feature i {
+    color: #6ea3f7;
+    font-size: 1rem;
+    flex-shrink: 0;
+}
+
+/* ── Login form: improved max-width and vertical rhythm ────── */
+.auth-form-col {
+    width: 100%;
+    max-width: 400px;
+}
+.auth-form-col .auth-header { text-align: left; }
+.auth-form-col .auth-header__icon { display: none; }  /* hidden on split layout */
+
+/* ── Pending status inline explanation ───────────────────────
+   Appears in my-resources below the badge to guide students.  */
+.bf-status-explain {
+    display: block;
+    font-size: 0.72rem;
+    margin-top: 0.3rem;
+    line-height: 1.45;
+    font-weight: 400;
+}
+.bf-status-explain--pending  {
+    color: #92400e;
+}
+.bf-status-explain--approved {
+    color: var(--bf-success-text);
+}
+.bf-status-explain--rejected {
+    color: var(--bf-danger-text);
+    font-weight: 500;
+}
+
+/* ── Upload guideline box ─────────────────────────────────── */
+.bf-upload-guide {
+    background: #f8fafc;
+    border: 1px solid var(--bf-border-default);
+    border-radius: var(--bf-radius-md);
+    padding: 0.875rem 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 0.845rem;
+    color: var(--bf-text-secondary);
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.65rem;
+}
+.bf-upload-guide i { color: var(--bf-blue-500); flex-shrink: 0; margin-top: 0.1rem; }
+.bf-upload-guide ul {
+    margin: 0.35rem 0 0 0;
+    padding-left: 1.125rem;
+}
+.bf-upload-guide ul li { margin-bottom: 0.15rem; }
+
+/* ── Responsive tweaks for new elements ─────────────────────── */
+@media (max-width: 575.98px) {
+    .bf-dropdown-rich { min-width: 220px; }
+    .bf-dropdown-identity { padding: 0.75rem; }
+    .bf-upload-actions { flex-direction: column; align-items: stretch; }
+    .bf-upload-actions .btn-primary { width: 100%; justify-content: center; }
+    .bf-back-link { justify-content: center; }
+}
+
+/* Admin dropdown richness on narrow screens */
+@media (max-width: 991.98px) {
+    .bf-dropdown-rich { min-width: 200px; }
+}
+
+
+/* =============================================================
+   Iteration 3 — Dropdown fix + unified View button
+   ============================================================= */
+
+/* ── Fix: Bootstrap dropdown-toggle caret on bf-user-trigger ──
+   Remove the default ::after caret that Bootstrap injects on
+   any element with .dropdown-toggle. The bf-user-trigger already
+   communicates its purpose visually without an extra glyph.     */
+.bf-user-trigger.dropdown-toggle::after,
+.adm-user-trigger.dropdown-toggle::after {
+    display: none;
+}
+
+/* ── Fix: ensure bf-user-trigger button properties don't
+   conflict with Bootstrap's own .dropdown-toggle styles.       */
+.bf-user-trigger.dropdown-toggle {
+    border: 1px solid transparent;
+    background: transparent;
+    outline: none;
+}
+.adm-user-trigger.dropdown-toggle {
+    border: none;
+    background: transparent;
+    outline: none;
+}
+
+/* ── Fix: dropdown-menu must not clip with overflow:hidden ────
+   Already removed from .bf-dropdown-rich above; this ensures
+   no child selector accidentally re-introduces it.             */
+.bf-dropdown-rich,
+.bf-dropdown-rich * {
+    /* overflow controlled by individual elements only */
+}
+
+/* ── Unified View button — eye icon + "View" label ────────────
+   Compact, neutral, consistent across library cards and admin
+   resource review cards. White background, subtle grey border,
+   blue text on hover.                                          */
+.bf-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.275rem 0.625rem;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: #374151 !important;
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: background 0.15s, border-color 0.15s, color 0.15s, box-shadow 0.15s;
+    cursor: pointer;
+    line-height: 1.25;
+}
+.bf-view-btn:hover {
+    background: #eff6ff;
+    border-color: #93c5fd;
+    color: #1d4ed8 !important;
+    box-shadow: 0 1px 4px rgba(37,99,235,0.12);
+    text-decoration: none;
+}
+.bf-view-btn:focus-visible {
+    outline: 2px solid var(--bf-blue-500);
+    outline-offset: 2px;
+}
+.bf-view-btn i {
+    font-size: 0.825rem;
+    flex-shrink: 0;
+}
+
+
+/* =============================================================
+   Iteration 4 — Reliable dropdown fix
+   Root cause: CSS animation on .dropdown-menu conflicted with
+   Bootstrap 5's internal transitionend listener, preventing
+   the dropdown from opening on click. Both animation rules
+   removed above. Dropdowns now use Bootstrap-native defaults.
+   ============================================================= */
+
+/* Dropdown menu item: tighten icon + text spacing */
+.bf-navbar .dropdown-item,
+.adm-nav .dropdown-menu .dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    font-size: 0.875rem;
+    padding: 0.45rem 0.875rem;
+    border-radius: var(--bf-radius-md);
+    color: var(--bf-text-primary);
+    transition: background-color 0.12s;
+}
+.bf-navbar .dropdown-item:hover,
+.adm-nav .dropdown-menu .dropdown-item:hover {
+    background-color: var(--bf-blue-50);
+    color: var(--bf-blue-600);
+}
+.bf-navbar .dropdown-item.text-danger,
+.adm-nav .dropdown-menu .dropdown-item.text-danger {
+    color: #dc2626 !important;
+    font-weight: 600;
+}
+.bf-navbar .dropdown-item.text-danger:hover,
+.adm-nav .dropdown-menu .dropdown-item.text-danger:hover {
+    background-color: #fff5f5;
+    color: #b91c1c !important;
+}
+
+/* Identity header inside dropdown — uses Bootstrap px-3 py-2 border-bottom */
+.bf-navbar .dropdown-menu .px-3.py-2,
+.adm-nav .dropdown-menu .px-3.py-2 {
+    background: var(--bf-bg-canvas);
+    border-radius: var(--bf-radius-md) var(--bf-radius-md) 0 0;
+}
+
+/* Ensure logout form button fills the menu item width */
+.bf-navbar .dropdown-menu form.m-0,
+.adm-nav .dropdown-menu form.m-0 {
+    display: block;
+}
+.bf-navbar .dropdown-menu form.m-0 .dropdown-item,
+.adm-nav .dropdown-menu form.m-0 .dropdown-item {
+    width: 100%;
+    text-align: left;
+    background: none;
+    border: none;
+    font-family: inherit;
+    cursor: pointer;
+}
+
+/* adm-avatar-lg — admin navbar avatar (defined here for admin pages that
+   include adm-nav styles inline; also needed for admin pages using main.css) */
+.adm-avatar-lg {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #2563eb;
+    border: 2px solid rgba(255,255,255,0.2);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    flex-shrink: 0;
+}
+
+/* ── Selected File Cards & Multi-File Upload UI ──────────── */
+.bf-upload-file-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.bf-selected-file-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.625rem 0.875rem;
+    background: #ffffff;
+    border: 1px solid var(--bf-border-default, #e2e8f0);
+    border-radius: var(--bf-radius-md, 8px);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+}
+
+.bf-selected-file-card:hover {
+    border-color: #cbd5e1;
+    background: #f8fafc;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.bf-file-ext-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+.bf-file-name {
+    font-size: 0.875rem;
+    color: var(--bf-text-primary, #0f172a);
+    line-height: 1.35;
+    word-break: break-all;
+}
+
+.bf-file-size {
+    font-size: 0.75rem;
+    color: var(--bf-text-tertiary, #64748b);
+}
+
+.bf-file-remove-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    border: 1px solid #fee2e2;
+    background: #fff;
+    color: #ef4444;
+    transition: all 0.15s ease;
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.bf-file-remove-btn:hover,
+.bf-file-remove-btn:focus-visible {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+    outline: none;
+}
+
+.bf-upload-zone.drag-over,
+.adm-upload-zone.drag-over {
+    border-color: var(--bf-blue-600, #2563eb) !important;
+    background-color: #eff6ff !important;
+}
+

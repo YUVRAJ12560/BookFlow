@@ -1,4 +1,16 @@
 <!DOCTYPE html>
+<!--
+  WARNING — layout/base.html is NOT currently used by any authenticated page.
+  All pages (dashboard, library, upload, home, admin) are standalone full-page
+  Thymeleaf files with their own inlined navbars.
+
+  This base layout contains only a guest-only navbar (Login / Register) with
+  no sec:authorize, no logout form, and no CSRF handling. Do NOT extend this
+  template for authenticated pages without adding the full navbar and CSRF support.
+
+  If you want a shared layout in future, build a new fragment in layout/navbar.html
+  and use Thymeleaf fragment inclusion (th:replace="layout/navbar") instead.
+-->
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
@@ -70,7 +82,7 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc4s9bIOgUxi8T/jzmQ5R6BaOqDM/N7mOLGSMd/oG9iy"
+            integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
 
     <!-- BookFlow JS -->

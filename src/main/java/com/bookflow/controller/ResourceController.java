@@ -55,7 +55,7 @@ public class ResourceController {
 
     
 @GetMapping("")
-public String resourceLibrary(ResourceFilterDto filter, Model model) {
+public String resourceLibrary(ResourceFilterDto filter, Authentication authentication, Model model) {
     List<Resource> resources = resourceService.findApproved(filter);
 
     Map<String, List<Resource>> grouped = resources.stream()
@@ -103,6 +103,11 @@ public String resourceLibrary(ResourceFilterDto filter, Model model) {
             resourceService.countApprovedByType(ResourceType.EXAM_PATTERN));
     model.addAttribute("countRefBook",
             resourceService.countApprovedByType(ResourceType.REFERENCE_BOOK));
+
+    if (authentication != null && authentication.isAuthenticated()) {
+        userRepository.findByEmail(authentication.getName())
+                .ifPresent(u -> model.addAttribute("user", u));
+    }
 
     return "resources/library";
 }
@@ -183,10 +188,14 @@ headers.setContentDisposition(
     // ----------------------------------------------------------------
 
     @GetMapping("/upload")
-    public String showUploadForm(Model model) {
+    public String showUploadForm(Authentication authentication, Model model) {
         model.addAttribute("resourceUploadDto", new ResourceUploadDto());
         model.addAttribute("resourceTypes", ResourceType.values());
         model.addAttribute("pageTitle", "Upload Resource");
+        if (authentication != null) {
+            userRepository.findByEmail(authentication.getName())
+                    .ifPresent(u -> model.addAttribute("user", u));
+        }
         return "resources/upload";
     }
 
@@ -202,8 +211,10 @@ headers.setContentDisposition(
             Model model,
             RedirectAttributes redirectAttributes) {
 
-        // Re-populate the type list so the form can redisplay on error.
+        // Re-populate the type list and user so the form can redisplay on error.
         model.addAttribute("resourceTypes", ResourceType.values());
+        userRepository.findByEmail(authentication.getName())
+                .ifPresent(u -> model.addAttribute("user", u));
 
         // Bean validation errors (blank title, missing type, etc.)
         if (bindingResult.hasErrors()) {
