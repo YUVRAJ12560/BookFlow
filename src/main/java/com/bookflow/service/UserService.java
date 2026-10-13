@@ -155,7 +155,14 @@ public class UserService implements UserDetailsService {
      */
     @Transactional
     public void verifyEmail(String rawToken) {
-        EmailVerificationToken record = tokenRepository.findByToken(rawToken)
+        if (rawToken == null || rawToken.isBlank()) {
+            throw new IllegalArgumentException(
+                    "No verification token was provided. "
+                    + "Please use the link from your verification email.");
+        }
+
+        String cleanToken = rawToken.trim();
+        EmailVerificationToken record = tokenRepository.findByToken(cleanToken)
                 .orElseThrow(() -> new IllegalArgumentException(
                         "This verification link is invalid. "
                         + "Please register again or request a new link."));
@@ -169,6 +176,13 @@ public class UserService implements UserDetailsService {
         }
 
         User user = record.getUser();
+        if (user == null) {
+            tokenRepository.delete(record);
+            throw new IllegalArgumentException(
+                    "This verification link is invalid. "
+                    + "Please register again or request a new link.");
+        }
+
         user.setEmailVerified(true);
         userRepository.save(user);
 

@@ -131,7 +131,7 @@ public class AuthController {
         }
 
         try {
-            userService.verifyEmail(token);
+            userService.verifyEmail(token.trim());
         } catch (IllegalArgumentException e) {
             model.addAttribute("errorMessage", e.getMessage());
             return "public/verify-error";
