@@ -1,247 +1,225 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | BookFlow</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Create Account | BookFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body class="auth-page">
 
-<!-- Minimal nav -->
 <nav class="navbar bf-navbar" aria-label="Site navigation">
-    <div class="container">
-        <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
-            BookFlow
-        </a>
-        <div class="ms-auto d-flex align-items-center gap-2">
-            <a class="bf-nav-btn bf-nav-btn-outline" th:href="@{/login}">Sign In</a>
-            <a class="bf-nav-link" th:href="@{/register}" style="color:#fff;">Register</a>
-        </div>
-    </div>
+  <div class="container">
+    <a class="bf-brand" th:href="@{/}">
+      <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
+      BookFlow
+    </a>
+    <a th:href="@{/login}" class="bf-nav-btn bf-nav-btn-outline ms-auto" style="font-size:.8125rem;">
+      Sign In
+    </a>
+  </div>
 </nav>
 
-<main class="auth-page auth-page--tall" id="main-content">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-11 col-sm-10 col-md-8 col-lg-6" style="max-width:480px;">
+<main id="main-content" class="flex-grow-1 py-4 py-md-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12 col-sm-10 col-md-8 col-lg-6" style="max-width:520px;">
 
-                <!-- Header -->
-                <div class="auth-header">
-                    <div class="auth-header__icon" aria-hidden="true">
-                        <i class="bi bi-book-half"></i>
-                    </div>
-                    <h1 class="auth-header__title">Create your account</h1>
-                    <p class="auth-header__sub">Use your college email to join BookFlow</p>
-                </div>
-
-                <!-- Card -->
-                <div class="auth-card" role="region" aria-label="Registration form">
-                    <div class="auth-card__body">
-
-                        <!-- Error alerts — all Thymeleaf conditions preserved exactly -->
-                        <div th:if="${domainError}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                            <span th:text="${domainError}"></span>
-                        </div>
-                        <div th:if="${emailError}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                            <span th:text="${emailError}"></span>
-                        </div>
-                        <div th:if="${passwordMismatch}"
-                             class="alert alert-danger d-flex align-items-center gap-2" role="alert">
-                            <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                            <span th:text="${passwordMismatch}"></span>
-                        </div>
-
-                        <!-- Google sign-up — hidden form for ID token -->
-                        <form id="googleAuthFormReg" th:action="@{/auth/google}" method="post" style="display:none;">
-                            <input type="hidden" id="googleCredentialReg" name="credential" value="">
-                        </form>
-
-                        <div id="googleBtnWrapReg" class="gsi-wrap">
-                            <button type="button" class="gsi-btn" onclick="triggerGoogleSignInReg()"
-                                    aria-label="Continue with Google">
-                                <svg class="gsi-btn__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                                    <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
-                                    <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
-                                    <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
-                                    <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
-                                </svg>
-                                Continue with Google
-                            </button>
-                        </div>
-
-                        <div class="auth-divider">or sign up with email</div>
-
-                        <!-- Registration form — th:object, th:field, th:errors preserved exactly -->
-                        <form th:action="@{/register}" th:object="${registerDto}"
-                              method="post" novalidate id="registerForm">
-
-                            <!-- Full Name -->
-                            <div class="mb-3">
-                                <label for="name" class="form-label">
-                                    Full Name <span class="text-danger" aria-label="required">*</span>
-                                </label>
-                                <input type="text" id="name" th:field="*{name}"
-                                       class="form-control"
-                                       th:classappend="${#fields.hasErrors('name')} ? ' is-invalid'"
-                                       placeholder="Your full name"
-                                       autocomplete="name"
-                                       aria-required="true">
-                                <div class="invalid-feedback"
-                                     th:if="${#fields.hasErrors('name')}"
-                                     th:errors="*{name}"></div>
-                            </div>
-
-                            <!-- College Email -->
-                            <div class="mb-3">
-                                <label for="email" class="form-label">
-                                    College Email <span class="text-danger" aria-label="required">*</span>
-                                </label>
-                                <input type="email" id="email" th:field="*{email}"
-                                       class="form-control"
-                                       th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'"
-                                       placeholder="yourname@pvppcoe.ac.in"
-                                       autocomplete="email"
-                                       pattern="^[a-zA-Z0-9._%+\-]+@pvppcoe\.ac\.in$"
-                                       title="Only @pvppcoe.ac.in email addresses are accepted"
-                                       aria-required="true"
-                                       aria-describedby="email-domain-hint">
-                                <div class="invalid-feedback"
-                                     th:if="${#fields.hasErrors('email')}"
-                                     th:errors="*{email}"></div>
-                                <div class="form-text" id="email-domain-hint">
-                                    <i class="bi bi-info-circle me-1" aria-hidden="true"></i>
-                                    Must end with @pvppcoe.ac.in
-                                </div>
-                            </div>
-
-                            <!-- Password row -->
-                            <div class="row g-3 mb-3">
-                                <div class="col-6">
-                                    <label for="password" class="form-label">
-                                        Password <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <div class="auth-pass-wrap">
-                                        <input type="password" id="password" th:field="*{password}"
-                                               class="form-control"
-                                               th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'"
-                                               placeholder="Min 8 chars"
-                                               autocomplete="new-password"
-                                               aria-required="true">
-                                        <button type="button" class="auth-pass-toggle"
-                                                aria-label="Show password"
-                                                onclick="togglePass('password', this)">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('password')}"
-                                         th:errors="*{password}"></div>
-                                </div>
-                                <div class="col-6">
-                                    <label for="confirmPassword" class="form-label">
-                                        Confirm <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <div class="auth-pass-wrap">
-                                        <input type="password" id="confirmPassword"
-                                               th:field="*{confirmPassword}"
-                                               class="form-control"
-                                               th:classappend="${#fields.hasErrors('confirmPassword')} ? ' is-invalid'"
-                                               placeholder="Repeat"
-                                               autocomplete="new-password"
-                                               aria-required="true">
-                                        <button type="button" class="auth-pass-toggle"
-                                                aria-label="Show confirm password"
-                                                onclick="togglePass('confirmPassword', this)">
-                                            <i class="bi bi-eye" aria-hidden="true"></i>
-                                        </button>
-                                    </div>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('confirmPassword')}"
-                                         th:errors="*{confirmPassword}"></div>
-                                </div>
-                            </div>
-
-                            <!-- Academic profile -->
-                            <span class="auth-section-label">Academic Profile</span>
-                            <div class="row g-3 mb-4">
-                                <div class="col-6">
-                                    <label for="year" class="form-label">
-                                        Year <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <select id="year" th:field="*{year}"
-                                            class="form-select"
-                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
-                                            aria-required="true">
-                                        <option value="">-- Year --</option>
-                                        <option value="1">Year 1</option>
-                                        <option value="2">Year 2</option>
-                                        <option value="3">Year 3</option>
-                                        <option value="4">Year 4</option>
-                                    </select>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('year')}"
-                                         th:errors="*{year}"></div>
-                                </div>
-                                <div class="col-6">
-                                    <label for="semester" class="form-label">
-                                        Semester <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <select id="semester" th:field="*{semester}"
-                                            class="form-select"
-                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'"
-                                            aria-required="true">
-                                        <option value="">-- Sem --</option>
-                                        <option th:each="s : ${#numbers.sequence(1,8)}"
-                                                th:value="${s}"
-                                                th:text="'Sem ' + ${s}"></option>
-                                    </select>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('semester')}"
-                                         th:errors="*{semester}"></div>
-                                </div>
-                            </div>
-
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-person-check me-1" aria-hidden="true"></i>
-                                    Create Account
-                                </button>
-                            </div>
-
-                        </form>
-
-                        <div class="auth-footer">
-                            Already have an account?
-                            <a th:href="@{/login}">Sign in &rarr;</a>
-                        </div>
-
-                    </div>
-                </div><!-- /auth-card -->
-
-            </div>
+        <div class="mb-4 text-center">
+          <a th:href="@{/}" class="auth-logo" style="justify-content:center;">
+            <span class="auth-logo__icon"><i class="bi bi-book-half"></i></span>
+            BookFlow
+          </a>
+          <h1 class="auth-title mt-2">Create your account</h1>
+          <p class="auth-subtitle">Use your @pvppcoe.ac.in email to join BookFlow.</p>
         </div>
+
+        <!-- Error alerts — all th: conditions preserved exactly -->
+        <div th:if="${domainError}" class="alert alert-danger mb-3" role="alert">
+          <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
+          <span th:text="${domainError}"></span>
+        </div>
+        <div th:if="${emailError}" class="alert alert-danger mb-3" role="alert">
+          <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
+          <span th:text="${emailError}"></span>
+        </div>
+        <div th:if="${passwordMismatch}" class="alert alert-danger mb-3" role="alert">
+          <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
+          <span th:text="${passwordMismatch}"></span>
+        </div>
+
+        <div class="bf-card">
+          <div class="bf-card-body p-4">
+
+            <!-- Google sign-up -->
+            <form id="googleAuthFormReg" th:action="@{/auth/google}" method="post" style="display:none;">
+              <input type="hidden" id="googleCredentialReg" name="credential" value="">
+            </form>
+
+            <div id="googleNotConfiguredAlertReg" class="alert alert-warning mb-3" style="display:none;" role="alert">
+              <i class="bi bi-info-circle flex-shrink-0" aria-hidden="true"></i>
+              <div>
+                <strong>Google Sign-Up setup required:</strong>
+                Please set the <code>GOOGLE_OAUTH_CLIENT_ID</code> environment variable, or create your account using your college email and password below.
+              </div>
+            </div>
+
+            <div id="googleBtnWrapReg" class="gsi-wrap mb-3">
+              <button type="button" class="gsi-btn gsi-btn-fallback" onclick="triggerGoogleSignInReg()" aria-label="Continue with Google">
+                <svg class="gsi-btn__icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                  <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                  <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                  <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                </svg>
+                Continue with Google
+              </button>
+            </div>
+
+            <div class="auth-divider">or sign up with email</div>
+
+            <!-- Registration form — all field names and th: bindings preserved exactly -->
+            <form id="registerForm" th:action="@{/register}" th:object="${registerDto}" method="post" novalidate>
+
+              <span class="auth-section-label">Personal Details</span>
+
+              <div class="mb-3">
+                <label for="name" class="form-label">
+                  Full Name <span class="text-danger" aria-label="required">*</span>
+                </label>
+                <input type="text" id="name"
+                       th:field="*{name}"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('name')} ? ' is-invalid'"
+                       placeholder="Your full name"
+                       autocomplete="name" aria-required="true">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('name')}" th:errors="*{name}"></div>
+              </div>
+
+              <div class="mb-4">
+                <label for="email" class="form-label">
+                  College Email <span class="text-danger" aria-label="required">*</span>
+                </label>
+                <input type="email" id="email"
+                       th:field="*{email}"
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('email')} ? ' is-invalid'"
+                       placeholder="yourname@pvppcoe.ac.in"
+                       autocomplete="email" aria-required="true">
+                <div class="invalid-feedback" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+                <div class="form-text">Only @pvppcoe.ac.in addresses accepted.</div>
+              </div>
+
+              <span class="auth-section-label">Set Password</span>
+
+              <div class="row g-3 mb-4">
+                <div class="col-6">
+                  <label for="password" class="form-label">
+                    Password <span class="text-danger" aria-label="required">*</span>
+                  </label>
+                  <div class="auth-pass-wrap">
+                    <input type="password" id="password"
+                           th:field="*{password}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('password')} ? ' is-invalid'"
+                           placeholder="Min 8 characters"
+                           autocomplete="new-password" aria-required="true">
+                    <button type="button" class="auth-pass-toggle"
+                            aria-label="Show password" onclick="togglePass('password', this)">
+                      <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
+                </div>
+                <div class="col-6">
+                  <label for="confirmPassword" class="form-label">
+                    Confirm <span class="text-danger" aria-label="required">*</span>
+                  </label>
+                  <div class="auth-pass-wrap">
+                    <input type="password" id="confirmPassword"
+                           th:field="*{confirmPassword}"
+                           class="form-control"
+                           th:classappend="${#fields.hasErrors('confirmPassword')} ? ' is-invalid'"
+                           placeholder="Repeat"
+                           autocomplete="new-password" aria-required="true">
+                    <button type="button" class="auth-pass-toggle"
+                            aria-label="Show confirm password" onclick="togglePass('confirmPassword', this)">
+                      <i class="bi bi-eye" aria-hidden="true"></i>
+                    </button>
+                  </div>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}"></div>
+                </div>
+              </div>
+
+              <span class="auth-section-label">Academic Profile</span>
+
+              <div class="row g-3 mb-4">
+                <div class="col-6">
+                  <label for="year" class="form-label">
+                    Year <span class="text-danger" aria-label="required">*</span>
+                  </label>
+                  <select id="year" th:field="*{year}"
+                          class="form-select"
+                          th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
+                          aria-required="true">
+                    <option value="">-- Year --</option>
+                    <option value="1">Year 1</option>
+                    <option value="2">Year 2</option>
+                    <option value="3">Year 3</option>
+                    <option value="4">Year 4</option>
+                  </select>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+                </div>
+                <div class="col-6">
+                  <label for="semester" class="form-label">
+                    Semester <span class="text-danger" aria-label="required">*</span>
+                  </label>
+                  <select id="semester" th:field="*{semester}"
+                          class="form-select"
+                          th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'"
+                          aria-required="true">
+                    <option value="">-- Sem --</option>
+                    <option th:each="s : ${#numbers.sequence(1,8)}"
+                            th:value="${s}" th:text="'Sem ' + ${s}"></option>
+                  </select>
+                  <div class="invalid-feedback" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></div>
+                </div>
+              </div>
+
+              <div class="d-grid">
+                <button type="submit" class="btn btn-primary btn-lg">
+                  <i class="bi bi-person-check me-1" aria-hidden="true"></i>
+                  Create Account
+                </button>
+              </div>
+
+            </form>
+
+            <div class="auth-footer">
+              Already have an account?
+              <a th:href="@{/login}" class="fw-600">Sign in &rarr;</a>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
     </div>
+  </div>
 </main>
 
-<!-- Compact footer -->
 <footer class="bf-footer bf-footer--compact" role="contentinfo">
-    <div class="container">
-        <div class="bf-footer-bottom" style="padding:.4rem 0;border-top:none;">
-            <span>&copy; 2026 BookFlow</span>
-        </div>
+  <div class="container">
+    <div class="bf-footer-bottom">
+      <span>&copy; 2026 BookFlow</span>
     </div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
@@ -249,69 +227,85 @@
         crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 
-<!-- Client-side domain validation — server always re-validates -->
 <script>
 document.getElementById('registerForm').addEventListener('submit', function(e) {
-    var emailInput = document.getElementById('email');
-    var val = emailInput.value.trim().toLowerCase();
-    if (!val.endsWith('@pvppcoe.ac.in') || val.indexOf('@') !== val.lastIndexOf('@') || val === '@pvppcoe.ac.in') {
-        emailInput.setCustomValidity('Only @pvppcoe.ac.in email addresses are accepted.');
-        emailInput.reportValidity();
-        e.preventDefault();
-    } else {
-        emailInput.setCustomValidity('');
-    }
+  var emailInput = document.getElementById('email');
+  var val = emailInput.value.trim().toLowerCase();
+  if (!val.endsWith('@pvppcoe.ac.in') || val.indexOf('@') !== val.lastIndexOf('@') || val === '@pvppcoe.ac.in') {
+    emailInput.setCustomValidity('Only @pvppcoe.ac.in email addresses are accepted.');
+    emailInput.reportValidity();
+    e.preventDefault();
+  } else {
+    emailInput.setCustomValidity('');
+  }
 });
 </script>
 
-<!-- GIS SDK -->
 <script src="https://accounts.google.com/gsi/client" async defer onload="initGoogleSignInReg()"></script>
-
 <script th:inline="javascript">
 /*<![CDATA[*/
 var _googleClientIdReg = /*[[${googleClientId}]]*/ '';
 
 function _isClientIdValidReg(id) {
-    return id && id.trim() !== '' && !id.startsWith('placeholder') && id !== 'REPLACE_WITH_YOUR_WEB_CLIENT_ID';
+  return id && id.trim() !== '' && !id.startsWith('placeholder') && id !== 'REPLACE_WITH_YOUR_WEB_CLIENT_ID';
 }
 
 function initGoogleSignInReg() {
-    if (!_isClientIdValidReg(_googleClientIdReg)) { return; }
+  if (!_isClientIdValidReg(_googleClientIdReg)) return;
+  try {
     google.accounts.id.initialize({
-        client_id: _googleClientIdReg.trim(),
-        callback: function(response) {
-            if (response && response.credential) {
-                document.getElementById('googleCredentialReg').value = response.credential;
-                document.getElementById('googleAuthFormReg').submit();
-            }
+      client_id: _googleClientIdReg.trim(),
+      callback: function(response) {
+        if (response && response.credential) {
+          document.getElementById('googleCredentialReg').value = response.credential;
+          document.getElementById('googleAuthFormReg').submit();
         }
+      }
     });
     var wrap = document.getElementById('googleBtnWrapReg');
-    google.accounts.id.renderButton(wrap, {
+    if (wrap) {
+      google.accounts.id.renderButton(wrap, {
         theme: 'outline', size: 'large', text: 'continue_with',
         width: Math.min(wrap.offsetWidth || 440, 440)
-    });
-    wrap.classList.add('gsi-rendered');
+      });
+      wrap.classList.add('gsi-rendered');
+    }
+  } catch (err) {
+    console.warn('[BookFlow] Google Sign-Up init error:', err);
+  }
 }
 
 function triggerGoogleSignInReg() {
-    if (window.google && window.google.accounts && window.google.accounts.id) {
-        initGoogleSignInReg();
+  if (!_isClientIdValidReg(_googleClientIdReg)) {
+    var alertBox = document.getElementById('googleNotConfiguredAlertReg');
+    if (alertBox) {
+      alertBox.style.display = 'flex';
+      alertBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
+    return;
+  }
+  if (window.google && window.google.accounts && window.google.accounts.id) {
+    initGoogleSignInReg();
+    try {
+      google.accounts.id.prompt();
+    } catch (e) {
+      console.warn('[BookFlow] Google prompt error:', e);
+    }
+  }
 }
 
 function togglePass(fieldId, btn) {
-    var input = document.getElementById(fieldId);
-    var icon  = btn.querySelector('i');
-    if (input.type === 'password') {
-        input.type = 'text';
-        icon.className = 'bi bi-eye-slash';
-        btn.setAttribute('aria-label', 'Hide password');
-    } else {
-        input.type = 'password';
-        icon.className = 'bi bi-eye';
-        btn.setAttribute('aria-label', 'Show password');
-    }
+  var input = document.getElementById(fieldId);
+  var icon  = btn.querySelector('i');
+  if (input.type === 'password') {
+    input.type = 'text';
+    icon.className = 'bi bi-eye-slash';
+    btn.setAttribute('aria-label', 'Hide password');
+  } else {
+    input.type = 'password';
+    icon.className = 'bi bi-eye';
+    btn.setAttribute('aria-label', 'Show password');
+  }
 }
 /*]]>*/
 </script>

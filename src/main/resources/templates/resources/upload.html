@@ -2,353 +2,282 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload Resource | BookFlow</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Upload Resource | BookFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<!-- ═══════════ NAVBAR ════════════════════════════════════════ -->
+<!-- ═══ NAVBAR ════════════════════════════════════════════════════ -->
 <nav class="navbar navbar-expand-lg bf-navbar" aria-label="Main navigation">
-    <div class="container">
-        <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
-            BookFlow
-        </a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navUpload"
-                aria-controls="navUpload" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navUpload">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-                <li class="nav-item">
-                    <a class="bf-nav-link" sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Dashboard</a>
-                    <a class="bf-nav-link" sec:authorize="hasRole('USER')" th:href="@{/user/dashboard}">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources}">Library</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link active" aria-current="page" th:href="@{/resources/upload}">Upload</a>
-                </li>
+  <div class="container">
+    <a class="bf-brand" th:href="@{/}">
+      <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
+      BookFlow
+    </a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navUp"
+            aria-controls="navUp" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navUp">
+      <ul class="navbar-nav me-auto ms-3 gap-1">
+        <li class="nav-item">
+          <a class="bf-nav-link" th:href="@{/user/dashboard}">Dashboard</a>
+        </li>
+        <li class="nav-item">
+          <a class="bf-nav-link" th:href="@{/resources}">Library</a>
+        </li>
+        <li class="nav-item">
+          <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
+        </li>
+        <li class="nav-item">
+          <a class="bf-nav-link active" aria-current="page" th:href="@{/resources/upload}">Upload</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <div class="dropdown">
+            <button class="bf-user-trigger dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" id="navUserDropdown">
+              <span class="bf-avatar-lg" th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}" aria-hidden="true">U</span>
+              <span class="d-none d-md-inline ms-1" th:text="${user != null ? user.name : ''}">User</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navUserDropdown">
+              <li class="px-3 py-2 border-bottom mb-1">
+                <div class="fw-700" style="font-size:.875rem;" th:text="${user != null ? user.name : ''}">Student</div>
+                <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${user != null ? user.email : ''}">email</div>
+              </li>
+              <li><a class="dropdown-item" th:href="@{/user/dashboard}">
+                <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+              </a></li>
+              <li><a class="dropdown-item" th:href="@{/resources/my}">
+                <i class="bi bi-file-earmark-text" aria-hidden="true"></i> My Resources
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Log Out
+                  </button>
+                </form>
+              </li>
             </ul>
-            <div class="d-flex align-items-center gap-2 ms-auto">
-                <div class="dropdown">
-                    <button class="bf-user-trigger dropdown-toggle"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        <span class="bf-avatar-lg" th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}" aria-hidden="true">U</span>
-                        <span class="d-none d-md-inline ms-1" th:text="${user != null ? user.name : ''}">User</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="px-3 py-2 border-bottom mb-1">
-                            <div class="fw-700" style="font-size:.875rem;color:var(--bf-text-primary);" th:text="${user != null ? user.name : ''}">User</div>
-                            <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${user != null ? user.email : ''}">Signed in</div>
-                        </li>
-                        <li>
-                            <a class="dropdown-item" sec:authorize="hasRole('USER')" th:href="@{/user/dashboard}">
-                                <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Dashboard
-                            </a>
-                        </li>
-                        <li><a class="dropdown-item" th:href="@{/resources/my}">
-                            <i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i>My Resources
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form th:action="@{/logout}" method="post" class="m-0">
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+          </div>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- ═══════════ PAGE BANNER ══════════════════════════════════ -->
+<!-- ═══ PAGE BANNER ═══════════════════════════════════════════════ -->
 <div class="bf-page-banner">
-    <div class="container">
-        <h1><i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Upload Resource</h1>
-        <p>Share academic materials with your peers. Your resource will be reviewed before publication.</p>
-    </div>
+  <div class="container">
+    <h1 class="bf-page-banner h1">Upload Resource</h1>
+    <p class="bf-page-banner p">Share your study materials with the BookFlow community. All submissions are reviewed before publishing.</p>
+  </div>
 </div>
 
-<!-- ═══════════ MAIN ══════════════════════════════════════════ -->
-<main class="bf-page-main" id="main-content">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-8 col-xl-7">
+<!-- ═══ MAIN ════════════════════════════════════════════════════════ -->
+<main id="main-content" class="bf-page-main">
+  <div class="container" style="max-width:760px;">
 
-
-
-                <!-- Error alerts — th:if and th:text preserved exactly -->
-                <div th:if="${fileError}"
-                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
-                    <i class="bi bi-x-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                    <span th:text="${fileError}"></span>
-                </div>
-                <div th:if="${uploadError}"
-                     class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
-                    <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
-                    <span th:text="${uploadError}"></span>
-                </div>
-
-                <!--
-                    Upload form — enctype, th:action, th:object all preserved exactly.
-                    CSRF token injected automatically by Thymeleaf + Spring Security.
-                -->
-                <form th:action="@{/resources/upload}"
-                      th:object="${resourceUploadDto}"
-                      method="post"
-                      enctype="multipart/form-data"
-                      novalidate>
-
-                    <!-- Resource Details card -->
-                    <div class="bf-card mb-3">
-                        <div class="bf-card-header">
-                            <i class="bi bi-file-earmark-text text-primary me-2" aria-hidden="true"></i>
-                            Resource Details
-                        </div>
-                        <div class="bf-card-body">
-
-                            <div class="mb-3">
-                                <label for="title" class="form-label">
-                                    Title <span class="text-danger" aria-label="required">*</span>
-                                </label>
-                                <input type="text" id="title" th:field="*{title}"
-                                       class="form-control"
-                                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
-                                       placeholder="e.g. Data Structures Unit 3 Notes"
-                                       aria-required="true">
-                                <div class="invalid-feedback"
-                                     th:if="${#fields.hasErrors('title')}"
-                                     th:errors="*{title}"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea id="description" th:field="*{description}"
-                                          class="form-control"
-                                          th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"
-                                          rows="3"
-                                          placeholder="Brief description of the resource (optional)"></textarea>
-                                <div class="invalid-feedback"
-                                     th:if="${#fields.hasErrors('description')}"
-                                     th:errors="*{description}"></div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="type" class="form-label">
-                                    Resource Type <span class="text-danger" aria-label="required">*</span>
-                                </label>
-                                <select id="type" th:field="*{type}"
-                                        class="form-select"
-                                        th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'"
-                                        aria-required="true">
-                                    <option value="">-- Select type --</option>
-                                    <option th:each="t : ${resourceTypes}"
-                                            th:value="${t}" th:text="${t.displayName}"></option>
-                                </select>
-                                <div class="invalid-feedback"
-                                     th:if="${#fields.hasErrors('type')}"
-                                     th:errors="*{type}"></div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- Academic Details card -->
-                    <div class="bf-card mb-3">
-                        <div class="bf-card-header">
-                            <i class="bi bi-mortarboard text-primary me-2" aria-hidden="true"></i>
-                            Academic Details
-                        </div>
-                        <div class="bf-card-body">
-
-                            <div class="row g-3 mb-3">
-                                <div class="col-md-6">
-                                    <label for="branch" class="form-label">
-                                        Branch <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <select id="branch" th:field="*{branch}"
-                                            class="form-select"
-                                            th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
-                                            aria-required="true">
-                                        <option value="">-- Select branch --</option>
-                                        <option value="Computer Engineering">Computer Engineering</option>
-                                        <option value="Information Technology">Information Technology</option>
-                                        <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
-                                        <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
-                                        <option value="Mechatronics">Mechatronics</option>
-                                    </select>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('branch')}"
-                                         th:errors="*{branch}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="subject" class="form-label">
-                                        Subject <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <input type="text" id="subject" th:field="*{subject}"
-                                           class="form-control"
-                                           th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
-                                           placeholder="e.g. Data Structures"
-                                           aria-required="true">
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('subject')}"
-                                         th:errors="*{subject}"></div>
-                                </div>
-                            </div>
-
-                            <div class="row g-3">
-                                <div class="col-md-6">
-                                    <label for="year" class="form-label">
-                                        Year <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <select id="year" th:field="*{year}"
-                                            class="form-select"
-                                            th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
-                                            aria-required="true">
-                                        <option value="">-- Select year --</option>
-                                        <option value="1">First Year</option>
-                                        <option value="2">Second Year</option>
-                                        <option value="3">Third Year</option>
-                                        <option value="4">Fourth Year</option>
-                                    </select>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('year')}"
-                                         th:errors="*{year}"></div>
-                                </div>
-                                <div class="col-md-6">
-                                    <label for="semester" class="form-label">
-                                        Semester <span class="text-danger" aria-label="required">*</span>
-                                    </label>
-                                    <select id="semester" th:field="*{semester}"
-                                            class="form-select"
-                                            th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'"
-                                            aria-required="true">
-                                        <option value="">-- Select semester --</option>
-                                        <option th:each="s : ${#numbers.sequence(1,8)}"
-                                                th:value="${s}" th:text="'Semester ' + ${s}"></option>
-                                    </select>
-                                    <div class="invalid-feedback"
-                                         th:if="${#fields.hasErrors('semester')}"
-                                         th:errors="*{semester}"></div>
-                                </div>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <!-- File upload card -->
-                    <div class="bf-card mb-4">
-                        <div class="bf-card-header d-flex justify-content-between align-items-center">
-                            <span>
-                                <i class="bi bi-file-earmark-arrow-up text-primary me-2" aria-hidden="true"></i>
-                                Resource Files <span class="text-danger" aria-label="required">*</span>
-                            </span>
-                            <span class="badge bg-light text-secondary border fw-normal" style="font-size:0.75rem;">
-                                Max 20 MB / file
-                            </span>
-                        </div>
-                        <div class="bf-card-body">
-                            <!-- Dropzone with file input overlay -->
-                            <div class="bf-upload-zone position-relative"
-                                 id="uploadZone"
-                                 role="button"
-                                 tabindex="0"
-                                 aria-label="Click to browse files or drag and drop files here">
-                                <i class="bi bi-cloud-arrow-up bf-upload-icon" aria-hidden="true"></i>
-                                <p class="mb-1 bf-upload-zone__label">
-                                    Click to choose files or drag &amp; drop here
-                                </p>
-                                <p class="mb-0 bf-upload-zone__hint text-muted">
-                                    Supported formats: <strong>PDF, DOC, DOCX</strong> &bull; Multiple files allowed
-                                </p>
-                                <!--
-                                    name="files" matches ResourceUploadDto.files — preserved exactly.
-                                    multiple allows multi-file upload.
-                                -->
-                                <input type="file" id="file" name="files" multiple
-                                       accept=".pdf,.doc,.docx"
-                                       style="position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;"
-                                       aria-label="Choose files to upload">
-                            </div>
-
-                            <!-- Live error notification for invalid file type or oversized file -->
-                            <div id="file-error-alert" class="alert alert-danger align-items-center gap-2 mt-3 mb-0"
-                                 style="display:none;" role="alert" aria-live="assertive">
-                                <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
-                                <div id="file-error-text" class="small"></div>
-                            </div>
-
-                            <!-- Selected files container (outside the dropzone overlay so remove buttons are directly clickable) -->
-                            <div id="selected-files-container" class="mt-3" style="display:none;">
-                                <div class="d-flex justify-content-between align-items-center mb-2 px-1">
-                                    <span class="fw-semibold text-secondary small" id="file-count-label">Attached files</span>
-                                    <button type="button" class="btn btn-link btn-sm text-danger text-decoration-none p-0" id="clearAllFilesBtn">
-                                        <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Remove all
-                                    </button>
-                                </div>
-                                <ul id="file-list" class="bf-upload-file-list list-unstyled mb-0" role="list"></ul>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Submit actions -->
-                    <div class="bf-upload-actions">
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-cloud-upload me-1" aria-hidden="true"></i>Submit for Review
-                        </button>
-                        <a th:href="@{/resources/my}" class="bf-back-link">
-                            <i class="bi bi-arrow-left" aria-hidden="true"></i>
-                            Back to My Resources
-                        </a>
-                    </div>
-
-                </form>
-
-                <!-- Info note -->
-                <div class="bf-info-note mt-3" role="note">
-                    <i class="bi bi-info-circle-fill" aria-hidden="true"></i>
-                    <span>
-                        Your resource will be reviewed by an administrator before publication.
-                        Only approved resources are visible in the public library.
-                    </span>
-                </div>
-
-            </div>
-        </div>
+    <!-- Error alerts — th:if and th:text bindings preserved exactly -->
+    <div th:if="${fileError}" class="alert alert-danger mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+      <span th:text="${fileError}"></span>
     </div>
+    <div th:if="${uploadError}" class="alert alert-danger mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+      <span th:text="${uploadError}"></span>
+    </div>
+
+    <!-- Upload form — enctype, th:action, th:object preserved exactly -->
+    <form th:action="@{/resources/upload}"
+          th:object="${resourceUploadDto}"
+          method="post"
+          enctype="multipart/form-data"
+          novalidate>
+
+      <!-- Resource Details -->
+      <div class="bf-card mb-3">
+        <div class="bf-card-header">
+          <i class="bi bi-file-earmark-text text-indigo" aria-hidden="true"></i>
+          Resource Details
+        </div>
+        <div class="bf-card-body">
+          <div class="mb-3">
+            <label for="title" class="form-label">Title <span class="text-danger" aria-label="required">*</span></label>
+            <input type="text" id="title" th:field="*{title}"
+                   class="form-control"
+                   th:classappend="${#fields.hasErrors('title')} ? ' is-invalid'"
+                   placeholder="e.g. Data Structures Unit 3 Notes"
+                   aria-required="true">
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></div>
+          </div>
+          <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea id="description" th:field="*{description}"
+                      class="form-control"
+                      th:classappend="${#fields.hasErrors('description')} ? ' is-invalid'"
+                      rows="3"
+                      placeholder="Brief description of the resource (optional)"></textarea>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('description')}" th:errors="*{description}"></div>
+          </div>
+          <div class="mb-0">
+            <label for="type" class="form-label">Resource Type <span class="text-danger" aria-label="required">*</span></label>
+            <select id="type" th:field="*{type}"
+                    class="form-select"
+                    th:classappend="${#fields.hasErrors('type')} ? ' is-invalid'"
+                    aria-required="true">
+              <option value="">-- Select type --</option>
+              <option th:each="t : ${resourceTypes}" th:value="${t}" th:text="${t.displayName}"></option>
+            </select>
+            <div class="invalid-feedback" th:if="${#fields.hasErrors('type')}" th:errors="*{type}"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Academic Details -->
+      <div class="bf-card mb-3">
+        <div class="bf-card-header">
+          <i class="bi bi-mortarboard text-indigo" aria-hidden="true"></i>
+          Academic Details
+        </div>
+        <div class="bf-card-body">
+          <div class="row g-3 mb-3">
+            <div class="col-md-6">
+              <label for="branch" class="form-label">Branch <span class="text-danger" aria-label="required">*</span></label>
+              <select id="branch" th:field="*{branch}"
+                      class="form-select"
+                      th:classappend="${#fields.hasErrors('branch')} ? ' is-invalid'"
+                      aria-required="true">
+                <option value="">-- Select branch --</option>
+                <option value="Computer Engineering">Computer Engineering</option>
+                <option value="Information Technology">Information Technology</option>
+                <option value="Computer Science &amp; Engineering (AI &amp; ML)">Computer Science &amp; Engineering (AI &amp; ML)</option>
+                <option value="Electronics &amp; Computer Science (ECS)">Electronics &amp; Computer Science (ECS)</option>
+                <option value="Mechatronics">Mechatronics</option>
+              </select>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('branch')}" th:errors="*{branch}"></div>
+            </div>
+            <div class="col-md-6">
+              <label for="subject" class="form-label">Subject <span class="text-danger" aria-label="required">*</span></label>
+              <input type="text" id="subject" th:field="*{subject}"
+                     class="form-control"
+                     th:classappend="${#fields.hasErrors('subject')} ? ' is-invalid'"
+                     placeholder="e.g. Data Structures"
+                     aria-required="true">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('subject')}" th:errors="*{subject}"></div>
+            </div>
+          </div>
+          <div class="row g-3">
+            <div class="col-6">
+              <label for="year" class="form-label">Year <span class="text-danger" aria-label="required">*</span></label>
+              <select id="year" th:field="*{year}"
+                      class="form-select"
+                      th:classappend="${#fields.hasErrors('year')} ? ' is-invalid'"
+                      aria-required="true">
+                <option value="">-- Year --</option>
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+              </select>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+            </div>
+            <div class="col-6">
+              <label for="semester" class="form-label">Semester <span class="text-danger" aria-label="required">*</span></label>
+              <select id="semester" th:field="*{semester}"
+                      class="form-select"
+                      th:classappend="${#fields.hasErrors('semester')} ? ' is-invalid'"
+                      aria-required="true">
+                <option value="">-- Sem --</option>
+                <option th:each="s : ${#numbers.sequence(1,8)}"
+                        th:value="${s}" th:text="'Sem ' + ${s}"></option>
+              </select>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- File Upload -->
+      <div class="bf-card mb-4">
+        <div class="bf-card-header">
+          <i class="bi bi-paperclip text-indigo" aria-hidden="true"></i>
+          Attach Files
+        </div>
+        <div class="bf-card-body">
+          <!-- Drop zone -->
+          <div id="uploadZone" class="bf-upload-zone"
+               onclick="document.getElementById('file').click()"
+               role="button" tabindex="0"
+               aria-label="Click to browse files or drag and drop files here">
+            <i class="bi bi-cloud-arrow-up bf-upload-icon" aria-hidden="true"></i>
+            <div class="bf-upload-zone__label">Click to choose files or drag &amp; drop here</div>
+            <div class="bf-upload-zone__hint">PDF, DOC, DOCX &bull; Max 20 MB per file &bull; Multiple files allowed</div>
+            <input type="file" id="file" name="files" multiple
+                   accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                   style="display:none;"
+                   aria-label="Choose files to upload">
+          </div>
+
+          <!-- File validation error alert — display:none prevents always-visible red box -->
+          <div id="file-error-alert" class="alert alert-danger align-items-center gap-2 mt-3 mb-0"
+               style="display:none;" role="alert" aria-live="assertive">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+            <div id="file-error-text" class="small"></div>
+          </div>
+
+          <!-- Selected files list -->
+          <div id="selected-files-container" class="mt-3" style="display:none;">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <span class="fw-600 text-muted" style="font-size:.8125rem;" id="file-count-label">Attached files</span>
+              <button type="button" class="btn btn-link btn-sm text-danger p-0 text-decoration-none" id="clearAllFilesBtn">
+                <i class="bi bi-trash3 me-1" aria-hidden="true"></i>Clear all
+              </button>
+            </div>
+            <ul id="file-list" class="bf-upload-file-list list-unstyled mb-0" role="list"></ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions -->
+      <div class="bf-upload-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-cloud-upload me-1" aria-hidden="true"></i>
+          Submit for Review
+        </button>
+        <a th:href="@{/resources/my}" class="bf-back-link">
+          <i class="bi bi-arrow-left" aria-hidden="true"></i> Cancel
+        </a>
+      </div>
+
+    </form>
+
+  </div>
 </main>
 
-<!-- ═══════════ FOOTER ════════════════════════════════════════ -->
 <footer class="bf-footer bf-footer--compact" role="contentinfo">
-    <div class="container">
-        <div class="bf-footer-bottom">
-            <span>&copy; 2026 BookFlow</span>
-        </div>
+  <div class="container">
+    <div class="bf-footer-bottom">
+      <span>&copy; 2026 BookFlow</span>
     </div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
-
 </body>
 </html>

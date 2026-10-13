@@ -1,294 +1,240 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pending Resources | BookFlow Admin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <style>
-        body { background: #f1f5f9; }
-
-        /* Admin navbar — same as dashboard, inline for standalone page */
-        .adm-nav { background:#0f172a; border-bottom:1px solid rgba(255,255,255,.07); padding:.5rem 0; position:sticky; top:0; z-index:1030; }
-        .adm-brand { display:inline-flex; align-items:center; gap:.5rem; color:#fff !important; font-size:1.05rem; font-weight:700; text-decoration:none; letter-spacing:-.015em; }
-        .adm-brand-icon { width:28px; height:28px; background:#2563eb; border-radius:6px; display:inline-flex; align-items:center; justify-content:center; font-size:.85rem; color:#fff; flex-shrink:0; }
-        .adm-badge { background:#fee2e2; color:#b91c1c; border:1px solid #fca5a5; border-radius:4px; font-size:.63rem; font-weight:700; padding:.1rem .45rem; letter-spacing:.04em; text-transform:uppercase; }
-        .adm-link { color:rgba(255,255,255,.7) !important; font-size:.84rem; font-weight:500; padding:.3rem .7rem; border-radius:6px; text-decoration:none; display:inline-flex; align-items:center; gap:.3rem; transition:background .15s,color .15s; }
-        .adm-link:hover, .adm-link.active { color:#fff !important; background:rgba(255,255,255,.1); }
-        .adm-avatar { width:26px; height:26px; background:#2563eb; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; font-size:.7rem; font-weight:700; color:#fff; text-transform:uppercase; }
-        .adm-user-trigger { color:rgba(255,255,255,.8) !important; font-size:.84rem; font-weight:500; display:inline-flex; align-items:center; gap:.4rem; padding:.28rem .6rem; border-radius:6px; cursor:pointer; transition:background .15s; background:transparent; border:none; font-family:inherit; line-height:inherit; }
-        .adm-user-trigger:hover { background:rgba(255,255,255,.08); color:#fff !important; }
-        .adm-nav .dropdown-menu { border:1px solid #e2e8f0; border-radius:10px; box-shadow:0 8px 24px rgba(0,0,0,.1); padding:.35rem; min-width:180px; margin-top:.4rem; }
-        .adm-nav .dropdown-item { border-radius:6px; font-size:.84rem; padding:.4rem .7rem; color:#1e293b; display:flex; align-items:center; gap:.5rem; }
-        .adm-nav .dropdown-item:hover { background:#eff6ff; color:#2563eb; }
-        .adm-nav .dropdown-item.text-danger:hover { background:#fff1f2; color:#b91c1c !important; }
-        .adm-chip-pending { background:#fef9c3; color:#92400e; border:1px solid #fde68a; border-radius:999px; padding:.15rem .55rem; font-size:.71rem; font-weight:600; display:inline-flex; align-items:center; gap:.25rem; }
-        .adm-page-header { background:#fff; border-bottom:1px solid #e2e8f0; padding:1rem 0; }
-        .adm-page-title { font-size:1.2rem; font-weight:700; color:#0f172a; margin:0; }
-        .adm-page-sub { font-size:.82rem; color:#64748b; margin:.1rem 0 0; }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Review Queue | BookFlow Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body class="adm-page">
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<!-- ═══════════ ADMIN NAVBAR ════════════════════════════════ -->
+<!-- ═══ ADMIN NAVBAR ══════════════════════════════════════════════ -->
 <nav class="navbar navbar-expand-lg adm-nav" aria-label="Admin navigation">
-    <div class="container-fluid px-4">
-        <a class="adm-brand me-3" th:href="@{/admin/dashboard}">
-            <span class="adm-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
-            BookFlow
-            <span class="adm-badge ms-1">Admin</span>
-        </a>
-        <button class="navbar-toggler border-0" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navAdminPend"
-                aria-controls="navAdminPend" aria-expanded="false" aria-label="Toggle navigation"
-                style="color:rgba(255,255,255,.7);">
-            <i class="bi bi-list fs-5" aria-hidden="true"></i>
-        </button>
-        <div class="collapse navbar-collapse" id="navAdminPend">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 gap-1">
-                <li class="nav-item">
-                    <a class="adm-link" th:href="@{/admin/dashboard}">
-                        <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="adm-link active" aria-current="page" th:href="@{/admin/resources/pending}">
-                        <i class="bi bi-hourglass-split" aria-hidden="true"></i> Pending Resources
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="adm-link" th:href="@{/admin/resources/upload}">
-                        <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
-                    </a>
-                </li>
+  <div class="container">
+    <a class="adm-brand me-3" th:href="@{/admin/dashboard}">
+      <span class="adm-brand-icon"><i class="bi bi-shield-lock"></i></span>
+      BookFlow <span class="adm-badge ms-1">Admin</span>
+    </a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navAdminPend"
+            aria-controls="navAdminPend" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navAdminPend">
+      <ul class="navbar-nav me-auto gap-1">
+        <li class="nav-item">
+          <a class="adm-link" th:href="@{/admin/dashboard}">
+            <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="adm-link active" aria-current="page" th:href="@{/admin/resources/pending}">
+            <i class="bi bi-clock-history" aria-hidden="true"></i> Review Queue
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="adm-link" th:href="@{/admin/resources/upload}">
+            <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Official
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto align-items-center">
+        <li class="nav-item">
+          <div class="dropdown">
+            <button class="adm-user-trigger dropdown-toggle" type="button"
+                    data-bs-toggle="dropdown" aria-expanded="false" id="navAdminDropdown">
+              <span class="adm-avatar-lg" th:text="${#strings.substring(admin.name,0,1)}" aria-hidden="true">A</span>
+              <span class="d-none d-sm-inline" th:text="${admin.name}">Admin</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navAdminDropdown">
+              <li class="px-3 py-2 border-bottom mb-1">
+                <div class="fw-700" style="font-size:.875rem;" th:text="${admin.name}">Admin</div>
+                <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${admin.email}">admin@college.edu</div>
+              </li>
+              <li><a class="dropdown-item" th:href="@{/admin/dashboard}">
+                <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+              </a></li>
+              <li><a class="dropdown-item" th:href="@{/admin/resources/upload}">
+                <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Official
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form th:action="@{/admin-logout}" method="post" class="m-0">
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Log Out
+                  </button>
+                </form>
+              </li>
             </ul>
-            <div class="d-flex align-items-center gap-2 ms-auto">
-                <div class="dropdown">
-                    <button class="adm-user-trigger dropdown-toggle"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        <span class="adm-avatar-lg" th:text="${#strings.substring(admin.name,0,1)}" aria-hidden="true">A</span>
-                        <span class="d-none d-sm-inline" th:text="${admin.name}">Admin</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <li class="px-3 py-2 border-bottom mb-1">
-                            <div class="fw-700" style="font-size:.875rem;color:var(--bf-text-primary);" th:text="${admin.name}">Admin</div>
-                            <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${admin.email}">admin@college.edu</div>
-                        </li>
-                        <li><a class="dropdown-item" th:href="@{/admin/dashboard}">
-                            <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Admin Dashboard
-                        </a></li>
-                        <li><a class="dropdown-item" th:href="@{/admin/resources/upload}">
-                            <i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Upload Resource
-                        </a></li>
-                        <li><hr class="dropdown-divider"></li>
-                        <li>
-                            <form th:action="@{/admin-logout}" method="post" class="m-0">
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+          </div>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- ═══════════ PAGE HEADER ══════════════════════════════════ -->
-<div class="adm-page-header">
-    <div class="container-fluid px-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-        <div>
-            <h1 class="adm-page-title">
-                <i class="bi bi-hourglass-split me-2" style="font-size:1rem;color:#d97706;" aria-hidden="true"></i>
-                Pending Resources
-            </h1>
-            <p class="adm-page-sub">Review and verify user-submitted resources before they go public.</p>
-        </div>
-        <span class="adm-chip-pending"
-              th:text="${#lists.size(pendingResources)} + ' awaiting review'"
-              aria-label="resources awaiting review"></span>
+<!-- ═══ HERO ═════════════════════════════════════════════════════ -->
+<div class="adm-hero">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h1 class="adm-hero__title">Review Queue</h1>
+        <p class="adm-hero__sub">Review and verify user-submitted resources before they go public.</p>
+      </div>
+      <span class="bf-badge bf-badge-pending" style="font-size:.875rem;padding:.35rem .75rem;"
+            th:text="${#lists.size(pendingResources)} + ' awaiting review'"
+            aria-label="resources awaiting review"></span>
     </div>
+  </div>
 </div>
 
-<!-- ═══════════ MAIN ══════════════════════════════════════════ -->
-<main class="bf-page-main" style="background:#f1f5f9;" id="main-content">
-    <div class="container-fluid px-4">
+<!-- ═══ MAIN ════════════════════════════════════════════════════ -->
+<main id="main-content" class="bf-page-main">
+  <div class="container" style="max-width:860px;">
 
-        <!-- Flash messages -->
-        <div th:if="${actionSuccess}"
-             class="alert alert-success auto-dismiss d-flex align-items-center gap-2 mb-3"
-             role="status" aria-live="polite">
-            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
-            <span th:text="${actionSuccess}"></span>
-        </div>
-        <div th:if="${actionError}"
-             class="alert alert-danger d-flex align-items-center gap-2 mb-3" role="alert">
-            <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
-            <span th:text="${actionError}"></span>
-        </div>
-
-        <!-- Empty state -->
-        <div th:if="${#lists.isEmpty(pendingResources)}" class="bf-empty-state">
-            <div class="bf-empty-icon" style="background:#dcfce7;color:#15803d;" aria-hidden="true">
-                <i class="bi bi-check2-circle"></i>
-            </div>
-            <h5>All caught up!</h5>
-            <p>No pending resources to review at this time.</p>
-            <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm">
-                <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Dashboard
-            </a>
-        </div>
-
-        <!--
-            Pending resource cards.
-            ALL th:action, th:object, th:if, th:errors, th:classappend preserved exactly.
-        -->
-        <div th:each="resource : ${pendingResources}" class="bf-pending-card"
-             th:attr="aria-label='Resource: ' + ${resource.title}">
-
-            <!-- Card header -->
-            <div class="bf-pending-card-header">
-                <div style="flex:1;min-width:0;">
-                    <h2 class="h6" th:text="${resource.title}">Title</h2>
-                    <div class="d-flex flex-wrap gap-2 mt-1">
-                        <span class="bf-badge-type" th:text="${resource.type.displayName}"></span>
-                        <span class="badge"
-                              style="background:#f1f5f9;color:#475569;border:1px solid #e2e8f0;font-size:.71rem;"
-                              th:text="${resource.branch}"></span>
-                    </div>
-                </div>
-                <div class="text-muted text-nowrap" style="font-size:.78rem;flex-shrink:0;">
-                    <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
-                    <span th:text="${#temporals.format(resource.createdAt, 'dd MMM yyyy · HH:mm')}"></span>
-                </div>
-            </div>
-
-            <!-- Card body -->
-            <div class="bf-pending-card-body">
-                <div class="row g-3">
-
-                    <!-- Resource details -->
-                    <div class="col-md-7">
-                        <dl class="bf-dl">
-                            <dt>Description</dt>
-                            <dd th:text="${resource.description != null and !resource.description.isEmpty()} ? ${resource.description} : '—'"></dd>
-                            <dt>Subject</dt>
-                            <dd th:text="${resource.subject}"></dd>
-                            <dt>Year / Semester</dt>
-                            <dd>
-                                Year <span th:text="${resource.year}"></span>,
-                                Semester <span th:text="${resource.semester}"></span>
-                            </dd>
-                            <dt>File</dt>
-                            <dd class="d-flex align-items-center gap-2 flex-wrap">
-                                <span class="d-flex align-items-center gap-1">
-                                    <i class="bi bi-file-earmark" style="color:#64748b;"
-                                       aria-hidden="true"></i>
-                                    <span th:text="${resource.originalFilename != null} ? ${resource.originalFilename} : '—'"
-                                          style="font-size:.82rem;"></span>
-                                </span>
-                                <a th:href="@{/admin/resources/{id}/file(id=${resource.id})}"
-                                   target="_blank" rel="noopener"
-                                   class="bf-view-btn">
-                                    <i class="bi bi-eye" aria-hidden="true"></i> View
-                                </a>
-                            </dd>
-                        </dl>
-                    </div>
-
-                    <!-- Uploader chip -->
-                    <div class="col-md-5">
-                        <div class="bf-uploader-chip">
-                            <p class="bf-section-label mb-2">Uploaded by</p>
-                            <div class="d-flex align-items-center gap-2">
-                                <div class="bf-avatar"
-                                     style="width:36px;height:36px;font-size:.8rem;flex-shrink:0;text-transform:uppercase;"
-                                     th:text="${#strings.substring(resource.uploadedBy.name,0,1)}"
-                                     aria-hidden="true">U</div>
-                                <div>
-                                    <div class="name" th:text="${resource.uploadedBy.name}"></div>
-                                    <div class="email" th:text="${resource.uploadedBy.email}"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- Card footer: approve + reject actions -->
-            <!--
-                ALL form th:action, method, th:object, name attributes,
-                th:classappend, th:if, onsubmit preserved exactly.
-            -->
-            <div class="bf-pending-card-footer">
-                <div class="bf-action-row">
-
-                    <!-- Approve form -->
-                    <form th:action="@{/admin/resources/{id}/approve(id=${resource.id})}"
-                          method="post"
-                          onsubmit="return confirm('Approve this resource and publish it to the library?')">
-                        <button type="submit" class="btn btn-success">
-                            <i class="bi bi-check-circle me-1" aria-hidden="true"></i>Approve
-                        </button>
-                    </form>
-
-                    <!-- Reject form -->
-                    <form th:action="@{/admin/resources/{id}/reject(id=${resource.id})}"
-                          th:object="${rejectDto}"
-                          method="post"
-                          class="d-flex flex-wrap gap-2 align-items-start flex-grow-1">
-
-                        <div class="bf-reject-input">
-                            <input type="text"
-                                   name="rejectionReason"
-                                   class="form-control"
-                                   th:classappend="${rejectErrorId == resource.id} ? ' is-invalid'"
-                                   placeholder="Rejection reason (required)"
-                                   maxlength="500"
-                                   aria-label="Rejection reason"
-                                   aria-required="true">
-                            <div th:if="${rejectErrorId == resource.id}"
-                                 class="invalid-feedback d-block"
-                                 role="alert">
-                                A rejection reason is required.
-                            </div>
-                        </div>
-
-                        <button type="submit" class="btn btn-danger">
-                            <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Reject
-                        </button>
-                    </form>
-
-                </div>
-            </div>
-
-        </div><!-- /th:each -->
-
+    <!-- Flash messages -->
+    <div th:if="${actionSuccess}" class="alert alert-success mb-4" role="status" aria-live="polite">
+      <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
+      <span th:text="${actionSuccess}"></span>
     </div>
+    <div th:if="${actionError}" class="alert alert-danger mb-4" role="alert">
+      <i class="bi bi-exclamation-triangle-fill flex-shrink-0" aria-hidden="true"></i>
+      <span th:text="${actionError}"></span>
+    </div>
+
+    <!-- Empty state -->
+    <div th:if="${#lists.isEmpty(pendingResources)}" class="bf-empty-state">
+      <i class="bf-empty-state__icon bi bi-check-circle" style="color:#16a34a;" aria-hidden="true"></i>
+      <h3>All caught up!</h3>
+      <p>No pending resources to review at this time.</p>
+      <a th:href="@{/admin/dashboard}" class="btn btn-outline-secondary btn-sm mt-2">
+        <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Dashboard
+      </a>
+    </div>
+
+    <!-- Pending resource cards — ALL th:action, th:object, th:if, th:errors, th:classappend preserved exactly -->
+    <div th:each="resource : ${pendingResources}"
+         class="adm-pending-card"
+         th:attr="aria-label='Resource: ' + ${resource.title}">
+
+      <div class="adm-pending-card__header">
+        <div style="min-width:0;flex:1;">
+          <h2 class="adm-pending-card__title" th:text="${resource.title}">Title</h2>
+          <div class="adm-pending-card__meta d-flex flex-wrap gap-2 align-items-center mt-1">
+            <span class="bf-badge bf-badge-type" th:text="${resource.type.displayName}"></span>
+            <span class="bf-badge" style="background:var(--bf-slate-100);color:var(--bf-slate-600);"
+                  th:text="${resource.branch}"></span>
+            <span style="font-size:.78rem;color:var(--bf-text-tertiary);">
+              <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>
+              <span th:text="${#temporals.format(resource.createdAt, 'dd MMM yyyy · HH:mm')}"></span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="adm-pending-card__body">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <dl class="row g-1" style="font-size:.875rem;margin:0;">
+              <dt class="col-4" style="color:var(--bf-text-secondary);font-weight:600;">Description</dt>
+              <dd class="col-8" style="margin:0;"
+                  th:text="${resource.description != null and !resource.description.isEmpty()} ? ${resource.description} : '—'"></dd>
+
+              <dt class="col-4" style="color:var(--bf-text-secondary);font-weight:600;">Subject</dt>
+              <dd class="col-8" style="margin:0;" th:text="${resource.subject}"></dd>
+
+              <dt class="col-4" style="color:var(--bf-text-secondary);font-weight:600;">Academic</dt>
+              <dd class="col-8" style="margin:0;">
+                Year <span th:text="${resource.year}"></span>,
+                Semester <span th:text="${resource.semester}"></span>
+              </dd>
+
+              <dt class="col-4" style="color:var(--bf-text-secondary);font-weight:600;">File</dt>
+              <dd class="col-8" style="margin:0;">
+                <span th:text="${resource.originalFilename != null} ? ${resource.originalFilename} : '—'"
+                      style="font-size:.82rem;"></span>
+                <a th:href="@{/admin/resources/{id}/file(id=${resource.id})}"
+                   target="_blank" rel="noopener"
+                   class="btn btn-outline-primary btn-sm ms-2" style="font-size:.75rem;">
+                  <i class="bi bi-eye me-1" aria-hidden="true"></i>Preview
+                </a>
+              </dd>
+            </dl>
+          </div>
+          <div class="col-md-4">
+            <div class="adm-uploader-row">
+              <div class="adm-uploader-avatar"
+                   th:text="${#strings.substring(resource.uploadedBy.name,0,1)}"
+                   aria-hidden="true">U</div>
+              <div>
+                <div class="fw-600" style="font-size:.84rem;" th:text="${resource.uploadedBy.name}"></div>
+                <div style="font-size:.75rem;color:var(--bf-text-tertiary);" th:text="${resource.uploadedBy.email}"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actions footer — ALL form th:action, method, th:object, name attributes preserved exactly -->
+      <div class="adm-pending-card__footer">
+
+        <!-- Approve form -->
+        <form th:action="@{/admin/resources/{id}/approve(id=${resource.id})}"
+              method="post"
+              onsubmit="return confirm('Approve this resource and publish it to the library?')">
+          <button type="submit" class="btn btn-success btn-sm">
+            <i class="bi bi-check-circle me-1" aria-hidden="true"></i>Approve
+          </button>
+        </form>
+
+        <!-- Reject form -->
+        <form th:action="@{/admin/resources/{id}/reject(id=${resource.id})}"
+              th:object="${rejectDto}"
+              method="post"
+              class="adm-reject-form flex-grow-1">
+          <div style="flex:1;min-width:0;">
+            <input type="text"
+                   name="rejectionReason"
+                   class="adm-reject-input w-100"
+                   th:classappend="${rejectErrorId == resource.id} ? ' is-invalid'"
+                   placeholder="Rejection reason (required)"
+                   maxlength="500"
+                   aria-label="Rejection reason"
+                   aria-required="true">
+            <div th:if="${rejectErrorId == resource.id}"
+                 class="invalid-feedback d-block" role="alert">
+              A rejection reason is required.
+            </div>
+          </div>
+          <button type="submit" class="btn btn-danger btn-sm flex-shrink-0">
+            <i class="bi bi-x-circle me-1" aria-hidden="true"></i>Reject
+          </button>
+        </form>
+
+      </div>
+    </div><!-- /th:each -->
+
+  </div>
 </main>
 
-<!-- ═══════════ FOOTER ════════════════════════════════════════ -->
-<footer class="bf-footer bf-footer--compact bf-footer--dark" role="contentinfo">
-    <div class="container-fluid px-4">
-        <div class="bf-footer-bottom">
-            <span>&copy; 2026 BookFlow</span>
-            <span>Admin Panel</span>
-        </div>
+<footer class="bf-footer bf-footer--compact" role="contentinfo">
+  <div class="container">
+    <div class="bf-footer-bottom">
+      <span>&copy; 2026 BookFlow Admin</span>
     </div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

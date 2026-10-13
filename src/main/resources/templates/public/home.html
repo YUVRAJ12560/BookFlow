@@ -19,135 +19,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <!-- BookFlow CSS -->
     <link rel="stylesheet" th:href="@{/css/main.css}">
-
-    <style>
-        /* ── Page-specific helpers ─────────────────────── */
-        .feature-card-clean {
-            background: #ffffff;
-            border: 1px solid var(--bf-border-default);
-            border-radius: var(--bf-radius-lg);
-            padding: 1.75rem 1.5rem;
-            height: 100%;
-            transition: border-color var(--bf-transition-smooth), box-shadow var(--bf-transition-smooth), transform var(--bf-transition-smooth);
-            box-shadow: var(--bf-shadow-sm);
-        }
-        .feature-card-clean:hover {
-            border-color: #bfdbfe;
-            box-shadow: 0 8px 24px rgba(37,99,235,0.09);
-            transform: translateY(-3px);
-        }
-        .feature-card-clean .feat-icon {
-            width: 44px; height: 44px;
-            border-radius: var(--bf-radius-md);
-            display: inline-flex; align-items: center; justify-content: center;
-            font-size: 1.25rem;
-            margin-bottom: 1rem;
-        }
-        .feature-card-clean h3 {
-            font-size: 0.9375rem;
-            font-weight: 700;
-            color: var(--bf-text-primary);
-            margin: 0 0 0.5rem;
-        }
-        .feature-card-clean p {
-            font-size: 0.875rem;
-            color: var(--bf-text-secondary);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        /* How-It-Works step */
-        .how-step {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        @media (max-width: 767.98px) {
-            .how-step { align-items: center; text-align: center; }
-        }
-
-        /* Category grid compact on home */
-        .home-cat-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 0.75rem;
-        }
-        @media (max-width: 1023.98px) {
-            .home-cat-grid { grid-template-columns: repeat(3, 1fr); }
-        }
-        @media (max-width: 639.98px) {
-            .home-cat-grid { grid-template-columns: repeat(2, 1fr); gap: 0.5rem; }
-        }
-
-        .home-cat-card {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 0.625rem;
-            padding: 1.125rem 1rem;
-            background: #ffffff;
-            border: 1px solid var(--bf-border-default);
-            border-radius: var(--bf-radius-lg);
-            text-decoration: none;
-            color: inherit;
-            transition: border-color var(--bf-transition-smooth), box-shadow var(--bf-transition-smooth), transform var(--bf-transition-smooth);
-            box-shadow: var(--bf-shadow-sm);
-            height: 100%;
-        }
-        .home-cat-card:hover {
-            border-color: var(--bf-blue-600);
-            box-shadow: 0 4px 14px rgba(37,99,235,0.12);
-            transform: translateY(-2px);
-            color: inherit;
-            text-decoration: none;
-        }
-        .home-cat-card .cat-icon {
-            width: 38px; height: 38px;
-            border-radius: var(--bf-radius-md);
-            background: #eff6ff;
-            color: var(--bf-blue-600);
-            display: grid;
-            place-items: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-        .home-cat-card strong {
-            font-size: 0.875rem;
-            font-weight: 700;
-            color: var(--bf-text-primary);
-            line-height: 1.3;
-        }
-        .home-cat-card span {
-            font-size: 0.79rem;
-            color: var(--bf-text-secondary);
-            line-height: 1.45;
-        }
-        .home-cat-card .cat-arrow {
-            margin-top: auto;
-            font-size: 0.75rem;
-            color: var(--bf-blue-600);
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        /* Workflow connector line */
-        .how-connector {
-            display: none;
-        }
-        @media (min-width: 768px) {
-            .how-connector {
-                display: block;
-                width: 100%;
-                height: 2px;
-                background: linear-gradient(90deg, var(--bf-blue-100), transparent);
-                margin-top: -1.5rem;
-                position: relative;
-                top: -20px;
-            }
-        }
-    </style>
 </head>
 <body>
 
@@ -172,9 +43,6 @@
 
             <div class="collapse navbar-collapse" id="navMain">
                 <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
-                    <li class="nav-item">
-                        <a class="bf-nav-link active" aria-current="page" th:href="@{/}">Home</a>
-                    </li>
                     <li class="nav-item" sec:authorize="isAuthenticated()">
                         <a class="bf-nav-link" th:href="@{/resources}">Library</a>
                     </li>
@@ -205,18 +73,20 @@
                                 aria-expanded="false"
                                 id="navUserDropdown"
                                 aria-label="Account menu — click to open">
-                            <span class="bf-avatar-lg" aria-hidden="true"><i class="bi bi-person"></i></span>
-                            <span th:text="${user != null ? user.name : ''}">User</span>
+                            <span class="bf-avatar-lg" aria-hidden="true">
+                                <span th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}">U</span>
+                            </span>
+                            <span th:text="${user != null ? user.name : 'Account'}">User</span>
                         </button>
                         <ul class="dropdown-menu dropdown-menu-end bf-dropdown-rich"
                             role="menu" aria-labelledby="navUserDropdown">
                             <li>
                                 <div class="bf-dropdown-identity">
                                     <div class="bf-dropdown-identity__avatar" aria-hidden="true">
-                                        <i class="bi bi-person" style="font-size:1rem;"></i>
+                                        <span th:text="${user != null ? #strings.substring(user.name,0,1) : 'U'}">U</span>
                                     </div>
                                     <div class="bf-dropdown-identity__info">
-                                        <p class="bf-dropdown-identity__name" th:text="${user != null ? user.name : ''}">User</p>
+                                        <p class="bf-dropdown-identity__name" th:text="${user != null ? user.name : 'User'}">User</p>
                                         <span class="bf-dropdown-identity__role bf-dropdown-identity__role--user"
                                               sec:authorize="hasRole('USER')">Student</span>
                                         <span class="bf-dropdown-identity__role bf-dropdown-identity__role--admin"
@@ -248,7 +118,7 @@
                             </li>
                             <li>
                                 <a class="dropdown-item" role="menuitem" th:href="@{/resources/upload}">
-                                    <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload a Resource
+                                    <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
                                 </a>
                             </li>
                             <li><hr class="dropdown-divider"></li>
@@ -275,29 +145,18 @@
     <section class="bf-hero2" aria-label="Hero">
         <div class="bf-hero2__inner">
 
-            <!-- LEFT: Text + CTAs -->
+            <!-- LEFT: Heading, tagline, lead, CTAs -->
             <div>
-                <span class="bf-eyebrow">
-                    <i class="bf-eyebrow-dot" aria-hidden="true"></i>
-                    Academic resource sharing
-                </span>
-
                 <h1 class="bf-h1">
-                    Your Academic<br>
-                    <span class="bf-h1-sub">Knowledge Hub</span>
+                    The Academic <span class="bf-h1-sub">Knowledge Hub</span>
                 </h1>
 
-                <!--
-                    Animated tagline — cycles through 4 phrases.
-                    The aria-label on the <p> reads out all phrases for screen readers.
-                    The rotator spans are aria-hidden so only one is read at a time.
-                -->
-                <p class="bf-tagline"
-                   aria-label="Lecture Notes &amp; Study Guides — Previous Year Question Papers — Study Resources — Academic Learning Materials">
+                <!-- Preserved rotating tagline animation -->
+                <p class="bf-tagline" aria-label="BookFlow taglines">
                     <span class="bf-tagline__rotator" aria-hidden="true">
-                        <span>Lecture Notes &amp; Study Guides</span>
-                        <span>Previous Year Question Papers</span>
-                        <span>Study Resources</span>
+                        <span>Lecture Notes</span>
+                        <span>Past Question Papers</span>
+                        <span>Exam Patterns</span>
                         <span>Academic Learning Materials</span>
                     </span>
                 </p>
@@ -310,21 +169,21 @@
 
                 <!-- CTAs — shown based on auth state -->
                 <div class="bf-hero2__ctas" sec:authorize="isAnonymous()">
-                    <a th:href="@{/register}" class="bf-btn--lg bf-btn--hero">
+                    <a th:href="@{/register}" class="bf-btn--hero">
                         Get Started Free
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
-                    <a th:href="@{/login}" class="bf-btn--lg bf-btn--outline-dark">
+                    <a th:href="@{/login}" class="bf-btn--outline-dark">
                         <i class="bi bi-box-arrow-in-right" aria-hidden="true"></i>
                         Sign In
                     </a>
                 </div>
                 <div class="bf-hero2__ctas" sec:authorize="isAuthenticated()">
-                    <a th:href="@{/resources}" class="bf-btn--lg bf-btn--hero">
+                    <a th:href="@{/resources}" class="bf-btn--hero">
                         Explore Library
                         <i class="bi bi-arrow-right" aria-hidden="true"></i>
                     </a>
-                    <a th:href="@{/resources/upload}" class="bf-btn--lg bf-btn--outline-dark">
+                    <a th:href="@{/resources/upload}" class="bf-btn--outline-dark">
                         <i class="bi bi-cloud-upload" aria-hidden="true"></i>
                         Upload a Resource
                     </a>
@@ -338,10 +197,10 @@
                 </ul>
             </div>
 
-            <!-- RIGHT: Floating document cards -->
+            <!-- RIGHT: Preserved floating document cards animation -->
             <div class="bf-stage" aria-label="Example resource cards" role="img">
 
-                <!-- Card 1 — featured (blue glow) -->
+                <!-- Card 1 — featured (indigo glow) -->
                 <div class="bf-doc bf-doc--1">
                     <div class="bf-doc__float">
                         <div class="bf-doc__card">
@@ -415,17 +274,23 @@
          ═══════════════════════════════════════════════════════ -->
     <section class="bf-features-section" aria-labelledby="feat-heading">
         <div class="container">
-            <div class="text-center mb-4">
+            <div class="text-center mb-5">
                 <span class="bf-section-eyebrow" id="feat-heading">Why BookFlow</span>
+                <h2 class="fw-800 mb-2" style="font-size:clamp(1.5rem, 2.5vw, 2rem);letter-spacing:-0.02em;">
+                    Built for your academic success
+                </h2>
+                <p class="text-muted mb-0" style="max-width:520px;margin:0 auto;font-size:.9375rem;">
+                    Everything students and educators need to share, verify, and discover top-quality resources.
+                </p>
             </div>
             <div class="row g-4">
                 <div class="col-sm-6 col-lg-3">
                     <div class="feature-card-clean">
-                        <div class="feat-icon" style="background:#eff6ff;color:#2563eb;">
+                        <div class="feat-icon" style="background:#eef2ff;color:#4f46e5;">
                             <i class="bi bi-cloud-upload" aria-hidden="true"></i>
                         </div>
                         <h3>Upload Resources</h3>
-                        <p>Share lecture notes, question papers, and reference materials with your peers instantly.</p>
+                        <p>Share lecture notes, question papers, and study guides with your peers effortlessly.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
@@ -434,16 +299,16 @@
                             <i class="bi bi-shield-check" aria-hidden="true"></i>
                         </div>
                         <h3>Verified Content</h3>
-                        <p>Every submission is reviewed by administrators to ensure quality before it goes live.</p>
+                        <p>Every resource is reviewed and approved by administrators before appearing in the library.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
                     <div class="feature-card-clean">
-                        <div class="feat-icon" style="background:#fdf4ff;color:#9333ea;">
+                        <div class="feat-icon" style="background:#faf5ff;color:#9333ea;">
                             <i class="bi bi-people" aria-hidden="true"></i>
                         </div>
                         <h3>Learn Together</h3>
-                        <p>Build a stronger academic community by sharing knowledge collaboratively with classmates.</p>
+                        <p>Build a collaborative knowledge repository with students across semesters and branches.</p>
                     </div>
                 </div>
                 <div class="col-sm-6 col-lg-3">
@@ -451,8 +316,8 @@
                         <div class="feat-icon" style="background:#fff7ed;color:#ea580c;">
                             <i class="bi bi-download" aria-hidden="true"></i>
                         </div>
-                        <h3>Access Anytime</h3>
-                        <p>Download approved resources instantly from one centralized, well-organised platform.</p>
+                        <h3>Instant Access</h3>
+                        <p>Browse and download verified academic materials on demand, anytime, from any device.</p>
                     </div>
                 </div>
             </div>
@@ -465,40 +330,40 @@
     <section class="bf-workflow-section" aria-labelledby="how-heading">
         <div class="container">
             <div class="text-center mb-5">
-                <span class="bf-section-eyebrow">Workflow</span>
-                <h2 class="fw-800 mb-2" id="how-heading" style="font-size:clamp(1.375rem,2.5vw,1.875rem);letter-spacing:-.025em;">
-                    How BookFlow Works
+                <span class="bf-section-eyebrow">How It Works</span>
+                <h2 class="fw-800 mb-2" id="how-heading" style="font-size:clamp(1.5rem, 2.5vw, 2rem);letter-spacing:-0.02em;">
+                    Three simple steps to get started
                 </h2>
-                <p class="text-muted mb-0" style="max-width:460px;margin:0 auto;font-size:.9375rem;">
-                    Three simple steps to start accessing and contributing.
+                <p class="text-muted mb-0" style="max-width:480px;margin:0 auto;font-size:.9375rem;">
+                    Getting the study materials you need has never been this seamless.
                 </p>
             </div>
 
-            <div class="row g-4 g-lg-5 justify-content-center">
+            <div class="row g-4 justify-content-center">
                 <div class="col-md-4">
                     <div class="how-step">
                         <div class="step-number" aria-hidden="true">1</div>
-                        <h3 class="h6 fw-bold mb-2">Create Your Account</h3>
-                        <p class="text-muted mb-0" style="font-size:.9rem;line-height:1.6;">
-                            Register securely with your official college email address and verify your identity.
+                        <h3 class="h6 fw-bold mb-2">Create College Account</h3>
+                        <p class="text-muted mb-0" style="font-size:.875rem;line-height:1.6;">
+                            Sign up securely with your official <code>@pvppcoe.ac.in</code> college email address.
                         </p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="how-step">
-                        <div class="step-number" aria-hidden="true" style="background:#16a34a;box-shadow:0 4px 12px rgba(22,163,74,0.3);">2</div>
-                        <h3 class="h6 fw-bold mb-2">Upload or Browse</h3>
-                        <p class="text-muted mb-0" style="font-size:.9rem;line-height:1.6;">
-                            Submit your own study materials or seamlessly browse resources shared by others.
+                        <div class="step-number" aria-hidden="true" style="background:#16a34a;box-shadow:0 4px 14px rgba(22,163,74,0.35);">2</div>
+                        <h3 class="h6 fw-bold mb-2">Upload or Discover</h3>
+                        <p class="text-muted mb-0" style="font-size:.875rem;line-height:1.6;">
+                            Submit your semester notes or search the library for verified subject materials.
                         </p>
                     </div>
                 </div>
                 <div class="col-md-4">
                     <div class="how-step">
-                        <div class="step-number" aria-hidden="true" style="background:#7c3aed;box-shadow:0 4px 12px rgba(124,58,237,0.3);">3</div>
-                        <h3 class="h6 fw-bold mb-2">Learn &amp; Excel</h3>
-                        <p class="text-muted mb-0" style="font-size:.9rem;line-height:1.6;">
-                            Download verified materials, prepare efficiently, and build a brighter academic future.
+                        <div class="step-number" aria-hidden="true" style="background:#7c3aed;box-shadow:0 4px 14px rgba(124,58,237,0.35);">3</div>
+                        <h3 class="h6 fw-bold mb-2">Study &amp; Excel</h3>
+                        <p class="text-muted mb-0" style="font-size:.875rem;line-height:1.6;">
+                            View resources inline, prepare for your exams with past papers, and excel academically.
                         </p>
                     </div>
                 </div>
@@ -509,86 +374,57 @@
     <!-- ═══════════════════════════════════════════════════════
          RESOURCE CATEGORIES — browse by type
          ═══════════════════════════════════════════════════════ -->
-    <section style="padding:4rem 0;background:#ffffff;border-bottom:1px solid var(--bf-border-default);"
-             aria-labelledby="cat-heading">
+    <section class="bf-categories-section" aria-labelledby="cat-heading">
         <div class="container">
             <div class="d-flex flex-wrap justify-content-between align-items-baseline gap-3 mb-4">
                 <div>
-                    <span class="bf-section-eyebrow">Categories</span>
-                    <h2 class="fw-800 mb-0" id="cat-heading" style="font-size:clamp(1.25rem,2vw,1.625rem);letter-spacing:-.025em;">
+                    <span class="bf-section-eyebrow">Curated Collections</span>
+                    <h2 class="fw-800 mb-0" id="cat-heading" style="font-size:clamp(1.35rem,2vw,1.75rem);letter-spacing:-0.02em;">
                         Browse by Resource Type
                     </h2>
                 </div>
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="bf-btn--ghost">
-                    View full library <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="btn btn-outline-primary btn-sm">
+                    View full library <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
                 </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="bf-btn--ghost">
-                    View full library <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="btn btn-outline-primary btn-sm">
+                    View full library <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
                 </a>
             </div>
 
             <div class="home-cat-grid">
 
                 <!-- Lecture Notes -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="home-cat-card">
-                    <div class="cat-icon"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></div>
+                <a th:href="@{/resources(type='NOTES')}" class="home-cat-card">
+                    <div class="cat-icon" style="background:#eff6ff;color:#2563eb;">
+                        <i class="bi bi-journal-text" aria-hidden="true"></i>
+                    </div>
                     <strong>Lecture Notes</strong>
-                    <span>Class notes and topic summaries for exam prep.</span>
-                    <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="home-cat-card">
-                    <div class="cat-icon"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></div>
-                    <strong>Lecture Notes</strong>
-                    <span>Class notes and topic summaries for exam prep.</span>
+                    <span>Curated classroom notes and unit summaries.</span>
                     <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
-                <!-- Previous Year Papers -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="home-cat-card">
+                <!-- PYQs -->
+                <a th:href="@{/resources(type='PYQ')}" class="home-cat-card">
                     <div class="cat-icon" style="background:#f0fdf4;color:#16a34a;">
                         <i class="bi bi-file-earmark-check" aria-hidden="true"></i>
                     </div>
-                    <strong>Previous Year Papers</strong>
-                    <span>University papers from past exam sessions.</span>
-                    <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="home-cat-card">
-                    <div class="cat-icon" style="background:#f0fdf4;color:#16a34a;">
-                        <i class="bi bi-file-earmark-check" aria-hidden="true"></i>
-                    </div>
-                    <strong>Previous Year Papers</strong>
-                    <span>University papers from past exam sessions.</span>
+                    <strong>Past Question Papers</strong>
+                    <span>Previous semester university exams.</span>
                     <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
-                <!-- Internal Exams -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="home-cat-card">
+                <!-- Internal Papers -->
+                <a th:href="@{/resources(type='INTERNAL_PAPER')}" class="home-cat-card">
                     <div class="cat-icon" style="background:#fef3c7;color:#d97706;">
                         <i class="bi bi-file-earmark-ruled" aria-hidden="true"></i>
                     </div>
-                    <strong>Internal Exams</strong>
-                    <span>Internal assessment and unit test papers.</span>
-                    <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="home-cat-card">
-                    <div class="cat-icon" style="background:#fef3c7;color:#d97706;">
-                        <i class="bi bi-file-earmark-ruled" aria-hidden="true"></i>
-                    </div>
-                    <strong>Internal Exams</strong>
+                    <strong>Internal Papers</strong>
                     <span>Internal assessment and unit test papers.</span>
                     <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
                 <!-- Exam Patterns -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="home-cat-card">
-                    <div class="cat-icon" style="background:#ccfbf1;color:#0d9488;">
-                        <i class="bi bi-list-check" aria-hidden="true"></i>
-                    </div>
-                    <strong>Exam Patterns</strong>
-                    <span>Paper structure and marking schemes.</span>
-                    <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="home-cat-card">
+                <a th:href="@{/resources(type='EXAM_PATTERN')}" class="home-cat-card">
                     <div class="cat-icon" style="background:#ccfbf1;color:#0d9488;">
                         <i class="bi bi-list-check" aria-hidden="true"></i>
                     </div>
@@ -598,20 +434,12 @@
                 </a>
 
                 <!-- Reference Books -->
-                <a sec:authorize="isAuthenticated()" th:href="@{/resources}" class="home-cat-card">
+                <a th:href="@{/resources(type='REFERENCE_BOOK')}" class="home-cat-card">
                     <div class="cat-icon" style="background:#ede9fe;color:#7c3aed;">
                         <i class="bi bi-book-half" aria-hidden="true"></i>
                     </div>
                     <strong>Reference Books</strong>
-                    <span>Recommended texts and study chapters.</span>
-                    <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                </a>
-                <a sec:authorize="isAnonymous()" th:href="@{/login}" class="home-cat-card">
-                    <div class="cat-icon" style="background:#ede9fe;color:#7c3aed;">
-                        <i class="bi bi-book-half" aria-hidden="true"></i>
-                    </div>
-                    <strong>Reference Books</strong>
-                    <span>Recommended texts and study chapters.</span>
+                    <span>Recommended textbooks and study references.</span>
                     <span class="cat-arrow">Explore <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
                 </a>
 
@@ -620,23 +448,39 @@
     </section>
 
     <!-- ═══════════════════════════════════════════════════════
-         CTA BAND — only for guests
+         CTA BAND
          ═══════════════════════════════════════════════════════ -->
-    <section class="home-cta" sec:authorize="isAnonymous()" aria-label="Get started">
+    <section class="home-cta" aria-label="Get started">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-lg-7 text-center">
-                    <h2 class="home-cta__title">Ready to Start Learning?</h2>
+            <div class="home-cta__card">
+                <div sec:authorize="isAnonymous()">
+                    <h2 class="home-cta__title">Ready to elevate your studies?</h2>
                     <p class="home-cta__sub">
-                        Join BookFlow and discover verified academic resources shared by your peers.
+                        Join BookFlow today with your college email and get access to verified academic resources shared by your peers.
                     </p>
                     <div class="d-flex justify-content-center flex-wrap gap-3">
-                        <a th:href="@{/register}" class="btn btn-primary btn-lg fw-600">
+                        <a th:href="@{/register}" class="btn btn-primary btn-lg fw-700 px-4">
                             <i class="bi bi-person-plus me-1" aria-hidden="true"></i>
                             Create Free Account
                         </a>
-                        <a th:href="@{/login}" class="btn btn-outline-light btn-lg fw-600">
+                        <a th:href="@{/login}" class="btn btn-outline-light btn-lg fw-600 px-4">
                             Sign In
+                        </a>
+                    </div>
+                </div>
+
+                <div sec:authorize="isAuthenticated()">
+                    <h2 class="home-cta__title">Share knowledge, empower peers</h2>
+                    <p class="home-cta__sub">
+                        Contribute your verified notes, question banks, or study guides to help fellow college students excel.
+                    </p>
+                    <div class="d-flex justify-content-center flex-wrap gap-3">
+                        <a th:href="@{/resources/upload}" class="btn btn-primary btn-lg fw-700 px-4">
+                            <i class="bi bi-cloud-upload me-1" aria-hidden="true"></i>
+                            Upload a Resource
+                        </a>
+                        <a th:href="@{/resources}" class="btn btn-outline-light btn-lg fw-600 px-4">
+                            Explore Library
                         </a>
                     </div>
                 </div>
@@ -651,55 +495,51 @@
      ═══════════════════════════════════════════════════════════ -->
 <footer class="site-footer" role="contentinfo">
     <div class="container">
-        <div class="row g-4 g-lg-5 site-footer__grid">
+        <div class="row g-4 g-lg-5">
 
             <!-- Brand column -->
             <div class="col-12 col-md-5 col-lg-4">
-                <a class="bf-brand site-footer__brand" th:href="@{/}">
+                <a class="site-footer__brand" th:href="@{/}">
                     <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
                     BookFlow
                 </a>
                 <p class="site-footer__desc">
-                    A centralised academic resource sharing platform for college students.
+                    A centralised academic resource sharing platform for college students. Share verified notes, question papers, and references.
                 </p>
             </div>
 
             <!-- Platform column -->
             <div class="col-6 col-md-3 col-lg-4">
-                <h2 class="site-footer__col-heading">Platform</h2>
+                <h3 class="site-footer__col-heading">Navigation</h3>
                 <ul class="site-footer__links">
                     <li><a th:href="@{/}">Home</a></li>
-                    <li>
-                        <a sec:authorize="isAuthenticated()" th:href="@{/resources}">Resource Library</a>
-                        <a sec:authorize="isAnonymous()" th:href="@{/login}">Resource Library</a>
-                    </li>
-                    <li><a sec:authorize="isAnonymous()" th:href="@{/register}">Register</a></li>
-                    <li><a sec:authorize="isAnonymous()" th:href="@{/login}">Login</a></li>
-                    <li>
-                        <a sec:authorize="hasRole('USER')" th:href="@{/user/dashboard}">Dashboard</a>
-                        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/dashboard}">Dashboard</a>
-                    </li>
-                    <li><a sec:authorize="isAuthenticated()" th:href="@{/resources/upload}">Upload Resource</a></li>
+                    <li><a th:href="@{/resources}">Resource Library</a></li>
+                    <li sec:authorize="isAnonymous()"><a th:href="@{/register}">Create Account</a></li>
+                    <li sec:authorize="isAnonymous()"><a th:href="@{/login}">Student Sign In</a></li>
+                    <li sec:authorize="isAnonymous()"><a th:href="@{/admin}">Admin Sign In</a></li>
+                    <li sec:authorize="hasRole('USER')"><a th:href="@{/user/dashboard}">Student Dashboard</a></li>
+                    <li sec:authorize="hasRole('ADMIN')"><a th:href="@{/admin/dashboard}">Admin Dashboard</a></li>
+                    <li sec:authorize="isAuthenticated()"><a th:href="@{/resources/upload}">Upload Resource</a></li>
                 </ul>
             </div>
 
             <!-- Resources column -->
             <div class="col-6 col-md-4 col-lg-4">
-                <h2 class="site-footer__col-heading">Resource Types</h2>
+                <h3 class="site-footer__col-heading">Resource Types</h3>
                 <ul class="site-footer__links">
-                    <li><span><i class="bi bi-file-earmark-text me-1" aria-hidden="true"></i>Lecture Notes</span></li>
-                    <li><span><i class="bi bi-file-earmark-check me-1" aria-hidden="true"></i>Previous Year Papers</span></li>
-                    <li><span><i class="bi bi-file-earmark-ruled me-1" aria-hidden="true"></i>Internal Exam Papers</span></li>
-                    <li><span><i class="bi bi-file-earmark-bar-graph me-1" aria-hidden="true"></i>Exam Patterns</span></li>
-                    <li><span><i class="bi bi-book me-1" aria-hidden="true"></i>Reference Books</span></li>
+                    <li><a th:href="@{/resources(type='NOTES')}"><i class="bi bi-journal-text me-2" aria-hidden="true"></i>Lecture Notes</a></li>
+                    <li><a th:href="@{/resources(type='PYQ')}"><i class="bi bi-file-earmark-check me-2" aria-hidden="true"></i>Past Question Papers</a></li>
+                    <li><a th:href="@{/resources(type='INTERNAL_PAPER')}"><i class="bi bi-file-earmark-ruled me-2" aria-hidden="true"></i>Internal Exam Papers</a></li>
+                    <li><a th:href="@{/resources(type='EXAM_PATTERN')}"><i class="bi bi-list-check me-2" aria-hidden="true"></i>Exam Patterns</a></li>
+                    <li><a th:href="@{/resources(type='REFERENCE_BOOK')}"><i class="bi bi-book-half me-2" aria-hidden="true"></i>Reference Books</a></li>
                 </ul>
             </div>
 
         </div>
 
         <div class="site-footer__bottom">
-            <span>&copy; 2026 BookFlow</span>
-            <span>Academic resources made easier.</span>
+            <span>&copy; 2026 BookFlow. All rights reserved.</span>
+            <span>Empowering students through verified knowledge sharing.</span>
         </div>
     </div>
 </footer>

@@ -67,14 +67,14 @@ public class SecurityConfig {
     public SecurityFilterChain adminFilterChain(HttpSecurity http) throws Exception {
         http
             // This chain only applies to /admin and /admin-login paths.
-            .securityMatcher("/admin", "/admin/**", "/admin-login")
+            .securityMatcher("/admin", "/admin/**", "/admin-login", "/admin-logout")
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
                 // The admin login page itself is public — it must be reachable
                 // without credentials so admins can enter them.
                 // Visiting /admin does NOT grant ADMIN privileges; the form only
                 // collects credentials which are then validated server-side.
-                .requestMatchers("/admin").permitAll()
+                .requestMatchers("/admin", "/admin-logout").permitAll()
                 // Everything else under /admin requires an authenticated ADMIN.
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().hasRole("ADMIN")
@@ -92,7 +92,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/admin-logout")
-                .logoutSuccessUrl("/admin?logout=true")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()
@@ -148,8 +148,8 @@ public class SecurityConfig {
         http
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
-                // Public pages — home, register, login, email verification
-                .requestMatchers("/", "/register", "/login").permitAll()
+                // Public pages — home, register, login, email verification, logout
+                .requestMatchers("/", "/register", "/login", "/logout").permitAll()
                 .requestMatchers("/verify-email", "/verify-pending", "/verify-success",
                                  "/verify-error", "/resend-verification", "/error").permitAll()
                 // Google Sign-In callback — validates the ID token server-side
@@ -176,7 +176,7 @@ public class SecurityConfig {
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/login?logout=true")
+                .logoutSuccessUrl("/")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
                 .permitAll()

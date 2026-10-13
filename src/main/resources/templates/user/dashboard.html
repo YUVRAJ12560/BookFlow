@@ -2,454 +2,290 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard | BookFlow</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
-    <style>
-        body { background: var(--bf-bg-canvas); }
-
-        /* ── Hero band ──────────────────────────────────────── */
-        .dash-hero {
-            background: #0f172a;
-            border-bottom: 1px solid rgba(255,255,255,0.06);
-            padding: 2rem 0 1.75rem;
-        }
-        .dash-hero-name {
-            color: #fff;
-            font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-            font-weight: 700;
-            letter-spacing: -0.02em;
-            margin: 0 0 0.3rem;
-        }
-        .dash-hero-sub {
-            color: rgba(255,255,255,0.5);
-            font-size: 0.875rem;
-            margin: 0 0 1.25rem;
-        }
-        .dash-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.3rem;
-            background: rgba(59,130,246,0.18);
-            border: 1px solid rgba(59,130,246,0.35);
-            color: #93c5fd;
-            border-radius: 999px;
-            padding: 0.2rem 0.65rem;
-            font-size: 0.78rem;
-            font-weight: 600;
-        }
-        .dash-hero-btn-primary {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            background: #fff; color: #0f172a !important;
-            border: none; border-radius: 8px;
-            padding: 0.5rem 1.15rem;
-            font-size: 0.875rem; font-weight: 700;
-            text-decoration: none;
-            transition: background 0.15s, transform 0.15s;
-        }
-        .dash-hero-btn-primary:hover { background: #dbeafe; transform: translateY(-1px); }
-        .dash-hero-btn-ghost {
-            display: inline-flex; align-items: center; gap: 0.4rem;
-            background: transparent; color: rgba(255,255,255,0.8) !important;
-            border: 1.5px solid rgba(255,255,255,0.25); border-radius: 8px;
-            padding: 0.5rem 1.15rem;
-            font-size: 0.875rem; font-weight: 600;
-            text-decoration: none;
-            transition: background 0.15s, border-color 0.15s;
-        }
-        .dash-hero-btn-ghost:hover {
-            background: rgba(255,255,255,0.08);
-            border-color: rgba(255,255,255,0.5);
-            color: #fff !important;
-        }
-
-        /* ── Quick-action cards ─────────────────────────────── */
-        .dash-qcard {
-            background: var(--bf-bg-surface);
-            border: 1px solid var(--bf-border-default);
-            border-radius: 12px;
-            box-shadow: var(--bf-shadow-sm);
-            padding: 1.35rem 1.25rem 1.1rem;
-            display: flex; flex-direction: column;
-            height: 100%; text-decoration: none;
-            transition: box-shadow 0.18s, transform 0.18s, border-color 0.18s;
-        }
-        .dash-qcard:hover {
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-            transform: translateY(-2px);
-            border-color: #bfdbfe;
-            text-decoration: none;
-        }
-        .dash-qcard-icon {
-            width: 42px; height: 42px; border-radius: 9px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; margin-bottom: 0.875rem; flex-shrink: 0;
-        }
-        .dash-qcard-title {
-            font-size: 0.925rem; font-weight: 700;
-            color: var(--bf-text-primary); margin: 0 0 0.3rem;
-        }
-        .dash-qcard-desc {
-            font-size: 0.8rem; color: var(--bf-text-secondary);
-            line-height: 1.5; flex: 1; margin: 0 0 0.75rem;
-        }
-        .dash-qcard-cta {
-            font-size: 0.8rem; font-weight: 600; color: var(--bf-blue-600);
-            display: inline-flex; align-items: center; gap: 0.3rem;
-            margin-top: auto;
-        }
-        .dash-qcard:hover .dash-qcard-cta i { transform: translateX(2px); }
-        .dash-qcard-cta i { transition: transform 0.15s; font-size: 0.7rem; }
-
-        /* ── Profile card ───────────────────────────────────── */
-        .dash-profile {
-            background: var(--bf-bg-surface);
-            border: 1px solid var(--bf-border-default);
-            border-radius: 12px;
-            box-shadow: var(--bf-shadow-sm);
-            overflow: hidden;
-        }
-        .dash-profile-header {
-            background: #0f172a; padding: 1.25rem 1.35rem;
-            display: flex; align-items: center; gap: 0.875rem;
-        }
-        .dash-profile-avatar {
-            width: 44px; height: 44px; background: #2563eb;
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 1.1rem; font-weight: 700; color: #fff;
-            flex-shrink: 0; border: 2px solid rgba(255,255,255,0.15);
-            text-transform: uppercase;
-        }
-        .dash-profile-name {
-            color: #fff; font-size: 0.9rem; font-weight: 700;
-            margin: 0 0 0.1rem; word-break: break-all;
-        }
-        .dash-profile-email {
-            color: rgba(255,255,255,0.45); font-size: 0.74rem;
-            margin: 0; word-break: break-all;
-        }
-        .dash-profile-row {
-            display: flex; align-items: center;
-            justify-content: space-between;
-            padding: 0.6rem 1.35rem; font-size: 0.84rem;
-            border-bottom: 1px solid var(--bf-border-subtle);
-        }
-        .dash-profile-row:last-child { border-bottom: none; }
-        .dash-profile-label {
-            color: var(--bf-text-tertiary); font-weight: 500;
-            display: flex; align-items: center; gap: 0.35rem;
-        }
-        .dash-profile-value { color: var(--bf-text-primary); font-weight: 600; }
-        .dash-chip-ok {
-            display: inline-flex; align-items: center; gap: 0.25rem;
-            background: var(--bf-success-bg); color: var(--bf-success-text);
-            border: 1px solid var(--bf-success-border);
-            border-radius: 999px; padding: 0.1rem 0.55rem;
-            font-size: 0.72rem; font-weight: 600;
-        }
-        .dash-chip-warn {
-            display: inline-flex; align-items: center; gap: 0.25rem;
-            background: var(--bf-warning-bg); color: var(--bf-warning-text);
-            border: 1px solid var(--bf-warning-border);
-            border-radius: 999px; padding: 0.1rem 0.55rem;
-            font-size: 0.72rem; font-weight: 600;
-        }
-
-        /* ── Suggestion strip ───────────────────────────────── */
-        .dash-strip {
-            background: #f0f9ff; border: 1px solid #bae6fd;
-            border-radius: 10px; padding: 0.8rem 1rem;
-            display: flex; align-items: center; gap: 0.75rem;
-            margin-bottom: 1.5rem; font-size: 0.84rem; color: #0369a1;
-        }
-        .dash-strip i { font-size: 1rem; flex-shrink: 0; color: #0284c7; }
-        .dash-strip a { color: #0369a1; font-weight: 700; }
-        .dash-strip a:hover { text-decoration: underline; }
-
-        @media (max-width: 767.98px) {
-            .dash-hero { padding: 1.5rem 0; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | BookFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
 <body>
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<!-- ═══════════ NAVBAR ════════════════════════════════════════ -->
+<!-- ═══ NAVBAR ════════════════════════════════════════════════════ -->
 <nav class="navbar navbar-expand-lg bf-navbar" aria-label="Main navigation">
-    <div class="container">
-        <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
-            BookFlow
-        </a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse" data-bs-target="#navDash"
-                aria-controls="navDash" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navDash">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-3">
-                <li class="nav-item">
-                    <a class="bf-nav-link active" aria-current="page" th:href="@{/user/dashboard}">Dashboard</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources}">Library</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources/my}">My Resources</a>
-                </li>
-                <li class="nav-item">
-                    <a class="bf-nav-link" th:href="@{/resources/upload}">Upload</a>
-                </li>
+  <div class="container">
+    <a class="bf-brand" th:href="@{/}">
+      <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
+      BookFlow
+    </a>
+    <button class="navbar-toggler" type="button"
+            data-bs-toggle="collapse" data-bs-target="#navDash"
+            aria-controls="navDash" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navDash">
+      <ul class="navbar-nav me-auto ms-3 gap-1">
+        <li class="nav-item">
+          <a class="bf-nav-link active" th:href="@{/user/dashboard}">
+            <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="bf-nav-link" th:href="@{/resources}">
+            <i class="bi bi-journals" aria-hidden="true"></i> Library
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="bf-nav-link" th:href="@{/resources/my}">
+            <i class="bi bi-file-earmark-text" aria-hidden="true"></i> My Resources
+          </a>
+        </li>
+      </ul>
+      <ul class="navbar-nav ms-auto align-items-center gap-1">
+        <li class="nav-item">
+          <div class="dropdown">
+            <button class="bf-user-trigger dropdown-toggle"
+                    type="button" data-bs-toggle="dropdown"
+                    aria-expanded="false" id="navUserDropdown">
+              <span class="bf-avatar-lg" th:text="${#strings.substring(user.name,0,1)}" aria-hidden="true">U</span>
+              <span class="d-none d-md-inline" th:text="${user.name}">Student</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navUserDropdown">
+              <li class="px-3 py-2 border-bottom mb-1">
+                <div class="fw-700" style="font-size:.875rem;" th:text="${user.name}">Student</div>
+                <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${user.email}">email</div>
+              </li>
+              <li><a class="dropdown-item" th:href="@{/user/dashboard}">
+                <i class="bi bi-speedometer2" aria-hidden="true"></i> Dashboard
+              </a></li>
+              <li><a class="dropdown-item" th:href="@{/resources/upload}">
+                <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
+              </a></li>
+              <li><a class="dropdown-item" th:href="@{/resources/my}">
+                <i class="bi bi-file-earmark-text" aria-hidden="true"></i> My Resources
+              </a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li>
+                <form th:action="@{/logout}" method="post" class="m-0">
+                  <button type="submit" class="dropdown-item text-danger">
+                    <i class="bi bi-box-arrow-right" aria-hidden="true"></i> Log Out
+                  </button>
+                </form>
+              </li>
             </ul>
-            <!-- User account dropdown — right side -->
-            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-                <li class="nav-item dropdown">
-                    <button class="bf-user-trigger dropdown-toggle"
-                            type="button"
-                            data-bs-toggle="dropdown"
-                            aria-expanded="false">
-                        <span class="bf-avatar-lg" th:text="${#strings.substring(user.name, 0, 1)}" aria-hidden="true">U</span>
-                        <span class="d-none d-md-inline ms-1" th:text="${user.name}">User</span>
-                    </button>
-                    <ul class="dropdown-menu dropdown-menu-end">
-                        <!-- Identity -->
-                        <li class="px-3 py-2 border-bottom mb-1">
-                            <div class="fw-700" style="font-size:.875rem;color:var(--bf-text-primary);" th:text="${user.name}">Student</div>
-                            <div style="font-size:.78rem;color:var(--bf-text-tertiary);" th:text="${user.email}">user@college.edu</div>
-                        </li>
-                        <!-- Nav items -->
-                        <li><a class="dropdown-item" th:href="@{/user/dashboard}">
-                            <i class="bi bi-speedometer2 me-2" aria-hidden="true"></i>Dashboard
-                        </a></li>
-                        <li><a class="dropdown-item" th:href="@{/resources/my}">
-                            <i class="bi bi-file-earmark-text me-2" aria-hidden="true"></i>My Resources
-                        </a></li>
-                        <li><a class="dropdown-item" th:href="@{/resources/upload}">
-                            <i class="bi bi-cloud-upload me-2" aria-hidden="true"></i>Upload a Resource
-                        </a></li>
-                        <li th:if="${user.year == null or user.semester == null}">
-                            <a class="dropdown-item text-warning" th:href="@{/user/complete-profile}">
-                                <i class="bi bi-exclamation-circle me-2" aria-hidden="true"></i>Complete Profile
-                            </a>
-                        </li>
-                        <li><hr class="dropdown-divider"></li>
-                        <!-- Logout — POST form -->
-                        <li>
-                            <form th:action="@{/logout}" method="post" class="m-0">
-                                <button type="submit" class="dropdown-item text-danger">
-                                    <i class="bi bi-box-arrow-right me-2" aria-hidden="true"></i>Log Out
-                                </button>
-                            </form>
-                        </li>
-                    </ul>
-                </li>
-            </ul>
-        </div>
+          </div>
+        </li>
+      </ul>
     </div>
+  </div>
 </nav>
 
-<!-- ═══════════ HERO ══════════════════════════════════════════ -->
-<div class="dash-hero" aria-label="Dashboard welcome">
-    <div class="container">
-        <div class="d-flex flex-wrap align-items-center gap-2 mb-2"
-             th:if="${user.year != null and user.semester != null}">
-            <span class="dash-pill">
-                <i class="bi bi-mortarboard" aria-hidden="true"></i>
-                Year <span th:text="${user.year}"></span>
-            </span>
-            <span class="dash-pill">
-                Semester <span th:text="${user.semester}"></span>
-            </span>
-        </div>
-        <h1 class="dash-hero-name">
-            Welcome back, <span th:text="${user.name}">Student</span>
+<!-- ═══ HERO BAND ═════════════════════════════════════════════════ -->
+<div class="dash-hero">
+  <div class="container">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+      <div>
+        <h1 class="dash-hero__title">
+          Welcome, <span th:text="${user.name}">Student</span>
         </h1>
-        <p class="dash-hero-sub">Discover and share academic resources with your peers.</p>
-        <div class="d-flex flex-wrap gap-2">
-            <a th:href="@{/resources}" class="dash-hero-btn-primary">
-                <i class="bi bi-search" aria-hidden="true"></i> Browse Library
-            </a>
-            <a th:href="@{/resources/upload}" class="dash-hero-btn-ghost">
-                <i class="bi bi-cloud-upload" aria-hidden="true"></i> Upload Resource
-            </a>
-        </div>
+        <p class="dash-hero__sub">Here's your BookFlow overview.</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a th:href="@{/resources}" class="btn btn-primary btn-sm">
+          <i class="bi bi-journals me-1" aria-hidden="true"></i> Browse Library
+        </a>
+        <a th:href="@{/resources/upload}" class="btn btn-outline-light btn-sm" style="border-color:rgba(255,255,255,.3);">
+          <i class="bi bi-cloud-upload me-1" aria-hidden="true"></i> Upload Resource
+        </a>
+      </div>
     </div>
+  </div>
 </div>
 
-<!-- ═══════════ MAIN BODY ═════════════════════════════════════ -->
-<main class="bf-page-main" id="main-content">
-    <div class="container">
+<!-- ═══ MAIN CONTENT ══════════════════════════════════════════════ -->
+<main id="main-content" class="bf-page-main">
+  <div class="container">
 
-        <!-- Profile-completion success flash -->
-        <div th:if="${profileSuccess}"
-             class="alert alert-success auto-dismiss d-flex align-items-center gap-2 mb-3"
-             role="status" aria-live="polite">
-            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
-            <span th:text="${profileSuccess}"></span>
-        </div>
-
-        <!-- Personalised suggestion strip -->
-        <div class="dash-strip" th:if="${user.year != null and user.semester != null}"
-             role="note">
-            <i class="bi bi-lightning-charge-fill" aria-hidden="true"></i>
-            <span>
-                Resources for
-                <strong>Year <span th:text="${user.year}"></span>,
-                Sem <span th:text="${user.semester}"></span></strong> —
-                <a th:href="@{/resources(year=${user.year},semester=${user.semester})}">Browse now &rarr;</a>
-            </span>
-        </div>
-
-        <div class="row g-4">
-
-            <!-- ── Quick actions ─────────────────────────── -->
-            <div class="col-lg-8">
-                <p class="bf-section-label mb-3">Quick Actions</p>
-                <div class="row g-3">
-
-                    <div class="col-sm-4">
-                        <a th:href="@{/resources}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-teal"><i class="bi bi-journals" aria-hidden="true"></i></div>
-                            <p class="dash-qcard-title">Browse Library</p>
-                            <p class="dash-qcard-desc">Explore verified notes, PYQs, and reference materials.</p>
-                            <span class="dash-qcard-cta">Open <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                        </a>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <a th:href="@{/resources/upload}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-blue"><i class="bi bi-cloud-upload" aria-hidden="true"></i></div>
-                            <p class="dash-qcard-title">Upload Resource</p>
-                            <p class="dash-qcard-desc">Share your notes. Submissions are reviewed before going live.</p>
-                            <span class="dash-qcard-cta">Upload <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                        </a>
-                    </div>
-
-                    <div class="col-sm-4">
-                        <a th:href="@{/resources/my}" class="dash-qcard">
-                            <div class="dash-qcard-icon bf-icon-green"><i class="bi bi-file-earmark-text" aria-hidden="true"></i></div>
-                            <p class="dash-qcard-title">My Resources</p>
-                            <p class="dash-qcard-desc">Track your submissions — pending, approved, or rejected.</p>
-                            <span class="dash-qcard-cta">View <i class="bi bi-arrow-right" aria-hidden="true"></i></span>
-                        </a>
-                    </div>
-
-                </div>
-            </div>
-
-            <!-- ── Profile card ──────────────────────────── -->
-            <div class="col-lg-4">
-
-                <!-- Complete profile -->
-                <div class="dash-profile" th:if="${user.year != null and user.semester != null}">
-                    <div class="dash-profile-header">
-                        <div class="dash-profile-avatar"
-                             th:text="${#strings.substring(user.name, 0, 1)}"
-                             aria-hidden="true">U</div>
-                        <div style="min-width:0;">
-                            <p class="dash-profile-name" th:text="${user.name}">Student Name</p>
-                            <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="dash-profile-row">
-                            <span class="dash-profile-label"><i class="bi bi-shield-check" aria-hidden="true"></i> Status</span>
-                            <span th:if="${user.emailVerified}" class="dash-chip-ok">
-                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Verified
-                            </span>
-                            <span th:if="${!user.emailVerified}" class="dash-chip-warn">
-                                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Unverified
-                            </span>
-                        </div>
-                        <div class="dash-profile-row">
-                            <span class="dash-profile-label"><i class="bi bi-mortarboard" aria-hidden="true"></i> Year</span>
-                            <span class="dash-profile-value">
-                                <th:block th:switch="${user.year}">
-                                    <span th:case="1">First Year</span>
-                                    <span th:case="2">Second Year</span>
-                                    <span th:case="3">Third Year</span>
-                                    <span th:case="4">Fourth Year</span>
-                                    <span th:case="*" th:text="'Year ' + ${user.year}"></span>
-                                </th:block>
-                            </span>
-                        </div>
-                        <div class="dash-profile-row">
-                            <span class="dash-profile-label"><i class="bi bi-bookmark-check" aria-hidden="true"></i> Semester</span>
-                            <span class="dash-profile-value" th:text="'Semester ' + ${user.semester}">Semester 6</span>
-                        </div>
-                        <div class="dash-profile-row">
-                            <span class="dash-profile-label"><i class="bi bi-person-badge" aria-hidden="true"></i> Role</span>
-                            <span class="dash-profile-value" th:text="${user.role}">USER</span>
-                        </div>
-                    </div>
-                    <div style="padding:0.875rem 1.35rem;border-top:1px solid var(--bf-border-subtle);">
-                        <a th:href="@{/user/complete-profile}" class="btn btn-outline-primary btn-sm w-100">
-                            <i class="bi bi-pencil me-1" aria-hidden="true"></i> Edit Profile
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Incomplete profile -->
-                <div class="dash-profile" th:if="${user.year == null or user.semester == null}">
-                    <div class="dash-profile-header">
-                        <div class="dash-profile-avatar"
-                             th:text="${#strings.substring(user.name, 0, 1)}"
-                             aria-hidden="true">U</div>
-                        <div style="min-width:0;">
-                            <p class="dash-profile-name" th:text="${user.name}">Student Name</p>
-                            <p class="dash-profile-email" th:text="${user.email}">user@college.edu</p>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="dash-profile-row">
-                            <span class="dash-profile-label"><i class="bi bi-shield-check" aria-hidden="true"></i> Status</span>
-                            <span th:if="${user.emailVerified}" class="dash-chip-ok">
-                                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Verified
-                            </span>
-                            <span th:if="${!user.emailVerified}" class="dash-chip-warn">
-                                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Unverified
-                            </span>
-                        </div>
-                    </div>
-                    <div style="padding:1rem 1.35rem;">
-                        <div class="dash-profile-incomplete-warn" role="alert">
-                            <p class="dash-profile-incomplete-warn__title">
-                                <i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>
-                                Profile incomplete
-                            </p>
-                            <p class="dash-profile-incomplete-warn__body">
-                                Add your academic year and semester to personalise your BookFlow experience.
-                            </p>
-                        </div>
-                        <a th:href="@{/user/complete-profile}" class="btn btn-primary btn-sm w-100">
-                            <i class="bi bi-person-check me-1" aria-hidden="true"></i> Complete Profile
-                        </a>
-                    </div>
-                </div>
-
-            </div>
-        </div>
+    <!-- Incomplete profile banner -->
+    <div th:if="${user.year == null or user.semester == null}"
+         class="alert alert-warning mb-4 d-flex align-items-center gap-3" role="alert">
+      <i class="bi bi-exclamation-triangle-fill fs-5 flex-shrink-0" aria-hidden="true"></i>
+      <div>
+        <strong>Profile incomplete.</strong>
+        Add your academic year and semester to personalise BookFlow.
+        <a th:href="@{/user/complete-profile}" class="alert-link ms-1">Complete profile &rarr;</a>
+      </div>
     </div>
+
+    <div class="row g-4">
+
+      <!-- LEFT — Quick actions + content -->
+      <div class="col-lg-8">
+
+        <!-- Quick action cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-sm-4">
+            <a th:href="@{/resources}" class="dash-action-card h-100" id="dashBrowseLibraryCard">
+              <div class="dash-action-card__icon" style="background:#eef2ff;color:#4f46e5;">
+                <i class="bi bi-journals" aria-hidden="true"></i>
+              </div>
+              <div class="dash-action-card__title">Browse Library</div>
+              <p class="dash-action-card__desc">Discover verified notes, PYQs, and reference materials.</p>
+              <span class="dash-action-card__cta" style="color:#4f46e5;">
+                Explore <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </span>
+            </a>
+          </div>
+          <div class="col-sm-4">
+            <a th:href="@{/resources/upload}" class="dash-action-card h-100">
+              <div class="dash-action-card__icon" style="background:#f0fdf4;color:#16a34a;">
+                <i class="bi bi-cloud-upload" aria-hidden="true"></i>
+              </div>
+              <div class="dash-action-card__title">Upload Resource</div>
+              <p class="dash-action-card__desc">Share your notes. Submissions are reviewed before going live.</p>
+              <span class="dash-action-card__cta" style="color:#16a34a;">
+                Upload <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </span>
+            </a>
+          </div>
+          <div class="col-sm-4">
+            <a th:href="@{/resources/my}" class="dash-action-card h-100">
+              <div class="dash-action-card__icon" style="background:#fff7ed;color:#ea580c;">
+                <i class="bi bi-file-earmark-text" aria-hidden="true"></i>
+              </div>
+              <div class="dash-action-card__title">My Resources</div>
+              <p class="dash-action-card__desc">Track your submissions — pending, approved, or rejected.</p>
+              <span class="dash-action-card__cta" style="color:#ea580c;">
+                View <i class="bi bi-arrow-right" aria-hidden="true"></i>
+              </span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Getting started guide -->
+        <div class="bf-card">
+          <div class="bf-card-header">
+            <i class="bi bi-compass text-indigo" aria-hidden="true"></i>
+            Getting Started
+          </div>
+          <div class="bf-card-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <div class="d-flex gap-3">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0;">1</div>
+                  <div>
+                    <div style="font-size:.875rem;font-weight:700;margin-bottom:.2rem;">Verify your email</div>
+                    <div style="font-size:.8rem;color:var(--bf-text-secondary);">Check your college inbox and click the verification link.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex gap-3">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0;">2</div>
+                  <div>
+                    <div style="font-size:.875rem;font-weight:700;margin-bottom:.2rem;">Browse the library</div>
+                    <div style="font-size:.8rem;color:var(--bf-text-secondary);">Find notes, PYQs, and reference books for your semester.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="d-flex gap-3">
+                  <div style="width:28px;height:28px;border-radius:50%;background:#eef2ff;color:#4f46e5;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:800;flex-shrink:0;">3</div>
+                  <div>
+                    <div style="font-size:.875rem;font-weight:700;margin-bottom:.2rem;">Contribute resources</div>
+                    <div style="font-size:.8rem;color:var(--bf-text-secondary);">Upload your own notes to help fellow students.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /col-lg-8 -->
+
+      <!-- RIGHT — Profile card -->
+      <div class="col-lg-4">
+        <div class="dash-profile-card">
+          <div class="dash-profile-card__header">
+            <div class="dash-profile-avatar" th:text="${#strings.substring(user.name,0,1)}" aria-hidden="true">U</div>
+            <div class="dash-profile-name" th:text="${user.name}">Student Name</div>
+            <div class="dash-profile-email" th:text="${user.email}">email</div>
+          </div>
+          <div class="dash-profile-card__body">
+            <!-- Verification status -->
+            <div class="dash-profile-row">
+              <span class="dash-profile-row__label">
+                <i class="bi bi-shield-check me-1" aria-hidden="true"></i>Status
+              </span>
+              <span th:if="${user.emailVerified}" class="dash-chip-ok">
+                <i class="bi bi-check-circle-fill" aria-hidden="true"></i> Verified
+              </span>
+              <span th:if="${!user.emailVerified}" class="dash-chip-warn">
+                <i class="bi bi-exclamation-circle-fill" aria-hidden="true"></i> Unverified
+              </span>
+            </div>
+            <!-- Year -->
+            <div class="dash-profile-row" th:if="${user.year != null}">
+              <span class="dash-profile-row__label">
+                <i class="bi bi-mortarboard me-1" aria-hidden="true"></i>Year
+              </span>
+              <span class="dash-profile-row__value">
+                <th:block th:switch="${user.year}">
+                  <span th:case="1">First Year</span>
+                  <span th:case="2">Second Year</span>
+                  <span th:case="3">Third Year</span>
+                  <span th:case="4">Fourth Year</span>
+                  <span th:case="*" th:text="'Year ' + ${user.year}"></span>
+                </th:block>
+              </span>
+            </div>
+            <!-- Semester -->
+            <div class="dash-profile-row" th:if="${user.semester != null}">
+              <span class="dash-profile-row__label">
+                <i class="bi bi-bookmark-check me-1" aria-hidden="true"></i>Semester
+              </span>
+              <span class="dash-profile-row__value" th:text="'Semester ' + ${user.semester}">Semester 6</span>
+            </div>
+            <!-- Role -->
+            <div class="dash-profile-row">
+              <span class="dash-profile-row__label">
+                <i class="bi bi-person-badge me-1" aria-hidden="true"></i>Role
+              </span>
+              <span class="dash-profile-row__value">Student</span>
+            </div>
+          </div>
+          <!-- Footer action -->
+          <div style="padding:.875rem 1.25rem;border-top:1px solid var(--bf-slate-100);">
+            <a th:href="@{/user/complete-profile}" class="btn btn-outline-primary btn-sm w-100">
+              <i class="bi bi-pencil me-1" aria-hidden="true"></i>
+              <span th:if="${user.year != null and user.semester != null}">Edit Profile</span>
+              <span th:if="${user.year == null or user.semester == null}">Complete Profile</span>
+            </a>
+          </div>
+        </div>
+      </div><!-- /col-lg-4 -->
+
+    </div><!-- /row -->
+
+  </div>
 </main>
 
-<!-- ═══════════ FOOTER ════════════════════════════════════════ -->
 <footer class="bf-footer bf-footer--compact" role="contentinfo">
-    <div class="container">
-        <div class="bf-footer-bottom">
-            <span>&copy; 2026 BookFlow</span>
-        </div>
+  <div class="container">
+    <div class="bf-footer-bottom">
+      <span>&copy; 2026 BookFlow</span>
     </div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>

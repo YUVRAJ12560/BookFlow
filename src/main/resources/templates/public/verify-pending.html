@@ -1,129 +1,117 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Your Email | BookFlow</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-          integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" th:href="@{/css/main.css}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verify Your Email | BookFlow</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" th:href="@{/css/main.css}">
 </head>
-<body>
+<body class="verify-page">
 
-<!-- Minimal nav -->
 <nav class="navbar bf-navbar" aria-label="Site navigation">
-    <div class="container">
-        <a class="bf-brand" th:href="@{/}">
-            <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
-            BookFlow
-        </a>
-    </div>
+  <div class="container">
+    <a class="bf-brand" th:href="@{/}">
+      <span class="bf-brand-icon" aria-hidden="true"><i class="bi bi-book-half"></i></span>
+      BookFlow
+    </a>
+  </div>
 </nav>
 
-<main class="auth-page" id="main-content">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-sm-10 col-md-7 col-lg-5 col-xl-4">
+<main id="main-content" class="flex-grow-1 d-flex align-items-center justify-content-center py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-12" style="max-width:440px;">
 
-                <div class="bf-card">
-                    <div class="bf-card-body text-center">
+        <div class="verify-card">
 
-                        <!-- Email icon -->
-                        <div class="bf-verify-icon" aria-hidden="true">
-                            <i class="bi bi-envelope-at"></i>
-                        </div>
+          <span class="verify-icon" aria-hidden="true">
+            <i class="bi bi-envelope-check" style="color:#4f46e5;"></i>
+          </span>
 
-                        <h1 class="h5 fw-bold mb-1">Check your college email</h1>
-                        <p class="text-muted mb-4" style="font-size:.875rem;">
-                            We sent a verification link to your
-                            <strong class="text-dark">college</strong> address.
-                            Click it to activate your account.
-                        </p>
+          <h1 class="fw-800" style="font-size:1.35rem;margin-bottom:.5rem;">Check your inbox</h1>
 
-                        <!-- Mail delivery failure -->
-                        <div th:if="${mailError}"
-                             class="alert alert-danger d-flex align-items-start gap-2 text-start mb-3"
-                             role="alert" aria-live="polite">
-                            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1" aria-hidden="true"></i>
-                            <div style="font-size:.85rem;">
-                                <strong>Email not sent.</strong>
-                                <span th:text="${mailError}"></span>
-                            </div>
-                        </div>
+          <p style="font-size:.9rem;color:var(--bf-text-secondary);margin-bottom:1.25rem;line-height:1.65;">
+            We've sent a verification link to your college email address.
+            Click it to activate your BookFlow account.
+          </p>
 
-                        <!-- Registration email flash -->
-                        <div th:if="${registeredEmail}"
-                             class="alert alert-info d-flex align-items-center gap-2 text-start mb-3"
-                             role="status" aria-live="polite">
-                            <i class="bi bi-info-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                            <span style="font-size:.85rem;">
-                                Verification email sent to
-                                <strong th:text="${registeredEmail}"></strong>.
-                            </span>
-                        </div>
-
-                        <!-- Resend success -->
-                        <div th:if="${resendSuccess}"
-                             class="alert alert-success auto-dismiss d-flex align-items-center gap-2 text-start mb-3"
-                             role="status" aria-live="polite">
-                            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
-                            <span style="font-size:.85rem;" th:text="${resendSuccess}"></span>
-                        </div>
-
-                        <!-- Spam tip -->
-                        <div class="alert alert-warning d-flex align-items-start gap-2 text-start mb-4" role="note">
-                            <i class="bi bi-lightbulb flex-shrink-0 mt-1" style="font-size:.85rem;" aria-hidden="true"></i>
-                            <div style="font-size:.82rem;">
-                                <strong>Didn't receive it?</strong>
-                                Check your spam or junk folder. Links expire after 24 hours.
-                            </div>
-                        </div>
-
-                        <!-- Resend form — action and field name preserved exactly -->
-                        <form th:action="@{/resend-verification}" method="post" class="mb-3">
-                            <label class="form-label text-start d-block" style="font-size:.82rem;">
-                                Request a new verification link
-                            </label>
-                            <div class="input-group">
-                                <input type="email" name="email"
-                                       class="form-control"
-                                       th:value="${email}"
-                                       placeholder="your.email@pvppcoe.ac.in"
-                                       autocomplete="email"
-                                       aria-label="Email address for resend"
-                                       required>
-                                <button type="submit" class="btn btn-primary">Resend</button>
-                            </div>
-                        </form>
-
-                        <hr class="bf-divider">
-
-                        <a th:href="@{/login}" class="text-muted" style="font-size:.82rem;">
-                            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Sign In
-                        </a>
-
-                    </div>
-                </div>
-
+          <!-- Status alerts — all th: bindings preserved -->
+          <div th:if="${mailError}"
+               class="alert alert-danger mb-3 text-start" role="alert" aria-live="polite">
+            <i class="bi bi-exclamation-triangle-fill flex-shrink-0 mt-1" aria-hidden="true"></i>
+            <div style="font-size:.85rem;">
+              <strong>Email not sent.</strong>
+              <span th:text="${mailError}"></span>
             </div>
+          </div>
+
+          <div th:if="${registeredEmail}"
+               class="alert alert-info mb-3 text-start" role="status" aria-live="polite">
+            <i class="bi bi-info-circle-fill flex-shrink-0" aria-hidden="true"></i>
+            <span style="font-size:.85rem;">
+              Verification email sent to <strong th:text="${registeredEmail}"></strong>.
+            </span>
+          </div>
+
+          <div th:if="${resendSuccess}"
+               class="alert alert-success mb-3 text-start" role="status" aria-live="polite">
+            <i class="bi bi-check-circle-fill flex-shrink-0" aria-hidden="true"></i>
+            <span style="font-size:.85rem;" th:text="${resendSuccess}"></span>
+          </div>
+
+          <div class="alert alert-warning mb-4 text-start" role="note">
+            <i class="bi bi-lightbulb flex-shrink-0 mt-1" style="font-size:.85rem;" aria-hidden="true"></i>
+            <div style="font-size:.82rem;">
+              <strong>Didn't receive it?</strong>
+              Check your spam or junk folder. Links expire after 24 hours.
+            </div>
+          </div>
+
+          <!-- Resend form — action and field name preserved exactly -->
+          <form th:action="@{/resend-verification}" method="post" class="mb-4">
+            <label class="form-label text-start d-block" style="font-size:.82rem;">
+              Request a new verification link
+            </label>
+            <div class="d-flex gap-2">
+              <input type="email" name="email"
+                     class="form-control"
+                     th:value="${email}"
+                     placeholder="your.email@pvppcoe.ac.in"
+                     autocomplete="email"
+                     aria-label="Email address for resend"
+                     required style="flex:1;">
+              <button type="submit" class="btn btn-primary" style="white-space:nowrap;">Resend</button>
+            </div>
+          </form>
+
+          <a th:href="@{/login}" style="font-size:.875rem;color:var(--bf-text-secondary);text-decoration:none;">
+            <i class="bi bi-arrow-left me-1" aria-hidden="true"></i>Back to Sign In
+          </a>
+
         </div>
+
+      </div>
     </div>
+  </div>
 </main>
 
 <footer class="bf-footer bf-footer--compact" role="contentinfo">
-    <div class="container">
-        <div class="bf-footer-bottom" style="padding:.4rem 0;border-top:none;">
-            <span>&copy; 2026 BookFlow</span>
-        </div>
+  <div class="container">
+    <div class="bf-footer-bottom">
+      <span>&copy; 2026 BookFlow</span>
     </div>
+  </div>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous"></script>
 <script th:src="@{/js/main.js}"></script>
 </body>
 </html>
