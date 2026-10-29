@@ -1,13 +1,16 @@
 package com.bookflow;
 
+import com.bookflow.config.GmailServiceFactory;
 import com.bookflow.config.SecurityConfig;
 import com.bookflow.controller.AuthController;
 import com.bookflow.entity.EmailVerificationToken;
 import com.bookflow.entity.Role;
 import com.bookflow.entity.User;
 import com.bookflow.service.EmailService;
+import com.google.api.services.gmail.Gmail;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -18,8 +21,11 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 /**
- * Automated test suite for BookFlow email verification URL generation,
- * token validation, lifecycle handling, security mapping, and reuse prevention.
+ * Automated test suite for BookFlow:
+ * - Email verification URL generation (including Railway domain detection)
+ * - GmailServiceFactory lifecycle resilience and failure handling
+ * - Token lifecycle, activation transition, and reuse prevention
+ * - Security permissions and route mappings
  */
 public class EmailVerificationTests {
 
@@ -28,9 +34,10 @@ public class EmailVerificationTests {
 
     public static void main(String[] args) {
         System.out.println("=================================================");
-        System.out.println("Running BookFlow Email Verification Test Suite");
+        System.out.println("Running BookFlow Verification & Lifecycle Suite");
         System.out.println("=================================================");
 
+        // URL Generation Tests
         testDefaultLocalUrlGeneration();
         testConfiguredBaseUrl();
         testTrailingSlashNormalization();
@@ -41,11 +48,20 @@ public class EmailVerificationTests {
         testNullAndBlankTokenRejection();
         testRailwayPublicDomainResolution();
         testDynamicRequestBaseUrlResolution();
+
+        // Token Lifecycle & Security Tests
         testTokenExpirationLogic();
         testUserEmailActivationTransition();
         testTokenConsumptionAndReusePrevention();
         testControllerMappingVerification();
         testSecurityConfigPermitAllVerification();
+        testResendVerificationControllerMapping();
+
+        // Gmail Lifecycle Resilience Tests
+        testGmailFactoryResilientStartupMissingCredentials();
+        testGmailFactoryGetThrowsWhenUnavailable();
+        testGmailFactoryMockAvailability();
+        testEmailServiceGracefulDeliveryFailure();
 
         System.out.println("=================================================");
         System.out.printf("Results: %d Passed, %d Failed%n", passed, failed);
@@ -89,24 +105,24 @@ public class EmailVerificationTests {
     // 2. Production configured domain
     private static void testConfiguredBaseUrl() {
         RequestContextHolder.resetRequestAttributes();
-        EmailService service = createEmailService("https://bookflow.pvppcoe.ac.in", null, "8080");
+        EmailService service = createEmailService("https://bookflow-production-20fe.up.railway.app", null, "8080");
         String token = "sample-token-123";
         String url = service.buildVerificationUrl(token);
 
         check("Configured Production Base URL",
-                url.equals("https://bookflow.pvppcoe.ac.in/verify-email?token=" + token),
-                "Expected https://bookflow.pvppcoe.ac.in/verify-email?token=" + token + ", got: " + url);
+                url.equals("https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token),
+                "Expected https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token + ", got: " + url);
     }
 
     // 3. Trailing slash normalization
     private static void testTrailingSlashNormalization() {
         RequestContextHolder.resetRequestAttributes();
-        EmailService service = createEmailService("https://bookflow.pvppcoe.ac.in///", null, "8080");
+        EmailService service = createEmailService("https://bookflow-production-20fe.up.railway.app///", null, "8080");
         String token = "clean-slash-token";
         String url = service.buildVerificationUrl(token);
 
         check("Trailing Slash Normalization",
-                url.equals("https://bookflow.pvppcoe.ac.in/verify-email?token=" + token),
+                url.equals("https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token),
                 "Should not have double slash before route, got: " + url);
     }
 
@@ -181,7 +197,7 @@ public class EmailVerificationTests {
                 "Both null and blank tokens must throw IllegalArgumentException");
     }
 
-    // Railway public domain automatic detection
+    // 9. Railway public domain automatic detection
     private static void testRailwayPublicDomainResolution() {
         RequestContextHolder.resetRequestAttributes();
         EmailService service = createEmailService(null, null, "8080");
@@ -194,14 +210,13 @@ public class EmailVerificationTests {
                 "Expected https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token + ", got: " + url);
     }
 
-    // 9. Dynamic request base URL resolution (when base URL is default/blank)
+    // 10. Dynamic request base URL resolution (when base URL is default/blank)
     private static void testDynamicRequestBaseUrlResolution() {
         try {
-            // Mock an incoming HTTP request from a deployed domain via dynamic proxy
             InvocationHandler handler = (proxy, method, mArgs) -> {
                 String name = method.getName();
                 if ("getScheme".equals(name)) return "https";
-                if ("getServerName".equals(name)) return "portal.bookflow.app";
+                if ("getServerName".equals(name)) return "bookflow-production-20fe.up.railway.app";
                 if ("getServerPort".equals(name)) return 443;
                 if ("getContextPath".equals(name)) return "";
                 if ("getRequestURI".equals(name)) return "/register";
@@ -223,24 +238,22 @@ public class EmailVerificationTests {
             String url = service.buildVerificationUrl(token);
 
             check("Dynamic Request-Based Base URL Inference",
-                    url.equals("https://portal.bookflow.app/verify-email?token=" + token),
-                    "Expected https://portal.bookflow.app/verify-email?token=" + token + ", got: " + url);
+                    url.equals("https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token),
+                    "Expected https://bookflow-production-20fe.up.railway.app/verify-email?token=" + token + ", got: " + url);
         } finally {
             RequestContextHolder.resetRequestAttributes();
         }
     }
 
-    // 10. Token entity expiration logic
+    // 11. Token entity expiration logic
     private static void testTokenExpirationLogic() {
         User user = new User();
         user.setEmail("student@pvppcoe.ac.in");
 
-        // Active token: expires in 24 hours
         EmailVerificationToken activeToken = new EmailVerificationToken(
                 UUID.randomUUID().toString(), user, LocalDateTime.now().plusHours(24));
         boolean activeValid = !activeToken.isExpired();
 
-        // Expired token: expired 1 hour ago
         EmailVerificationToken expiredToken = new EmailVerificationToken(
                 UUID.randomUUID().toString(), user, LocalDateTime.now().minusHours(1));
         boolean expiredDetected = expiredToken.isExpired();
@@ -250,7 +263,7 @@ public class EmailVerificationTests {
                 "activeToken should not be expired; expiredToken must report isExpired=true");
     }
 
-    // 11. User activation state transition
+    // 12. User activation state transition
     private static void testUserEmailActivationTransition() {
         User user = new User();
         user.setName("Test Student");
@@ -267,7 +280,7 @@ public class EmailVerificationTests {
                 "User should start with emailVerified=false and transition to emailVerified=true");
     }
 
-    // 12. Token consumption and reuse prevention
+    // 13. Token consumption and reuse prevention
     private static void testTokenConsumptionAndReusePrevention() {
         Map<String, EmailVerificationToken> mockTokenStore = new HashMap<>();
 
@@ -281,17 +294,14 @@ public class EmailVerificationTests {
                 tokenVal, user, LocalDateTime.now().plusHours(24));
         mockTokenStore.put(tokenVal, token);
 
-        // Step 1: First verification attempt (valid token)
         EmailVerificationToken found = mockTokenStore.get(tokenVal);
         boolean foundFirst = (found != null && !found.isExpired());
         if (foundFirst) {
             found.getUser().setEmailVerified(true);
-            mockTokenStore.remove(tokenVal); // Deleted immediately on single use
+            mockTokenStore.remove(tokenVal);
         }
 
         boolean verifiedAfterFirst = user.isEmailVerified();
-
-        // Step 2: Second verification attempt (attempting to reuse consumed token)
         EmailVerificationToken reused = mockTokenStore.get(tokenVal);
         boolean reuseBlocked = (reused == null);
 
@@ -300,7 +310,7 @@ public class EmailVerificationTests {
                 "Token must be deleted on first use and unavailable for reuse");
     }
 
-    // 13. Controller mapping inspection
+    // 14. Controller mapping inspection
     private static void testControllerMappingVerification() {
         boolean mappingFound = false;
         for (Method m : AuthController.class.getDeclaredMethods()) {
@@ -322,11 +332,117 @@ public class EmailVerificationTests {
                 "AuthController must have @GetMapping(\"/verify-email\") on verifyEmail method");
     }
 
-    // 14. SecurityConfig permitAll inspection
+    // 15. SecurityConfig permitAll inspection
     private static void testSecurityConfigPermitAllVerification() {
         boolean classPresent = SecurityConfig.class != null;
         check("SecurityConfig Presence and Public Endpoint Registration",
                 classPresent,
                 "SecurityConfig must be loaded and configuring /verify-email permitAll");
+    }
+
+    // 16. Resend verification controller mapping
+    private static void testResendVerificationControllerMapping() {
+        boolean resendMappingFound = false;
+        for (Method m : AuthController.class.getDeclaredMethods()) {
+            if (m.getName().equals("resendVerification")) {
+                PostMapping mapping = m.getAnnotation(PostMapping.class);
+                if (mapping != null) {
+                    for (String path : mapping.value()) {
+                        if (path.equals("/resend-verification")) {
+                            resendMappingFound = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        check("AuthController /resend-verification Mapping",
+                resendMappingFound,
+                "AuthController must have @PostMapping(\"/resend-verification\")");
+    }
+
+    // 17. GmailFactory startup resilience when credentials are empty/invalid
+    private static void testGmailFactoryResilientStartupMissingCredentials() {
+        GmailServiceFactory factory = new GmailServiceFactory();
+        factory.setCredentialsFilePath("non-existent-secrets/client_secret.json");
+        factory.setCredentialsJson(null);
+        factory.setRefreshToken(null);
+        factory.setClientId(null);
+        factory.setClientSecret(null);
+
+        boolean noExceptionThrown = true;
+        try {
+            factory.init();
+        } catch (Exception e) {
+            noExceptionThrown = false;
+        }
+
+        boolean unavailable = !factory.isAvailable();
+        boolean errorRecorded = factory.getInitializationError() != null;
+
+        check("GmailFactory Resilient Startup Without Credentials",
+                noExceptionThrown && unavailable && errorRecorded,
+                "GmailServiceFactory.init() must not throw on missing/invalid credentials");
+    }
+
+    // 18. GmailFactory getGmailService throws IllegalStateException when unavailable
+    private static void testGmailFactoryGetThrowsWhenUnavailable() {
+        GmailServiceFactory factory = new GmailServiceFactory();
+        factory.setCredentialsFilePath("non-existent-secrets/client_secret.json");
+        factory.init();
+
+        boolean throwsIllegalState = false;
+        try {
+            factory.getGmailService();
+        } catch (IllegalStateException e) {
+            throwsIllegalState = true;
+        }
+
+        check("GmailFactory getGmailService Fails Explicitly When Unavailable",
+                throwsIllegalState,
+                "getGmailService() must throw IllegalStateException when credentials are not operational");
+    }
+
+    // 19. GmailFactory mock availability
+    private static void testGmailFactoryMockAvailability() {
+        GmailServiceFactory factory = new GmailServiceFactory();
+        factory.setAvailable(true);
+        factory.setInitializationError(null);
+
+        Gmail mockGmail = new Gmail.Builder(
+                new com.google.api.client.http.javanet.NetHttpTransport(),
+                com.google.api.client.json.gson.GsonFactory.getDefaultInstance(),
+                request -> {})
+                .setApplicationName("BookFlow-Test")
+                .build();
+        factory.setGmailService(mockGmail);
+
+        check("GmailFactory Availability State Management",
+                factory.isAvailable() && factory.getInitializationError() == null && factory.getGmailService() != null,
+                "GmailServiceFactory must report available=true when client is active");
+    }
+
+    // 20. EmailService graceful delivery failure when Gmail is unavailable
+    private static void testEmailServiceGracefulDeliveryFailure() {
+        GmailServiceFactory unavailableFactory = new GmailServiceFactory();
+        unavailableFactory.setAvailable(false);
+        unavailableFactory.setInitializationError("Token refresh rejected (invalid_grant)");
+
+        EmailService service = new EmailService(unavailableFactory);
+        service.setConfiguredBaseUrl("https://bookflow-production-20fe.up.railway.app");
+
+        boolean threwRuntimeException = false;
+        String caughtMessage = "";
+        try {
+            service.sendVerificationEmail("test@pvppcoe.ac.in", "test-token-123");
+        } catch (RuntimeException e) {
+            threwRuntimeException = true;
+            caughtMessage = e.getMessage();
+        }
+
+        check("EmailService Controlled Failure When Gmail Unavailable",
+                threwRuntimeException && caughtMessage.contains("unavailable"),
+                "sendVerificationEmail must throw a controlled RuntimeException when Gmail is down, got: " + caughtMessage);
     }
 }

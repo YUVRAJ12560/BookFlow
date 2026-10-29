@@ -193,6 +193,16 @@ public class EmailService {
                 + "— The BookFlow Team\n"
                 + "PVPP College of Engineering";
 
+        if (gmailServiceFactory == null || !gmailServiceFactory.isAvailable()) {
+            String reason = (gmailServiceFactory != null && gmailServiceFactory.getInitializationError() != null)
+                    ? gmailServiceFactory.getInitializationError()
+                    : "service is not configured";
+            log.error("[EMAIL] Gmail delivery is unavailable ({}). Cannot send verification email to {}", reason, toEmail);
+            throw new RuntimeException("Email delivery is temporarily unavailable. "
+                    + "Your account has been created, but the verification email could not be sent. "
+                    + "Please request a new link once email service is restored.");
+        }
+
         try {
             Message gmailMessage = buildGmailMessage(fromAddress, toEmail, subject, body);
 
@@ -208,6 +218,9 @@ public class EmailService {
         } catch (IOException e) {
             log.error("[EMAIL] Gmail API call failed: {}", e.getMessage());
             throw new RuntimeException("Failed to send verification email via Gmail API", e);
+        } catch (IllegalStateException e) {
+            log.error("[EMAIL] Gmail service unavailable: {}", e.getMessage());
+            throw new RuntimeException("Email delivery is temporarily unavailable: " + e.getMessage(), e);
         }
     }
 

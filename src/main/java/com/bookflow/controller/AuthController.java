@@ -157,11 +157,16 @@ public class AuthController {
             redirectAttributes.addFlashAttribute("resendSuccess",
                     "A new verification email has been sent to " + email
                     + ". Please check your inbox.");
-        } catch (Exception e) {
-            // Don't leak whether the address is registered.
+        } catch (org.springframework.security.core.userdetails.UsernameNotFoundException e) {
+            // Anti-enumeration: don't leak whether the address is registered
             redirectAttributes.addFlashAttribute("resendSuccess",
                     "If that address is registered and unverified, "
                     + "a new verification email has been sent.");
+        } catch (Exception e) {
+            log.warn("[RESEND] Email delivery failed for {}: {}", email, e.getMessage());
+            redirectAttributes.addFlashAttribute("mailError",
+                    "We were unable to send the verification email right now. "
+                    + "Please try again later or contact the administrator.");
         }
 
         return "redirect:/verify-pending?email=" +
